@@ -21,7 +21,7 @@ const Modal = ({isOpen, onChange, title, description, children}:Props) => {
                 <Dialog.Title className='text-2xl text-center font-bold mb-4'>
                     {title}
                 </Dialog.Title>
-                <Dialog.Description className='mb-5 text-sm leading-normal text-center'>
+                <Dialog.Description className='mb-5 text-sm leading-normal text-center'>ㅔ
                     {description}
                 </Dialog.Description>
                 <div>{children}</div>
