@@ -10,3 +10,13 @@ export const loginState = atom({
   default: false,
 });
 
+export const loginUsername = atom({
+  key: "username",
+  default: "프로필",
+});
+
+export const loginUserId = atom({
+  key: "userId",
+  default: 0,
+});
+
