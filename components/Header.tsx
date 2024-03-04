@@ -7,12 +7,11 @@ import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 import Button from './Button';
 import useAuthModal from '@/hooks/useAuthModal';
-import { useUser } from '@/hooks/useUser';
 import { FaUserAlt } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import {useRecoilState} from "recoil";
 import {baseUrl, loginState} from "@/store/store";
-import {CheckAccessToken, GetCookie, SetTokenCookie} from "@/libs/token";
+import {CheckAccessToken, GetCookie, LogoutProcess, ReissueTokens, SetTokenCookie} from "@/libs/auth";
 
 interface Props{
     children:React.ReactNode;
@@ -21,35 +20,12 @@ interface Props{
 const Header: React.FC<Props> = ({children,className}) => {
     const [isLogin, setIsLogin] = useRecoilState(loginState);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
-    const accessToken = GetCookie('accessToken');
     const router = useRouter()
     const handleLogout =  async () => {
         //reset any playing songs
         router.refresh()
 
-        const response = await fetch(requestUrl+`/member/logout`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: accessToken,
-            }
-        });
-
-        if(!response.ok){
-            console.log(response);
-            const errorData = await response.json();
-            toast.error(errorData.message)
-        }else{
-            toast.success('로그아웃 되었습니다.')
-        }
-
-        SetTokenCookie('accessToken', '', 0);
-        SetTokenCookie('refreshToken', '', 0);
-        CheckAccessToken(setIsLogin);
-
-        localStorage.removeItem("memberId");
-        localStorage.removeItem("username")
+        LogoutProcess(requestUrl, setIsLogin);
     }
     const authModal = useAuthModal()
 

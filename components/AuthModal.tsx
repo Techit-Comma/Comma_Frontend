@@ -12,7 +12,7 @@ import {loginState, baseUrl} from "@/store/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {CheckAccessToken, SetTokenCookie} from "@/libs/token";
+import {CheckAccessToken, Login, SetTokenCookie} from "@/libs/auth";
 
 const AuthModal = () => {
     const router = useRouter()
@@ -75,19 +75,10 @@ const AuthModal = () => {
             const responseData = await response.json();
             const { username, memberId, accessToken, refreshToken } = responseData.data;
 
-            SetTokenCookie('accessToken', accessToken, 1);
-            SetTokenCookie('refreshToken', refreshToken, 24 * 7);
-
-
-            localStorage.setItem('username', username);
-            localStorage.setItem('memberId', memberId.toString());
-
-            CheckAccessToken(setIsLogin);
+            Login(username, memberId, accessToken, refreshToken, setIsLogin);
             toast.success("로그인 되었습니다.");
             onClose();
         }
-
-
     }
 
     return (
