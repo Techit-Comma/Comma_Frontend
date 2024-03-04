@@ -1,24 +1,6 @@
 import {SetterOrUpdater} from "recoil";
 import {toast} from "react-hot-toast";
 
-export function GetCookie(name: string): string | undefined {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift();
-}
-
-export function CheckAccessToken(setIsLogin:SetterOrUpdater<boolean>): void {
-  const accessToken = GetCookie('accessToken');
-
-  if (accessToken) {
-    // accessToken이 있을 경우, 로그인 상태로 간주
-    setIsLogin(true);
-  } else {
-    // accessToken이 없을 경우, 로그아웃 상태로 간주
-    setIsLogin(false);
-  }
-}
-
 export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>) {
   const accessToken = GetCookie('accessToken');
   const response = await fetch(requestUrl+`/member/logout`, {
@@ -43,6 +25,24 @@ export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdate
   } else {
     Logout(setIsLogin);
     toast.success('로그아웃 되었습니다.');
+  }
+}
+
+export function GetCookie(name: string): string | undefined { // 쿠키에서 Token 값 가져오기
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+}
+
+export function CheckAccessToken(setIsLogin:SetterOrUpdater<boolean>): void { // 로그인 상태 전환
+  const accessToken = GetCookie('accessToken');
+
+  if (accessToken) {
+    // accessToken이 있을 경우, 로그인 상태로 간주
+    setIsLogin(true);
+  } else {
+    // accessToken이 없을 경우, 로그아웃 상태로 간주
+    setIsLogin(false);
   }
 }
 

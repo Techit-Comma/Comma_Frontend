@@ -12,7 +12,7 @@ import {loginState, baseUrl} from "@/store/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {CheckAccessToken, Login, SetTokenCookie} from "@/libs/auth";
+import {Login} from "@/libs/auth";
 
 const AuthModal = () => {
     const router = useRouter()
