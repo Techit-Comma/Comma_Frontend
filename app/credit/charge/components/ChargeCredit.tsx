@@ -2,31 +2,37 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 import { GetCookie } from '@/libs/auth';
 import Modal from '@/components/Modal';
 import Payment from './Payment';
+import { ReissueTokens } from '@/libs/auth';
+import { SetterOrUpdater } from 'recoil';
 
 const ChargeCredit = () => {
   const router = useRouter();
   const [chargeAmount, setChargeAmount] = useState('');
   const [isOpen, setOpen] = useState(false);
+  const [chargeId, setChargeId] = useState('');
+  const [chargeCode, setChargeCode] = useState('');
+  const [charger, setCharger] = useState('');
 
   const openModal = () => {
     setOpen(true); 
   }
 
   const closeModal = () => {
-    console.log('결제를 취소하였습니다.');
+    toast.error('결제를 취소하였습니다.')
     setOpen(false); 
   }
 
   const handleSubmit = async (event: any) => {
-    event.preventDefault(); // 기본 제출 행동 방지
+    event.preventDefault();
 
     const accessToken = GetCookie('accessToken');
 
     if (!accessToken) {
-        // 차후 처리 
+      toast.error('로그인이 필요합니다.')
       return;
     }
 
@@ -47,11 +53,12 @@ const ChargeCredit = () => {
       }
 
       const resp = await response.json();
-      const chargeId = resp.chargeId;
+      setChargeId(resp.chargeId);
+      setChargeCode(resp.chargeCode);
+      setCharger(resp.username); 
 
       openModal(); 
 
-      // await router.push(`/credit/charge/payment?chargeId=${chargeId}`);
     } catch (error) {
         console.log('Error 발생')
     }
@@ -86,7 +93,7 @@ const ChargeCredit = () => {
           <button type="submit" className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost">충전하기</button>
         </form>
       </div>
-      <Modal isOpen={isOpen} onChange={closeModal} title='크레딧 충전' description={'충전금액' + chargeAmount} ><Payment /></Modal>
+      <Modal isOpen={isOpen} onChange={closeModal} title='크레딧 충전' description={'충전금액' + chargeAmount} ><Payment username={charger} chargeCode={chargeCode} chargeAmount={chargeAmount} /></Modal>
     </div>
   );
 };
