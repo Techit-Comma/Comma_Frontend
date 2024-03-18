@@ -15,8 +15,8 @@ export const loginUsername = atom({
   default: "프로필",
 });
 
-export const loginUserId = atom({
-  key: "userId",
-  default: 0,
+export const loginMemberId = atom({
+  key: "memberId",
+  default: "0",
 });
 
