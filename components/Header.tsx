@@ -10,7 +10,7 @@ import useAuthModal from '@/hooks/useAuthModal';
 import { FaUserAlt } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import {useRecoilState} from "recoil";
-import {baseUrl, loginState} from "@/store/store";
+import {baseUrl, loginMemberId, loginState, loginUsername} from "@/store/store";
 import {CheckAccessToken, GetCookie, LogoutProcess, ReissueTokens, SetTokenCookie} from "@/libs/auth";
 
 interface Props{
@@ -19,13 +19,15 @@ interface Props{
 }
 const Header: React.FC<Props> = ({children,className}) => {
     const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [username, setUsername] = useRecoilState(loginUsername);
+    const [memberId, setMemberId] = useRecoilState(loginMemberId);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
     const router = useRouter()
     const handleLogout =  async () => {
         //reset any playing songs
         router.refresh()
 
-        LogoutProcess(requestUrl, setIsLogin);
+        await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId);
     }
     const authModal = useAuthModal()
 
@@ -59,9 +61,6 @@ const Header: React.FC<Props> = ({children,className}) => {
                     ):(
                         //not logged in
                     <>
-                        <div>
-                            <Button onClick={authModal.onOpen} className='bg-transparent text-neutral-300 font-medium'>Sign Up</Button>
-                        </div>
                         <div>
                             <Button onClick={authModal.onOpen} className='bg-white px-6 py-2'>Log in</Button>
                         </div>
