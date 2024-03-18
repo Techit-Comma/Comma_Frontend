@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, {useEffect} from 'react'
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 import {RxCaretLeft,RxCaretRight} from 'react-icons/rx';
@@ -10,26 +10,45 @@ import useAuthModal from '@/hooks/useAuthModal';
 import { FaUserAlt } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import {useRecoilState} from "recoil";
-import {baseUrl, loginMemberId, loginState, loginUsername} from "@/store/store";
-import {CheckAccessToken, GetCookie, LogoutProcess, ReissueTokens, SetTokenCookie} from "@/libs/auth";
+import {
+    baseUrl,
+    memberIdState,
+    loginState,
+    usernameState,
+    nicknameState,
+    profileImageUrlState
+} from "@/store/store";
+import {
+    CheckAccessToken,
+    GetCookie,
+    getLoginState,
+    LogoutProcess,
+    ReissueTokens,
+    SetTokenCookie
+} from "@/libs/auth";
 
 interface Props{
     children:React.ReactNode;
     className?:string
 }
 const Header: React.FC<Props> = ({children,className}) => {
-    const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [username, setUsername] = useRecoilState(loginUsername);
-    const [memberId, setMemberId] = useRecoilState(loginMemberId);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [username, setUsername] = useRecoilState(usernameState);
+    const [memberId, setMemberId] = useRecoilState(memberIdState);
+    const [nickname, setNickname] = useRecoilState(nicknameState);
+    const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
     const router = useRouter()
     const handleLogout =  async () => {
         //reset any playing songs
         router.refresh()
-
-        await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId);
+        await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
     }
     const authModal = useAuthModal()
+
+    useEffect(() => {
+        getLoginState(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+    }, []);
 
     return (
         <div className={twMerge(`h-fit bg-gradient-to-br from-blue-950 via-neutral-900 to-neutral-900 p-6`,className)}>
@@ -60,11 +79,9 @@ const Header: React.FC<Props> = ({children,className}) => {
                         </div>
                     ):(
                         //not logged in
-                    <>
-                        <div>
-                            <Button onClick={authModal.onOpen} className='bg-white px-6 py-2'>Log in</Button>
+                        <div className='flex gap-x-4 items-center'>
+                            <Button onClick={authModal.onOpen} className='bg-white px-6 py-2'>Login</Button>
                         </div>
-                    </>
                     )}
                 </div>
             </div>

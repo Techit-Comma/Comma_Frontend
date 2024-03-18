@@ -8,20 +8,30 @@ import {useRecoilState} from "recoil";
 import Button from '@mui/material/Button';
 import Divider from '@material-ui/core/Divider';
 import {toast} from "react-hot-toast";
-import {baseUrl, loginMemberId, loginState, loginUsername} from "@/store/store";
+import {
+    baseUrl,
+    memberIdState,
+    loginState,
+    usernameState,
+    nicknameState,
+    profileImageUrlState
+} from "@/store/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {Login} from "@/libs/auth";
+import {getUserInfo, Login} from "@/libs/auth";
 
 const AuthModal = () => {
     const router = useRouter()
     const {onClose, isOpen} = useAuthModal();
+
     // 페이지 및 전역 상태 관리
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [username, setUsername] = useRecoilState(loginUsername);
-    const [memberId, setMemberId] = useRecoilState(loginMemberId);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
+    const [username, setUsername] = useRecoilState(usernameState);
+    const [memberId, setMemberId] = useRecoilState(memberIdState);
+    const [nickname, setNickname] = useRecoilState(nicknameState);
+    const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
 
     useEffect(()=>{
         if(isLogin){
@@ -113,9 +123,10 @@ const AuthModal = () => {
             }
 
             const responseData = await response.json();
-            const { username, memberId, accessToken, refreshToken } = responseData.data;
+            const {accessToken, refreshToken} = responseData.data;
 
-            Login(username, memberId, accessToken, refreshToken, setIsLogin, setUsername, setMemberId);
+            Login(accessToken, refreshToken, setIsLogin);
+            await getUserInfo(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
             toast.success("로그인 되었습니다.");
             onClose();
         }
@@ -174,7 +185,6 @@ const AuthModal = () => {
                 toast.error(errorData.message); // Exception 으로 처리 된 message
                 return;
             }
-
 
             toast.success("회원가입이 완료되었습니다.");
             setFormState(false);

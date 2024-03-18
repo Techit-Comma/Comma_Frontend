@@ -10,13 +10,23 @@ export const loginState = atom({
   default: false,
 });
 
-export const loginUsername = atom({
+export const usernameState = atom({
   key: "username",
-  default: "프로필",
+  default: "comma_username",
 });
 
-export const loginMemberId = atom({
+export const memberIdState = atom({
   key: "memberId",
   default: "0",
+});
+
+export const nicknameState = atom({
+  key: "nickname",
+  default: "",
+});
+
+export const profileImageUrlState = atom({
+  key: "profileImageUrl",
+  default: "comma_profileImageUrl",
 });
 
