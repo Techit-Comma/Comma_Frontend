@@ -1,7 +1,7 @@
 import {SetterOrUpdater} from "recoil";
 import {toast} from "react-hot-toast";
 
-export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>) {
+export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
   const accessToken = GetCookie('accessToken');
   const response = await fetch(requestUrl+`/member/logout`, {
     method: 'POST',
@@ -13,17 +13,17 @@ export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdate
   });
 
   if(!response.ok){
-    const isReissue = await ReissueTokens(requestUrl, setIsLogin);
+    const isReissue = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId);
     if(isReissue) {
-      LogoutProcess(requestUrl, setIsLogin);
+      await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId);
     } else {
       // 토큰 재발급 실패 처리
-      Logout(setIsLogin);
+      Logout(setIsLogin, setUsername, setMemberId);
       toast.error("재로그인이 필요합니다.")
       return;
     }
   } else {
-    Logout(setIsLogin);
+    Logout(setIsLogin, setUsername, setMemberId);
     toast.success('로그아웃 되었습니다.');
   }
 }
@@ -46,20 +46,48 @@ export function CheckAccessToken(setIsLogin:SetterOrUpdater<boolean>): void { //
   }
 }
 
-export function Login(username:string, memberId:string, accessToken:string, refreshToken:string, setIsLogin:SetterOrUpdater<boolean>) {
+export function Login(username:string, memberId:string, accessToken:string, refreshToken:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
   SetTokenCookie('accessToken', accessToken, 1);
   SetTokenCookie('refreshToken', refreshToken, 24 * 7);
-  localStorage.setItem('username', username);
-  localStorage.setItem('memberId', memberId);
+  setUserInfo(username, memberId, setUsername, setMemberId)
 
   CheckAccessToken(setIsLogin);
 }
 
-export function Logout(setIsLogin:SetterOrUpdater<boolean>) {
-  SetTokenCookie('accessToken', '', 0);
-  SetTokenCookie('refreshToken', '', 0);
+export function oauthLogin(username:string, memberId:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
+  setUserInfo(username, memberId, setUsername, setMemberId)
+  CheckAccessToken(setIsLogin);
+}
+
+function setUserInfo(username:string, memberId:string, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
+  localStorage.setItem('username', username);
+  localStorage.setItem('memberId', memberId);
+  setUsername(username);
+  setMemberId(memberId);
+}
+
+export function getLoginState(setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
+  CheckAccessToken(setIsLogin);
+
+  const username = localStorage.getItem('username');
+  const memberId = localStorage.getItem('memberId');
+
+  if (username && memberId) {
+    setUsername(username);
+    setMemberId(memberId);
+    return true;
+  }
+
+  return false;
+}
+
+export function Logout(setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
+  SetTokenCookie("accessToken", "", 0);
+  SetTokenCookie("refreshToken", "", 0);
   localStorage.removeItem("memberId");
   localStorage.removeItem("username")
+  setUsername("프로필");
+  setMemberId("0");
 
   CheckAccessToken(setIsLogin);
 }
@@ -74,7 +102,7 @@ export function SetTokenCookie(name: string, value: string, hours: number): void
   document.cookie = name + "=" + (value || "")  + expires + "; path=/; Secure";
 }
 
-export async function ReissueTokens(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>) {
+export async function ReissueTokens(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>, setMemberId:SetterOrUpdater<string>) {
   const _refreshToken = GetCookie('refreshToken');
 
   if (!_refreshToken) {
@@ -95,7 +123,7 @@ export async function ReissueTokens(requestUrl:string, setIsLogin:SetterOrUpdate
   if (!response.ok) {
     // 토큰 재발급 요청이 실패한 경우, 로그아웃 상태로 간주
     setIsLogin(false);
-    await LogoutProcess(requestUrl, setIsLogin);
+    await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId);
     return false;
   }
 
@@ -103,6 +131,6 @@ export async function ReissueTokens(requestUrl:string, setIsLogin:SetterOrUpdate
   const { username, memberId, accessToken, refreshToken } = responseData.data;
 
   // 재로그인 (토큰 및 정보 재할당)
-  Login(username, memberId, accessToken, refreshToken, setIsLogin);
+  Login(username, memberId, accessToken, refreshToken, setIsLogin, setUsername, setMemberId);
   return true;
 }
