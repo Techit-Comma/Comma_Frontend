@@ -26,6 +26,7 @@ import {
     ReissueTokens,
     SetTokenCookie
 } from "@/libs/auth";
+import ProfileButton from "@/components/ProfileButton";
 
 interface Props{
     children:React.ReactNode;
@@ -75,7 +76,7 @@ const Header: React.FC<Props> = ({children,className}) => {
                         //logged in
                         <div className='flex gap-x-4 items-center'>
                             <Button onClick={handleLogout} className='bg-white px-6 py-2'>Logout</Button>
-                            <Button onClick={()=>router.push('/account')} className='bg-white'><FaUserAlt/></Button>
+                            <ProfileButton onClick={()=>router.push('/account')} className='w-16 h-10' profileImageUrl={profileImageUrl}></ProfileButton>
                         </div>
                     ):(
                         //not logged in
