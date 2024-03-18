@@ -12,14 +12,19 @@ import HorizontalLinearAlternativeLabelStepper from "@/components/Album/AlbumRel
 //MUI Circle Progress
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import {GetCookie} from "@/libs/auth";
+import {useRecoilState} from 'recoil';
+import AlbumReleaseForm from "@/app/album/release/components/AlbumReleaseForm";
 
 const AlbumReleaseModal = () => {
     const {onClose, isOpen} = useAlbumReleaseModal()
     const [step, setStep] = useState(0);
     const [filePath, setFilePath] = useState('');
+    const [imagePath, setImagePath] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
 
-    const onChange = (open:boolean) =>{
+    const onChange = (open:boolean) => {
         if(!open){
             onClose()
         }
@@ -30,11 +35,12 @@ const AlbumReleaseModal = () => {
         console.log('Files:', file);
         setIsLoading(true);
 
-        const res = await fetch(`${baseUrl}/streaming/upload?filename=${encodeURIComponent(file.name)}`, {
+        const token = GetCookie('accessToken');
+        const headers = token ? { 'Authorization': token } : undefined;
+
+        const res = await fetch(`${requestUrl}/streaming/upload?filename=${encodeURIComponent(file.name)}`, {
             method: 'GET',
-            headers: {
-                //'Authorization': getCookie('accessToken'),
-            }
+            headers: headers
         });
 
         const statElement = document.getElementById('stat');
@@ -59,6 +65,37 @@ const AlbumReleaseModal = () => {
         } else {
             if (statElement) statElement.innerHTML = 'Presigned URL을 받아오는 데 실패했습니다.';
             toast.error('Presigned URL 받아오기 실패');
+            setIsLoading(false);
+        }
+    }
+
+    async function handleImageUpload(file: File) {
+        console.log('handleImageUpload called');
+        console.log('Files:', file);
+        setIsLoading(true);
+
+        const token = GetCookie('accessToken');
+        const headers = token ? { 'Authorization': token } : undefined;
+
+        const res = await fetch(`${requestUrl}/album/upload`, {
+            method: 'POST',
+            body: file,
+            headers: headers
+        });
+        const statElement = document.getElementById('stat');
+
+        const { data } = await res.json();
+
+        if (res.ok) {
+            setImagePath(data.uploadFileUrl);
+            if (statElement) statElement.innerHTML = '업로드 성공!';
+            toast.success('업로드 성공');
+            <AlbumReleaseForm filePath={filePath} imagePath={imagePath} />
+            window.location.href = '/album/release';
+            setIsLoading(false);
+        } else {
+            if (statElement) statElement.innerHTML = '업로드 실패!';
+            toast.error('업로드 실패');
             setIsLoading(false);
         }
     }
@@ -89,8 +126,6 @@ const AlbumReleaseModal = () => {
                                         maxFileSize={50000000}
                                         onChange={(files) => {
                                             if (files.length > 0) {
-                                                console.log('DropzoneArea onChange event triggered');
-                                                console.log('File MIME type:', files[0].type);
                                                 handleAudioUpload(files[0]);
                                             }
                                         }}
@@ -102,8 +137,28 @@ const AlbumReleaseModal = () => {
                 ) : (
                     // Add the content for the next step here
                     <div>
-                        <p>앨범 이미지 변경 모달</p>
-                        <p>현재 스텝: {step}</p>
+                        <Divider variant="middle" style={{background: 'gray'}}/>
+                        <p className="text-center m-3">
+                            앨범 이미지의 크기는 10MB 미만<br/>
+                        </p>
+                        <Divider variant="middle" style={{background: 'gray'}}/>
+                        <div className="container">
+                            <div className="flex flex-col">
+                                <div className="flex flex-col m-5 items-center">
+                                    <DropzoneArea
+                                        filesLimit={1}
+                                        dropzoneText={""}
+                                        acceptedFiles={['image/*']}
+                                        maxFileSize={10000000}
+                                        onChange={(files) => {
+                                            if (files.length > 0) {
+                                                handleImageUpload(files[0]);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )
             )}
