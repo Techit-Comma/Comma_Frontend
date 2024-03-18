@@ -45,9 +45,21 @@ const AuthModal = () => {
         const response = await fetch(requestUrl + `/oauth/google`, {
             method: 'GET',
             credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(errorData.message); // Exception 으로 처리 된 message
+            return;
+        }
+
+        window.location.href = await response.text();
+    }
+
+    async function githubOauth() {
+        const response = await fetch(requestUrl + `/oauth/github`, {
+            method: 'GET',
+            credentials: 'include',
         });
 
         if (!response.ok) {
@@ -234,7 +246,7 @@ const AuthModal = () => {
                                 </Button>
                                 <Button className="w-full" variant="outlined" color="inherit"
                                         startIcon={<FontAwesomeIcon icon={faGithub}/>}
-                                        style={{textTransform: 'none'}}>
+                                        style={{textTransform: 'none'}} onClick={githubOauth}>
                                     Github로 계속하기
                                 </Button>
                             </div>
