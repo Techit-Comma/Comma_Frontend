@@ -1,4 +1,5 @@
-import { atom } from "recoil";
+import {atom, RecoilState} from "recoil";
+import {UserInfos} from "@/types";
 
 export const baseUrl = atom({
   key: "url",
@@ -10,23 +11,13 @@ export const loginState = atom({
   default: false,
 });
 
-export const usernameState = atom({
+export const userInfoState : RecoilState<UserInfos> = atom({
   key: "username",
-  default: "comma_username",
-});
-
-export const memberIdState = atom({
-  key: "memberId",
-  default: "0",
-});
-
-export const nicknameState = atom({
-  key: "nickname",
-  default: "",
-});
-
-export const profileImageUrlState = atom({
-  key: "profileImageUrl",
-  default: "comma_profileImageUrl",
+  default: {
+    memberId: "0",
+    username: "",
+    nickname: "",
+    profileImageUrl: "",
+  }
 });
 

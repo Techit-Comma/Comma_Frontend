@@ -11,18 +11,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Divider from "@material-ui/core/Divider";
-import {GetCookie, getLoginState, Logout, ReissueTokens} from "@/libs/auth";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
 import {
   baseUrl,
   loginState,
-  memberIdState,
-  nicknameState,
-  profileImageUrlState,
-  usernameState
 } from "@/store/store";
-import {router} from "next/client";
+import axiosClient from "@/libs/axiosClient";
 
 interface NotificationItem {
   notificationId: number;
@@ -41,10 +36,6 @@ function NotificationButton() {
   // 공통 변수
   const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
-  const [username, setUsername] = useRecoilState(usernameState);
-  const [memberId, setMemberId] = useRecoilState(memberIdState);
-  const [nickname, setNickname] = useRecoilState(nicknameState);
-  const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -54,68 +45,56 @@ function NotificationButton() {
     setAnchorEl(null);
   };
 
-  async function getNotification(accessToken:string, retryCount= 0) { // retry도 공통 함수화 ㄱㄱ
-    const response = await fetch(requestUrl + `/notification`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: accessToken,
-      }
-    });
-
-    if(response.status === 401){
-      const accessToken = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-      if(!accessToken || retryCount >= 3) {
-        Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-        toast.error("재로그인이 필요합니다.")
-        return;
-      }
-      await getNotification(accessToken, retryCount + 1);
+  async function getNotification() {
+    try {
+      const response = await axiosClient.get('/notification');
+      const responseData = response.data;
+      setNotificationList(responseData);
+    } catch (error) {
+      toast.error('알림 정보를 가져올 수 없습니다.', error);
+      return undefined;
     }
-
-    const responseData = await response.json();
-    setNotificationList(responseData);
   }
 
-  async function readNotification(accessToken:string, notificationId:number, retryCount= 0) { // retry도 공통 함수화 ㄱㄱ
-    const response = await fetch(requestUrl + `/notification`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: accessToken,
-      },
-      body: JSON.stringify({ notificationId })
-    });
+  async function getNotificationToLongPolling() {
+    try {
+      const response = await axiosClient.get('/notification/subscribe');
+      const responseData = response.data;
+      setNotificationList(responseData);
+    } catch (error) {
+      toast.error('알림 정보를 가져올 수 없습니다.', error);
+      return undefined;
+    }
+  }
 
-    if(response.status === 401){
-      const accessToken = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-      if(!accessToken || retryCount >= 3) {
-        Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-        toast.error("재로그인이 필요합니다.")
-        return;
-      }
-      await readNotification(accessToken, retryCount + 1);
+  async function readNotification(notificationId:number) {
+    try {
+      await axiosClient.post('/notification', {
+        "notificationId": notificationId,
+      });
+    } catch (error) {
+      toast.error('알림을 읽을 수 없습니다.', error);
+      return undefined;
     }
   }
 
   const handleReadNotification = async (notificationId:number) => {
-    const accessToken = GetCookie("accessToken");
-    await readNotification(accessToken, notificationId); // API 호출
+    await readNotification(notificationId);
 
     // 알림 목록에서 해당 알림의 isRead 상태를 true로 업데이트
     const updatedNotifications = notificationList?.map((notification) =>
         notification.notificationId === notificationId ? { ...notification, isRead: true } : notification
     );
+
     setNotificationList(updatedNotifications); // 업데이트된 알림 목록으로 상태 업데이트
   };
 
   useEffect(() => {
-    if (isLogin) {
-      getNotification(GetCookie('accessToken'));
+    if (!isLogin) {
+      getNotification();
     }
-  }, [isLogin]); // 의존성 배열에 isLogin 추가
+  }, [isLogin]);
+
   return (
       <div>
         <IconButton onClick={handleClick}>

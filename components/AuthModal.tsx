@@ -8,18 +8,13 @@ import {useRecoilState} from "recoil";
 import Button from '@mui/material/Button';
 import Divider from '@material-ui/core/Divider';
 import {toast} from "react-hot-toast";
-import {
-    baseUrl,
-    memberIdState,
-    loginState,
-    usernameState,
-    nicknameState,
-    profileImageUrlState
-} from "@/store/store";
+import {loginState, userInfoState} from "@/store/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {getUserInfo, Login} from "@/libs/auth";
+import {CheckAccessToken, getLoginState, Login} from "@/libs/auth";
+import axiosClient from "@/libs/axiosClient";
+import {UserInfos} from "@/types";
 
 const AuthModal = () => {
     const router = useRouter()
@@ -27,11 +22,7 @@ const AuthModal = () => {
 
     // 페이지 및 전역 상태 관리
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
-    const [username, setUsername] = useRecoilState(usernameState);
-    const [memberId, setMemberId] = useRecoilState(memberIdState);
-    const [nickname, setNickname] = useRecoilState(nicknameState);
-    const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
 
     useEffect(()=>{
         if(isLogin){
@@ -52,33 +43,23 @@ const AuthModal = () => {
 
     // Oauth
     async function googleOauth() {
-        const response = await fetch(requestUrl + `/oauth/google`, {
-            method: 'GET',
-            credentials: 'include',
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            toast.error(errorData.message); // Exception 으로 처리 된 message
-            return;
+        try {
+            const response = await axiosClient.get('/oauth/google');
+            window.location.href = response.data;
+        } catch (error) {
+            toast.error('Google 로그인에 실패했습니다.', error);
+            return undefined;
         }
-
-        window.location.href = await response.text();
     }
 
     async function githubOauth() {
-        const response = await fetch(requestUrl + `/oauth/github`, {
-            method: 'GET',
-            credentials: 'include',
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            toast.error(errorData.message); // Exception 으로 처리 된 message
-            return;
+        try {
+            const response = await axiosClient.get('/oauth/github');
+            window.location.href = response.data;
+        } catch (error) {
+            toast.error('Github 로그인에 실패했습니다.', error);
+            return undefined;
         }
-
-        window.location.href = await response.text();
     }
 
     // Login Form
@@ -95,40 +76,18 @@ const AuthModal = () => {
             for (let pair of formData.entries()) {
                 jsonData[pair[0]] = pair[1] as string;
             }
+            try {
+                const response = await axiosClient.post('/member/login', jsonData);
+                const responseData = response.data.data;
+                Login(responseData.accessToken, responseData.refreshToken);
+                setIsLogin(true);
 
-            const response = await fetch(requestUrl + `/member/login`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                if(errorData.validMessages !== null){
-                    if (errorData.validMessages.username) {
-                        toast.error(errorData.validMessages.username);
-                        return;
-                    }
-
-                    if (errorData.validMessages.password) {
-                        toast.error(errorData.validMessages.password);
-                        return;
-                    }
-                }
-                toast.error(errorData.message); // Exception 으로 처리 된 message
-                return;
+                toast.success("로그인 되었습니다.");
+                onClose();
+            } catch (error) {
+                toast.error('로그인에 실패했습니다.', error);
+                return undefined;
             }
-
-            const responseData = await response.json();
-            const {accessToken, refreshToken} = responseData.data;
-
-            Login(accessToken, refreshToken, setIsLogin);
-            await getUserInfo(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-            toast.success("로그인 되었습니다.");
-            onClose();
         }
     }
 
@@ -149,45 +108,15 @@ const AuthModal = () => {
             for (let pair of formData.entries()) {
                 jsonData[pair[0]] = pair[1] as string;
             }
+            try {
+                await axiosClient.post('/member/join', jsonData);
 
-            const response = await fetch(requestUrl + `/member/join`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                if(errorData.validMessages !== null){
-                    if (errorData.validMessages.username) {
-                        toast.error(errorData.validMessages.username);
-                        return;
-                    }
-
-                    if (errorData.validMessages.nickname) {
-                        toast.error(errorData.validMessages.nickname);
-                        return;
-                    }
-
-                    if (errorData.validMessages.password) {
-                        toast.error(errorData.validMessages.password);
-                        return;
-                    }
-
-                    if (errorData.validMessages.email) {
-                        toast.error(errorData.validMessages.email);
-                        return;
-                    }
-                }
-                toast.error(errorData.message); // Exception 으로 처리 된 message
-                return;
+                toast.success("회원가입이 완료되었습니다.");
+                setFormState(false);
+            } catch (error) {
+                toast.error('회원가입에 실패했습니다.', error);
+                return undefined;
             }
-
-            toast.success("회원가입이 완료되었습니다.");
-            setFormState(false);
         }
     }
 

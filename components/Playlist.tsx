@@ -3,11 +3,12 @@
 import {TbPlaylist} from 'react-icons/tb' 
 import {AiOutlinePlus} from 'react-icons/ai'
 import useAuthModal from '@/hooks/useAuthModal'
-import { useUser } from '@/hooks/useUser'
 import useUploadModal from '@/hooks/useUploadModal'
 import { Song } from '@/types'
 import MediaItem from './MediaItem'
 import useOnPlay from '@/hooks/useOnPlay'
+import {useRecoilState} from "recoil";
+import {loginState} from "@/store/store";
 
 interface Props{
     songs:Song[]
@@ -16,13 +17,13 @@ interface Props{
 const Playlist = ({songs}:Props) => {
 
     const authModal = useAuthModal()
-    const { user } = useUser()
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
     const uploadModal = useUploadModal()
     const onPlay = useOnPlay(songs)
 
     const onClick = () => {
         //if not logged in send to auth 
-        if(!user){
+        if(!isLogin){
             return authModal.onOpen()
         }
         return uploadModal.onOpen()

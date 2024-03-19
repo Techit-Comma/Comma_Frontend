@@ -1,43 +1,29 @@
 'use client'
 
-import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation"
 import React, { useEffect } from "react";
-import Button from "@/components/Button";
-import { toast } from "react-hot-toast";
 import {ListItemButton, ListItemText} from "@mui/material";
 import {LogoutProcess} from "@/libs/auth";
-import {useRecoilState} from "recoil";
-import {
-    baseUrl,
-    loginState,
-    memberIdState,
-    nicknameState,
-    profileImageUrlState,
-    usernameState
-} from "@/store/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faGears, faLock} from "@fortawesome/free-solid-svg-icons";
+import {toast} from "react-hot-toast";
+import {useRecoilState} from "recoil";
+import {loginState} from "@/store/store";
 
 const AccountContent = () => {
     const router = useRouter();
-    const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [username, setUsername] = useRecoilState(usernameState);
-    const [memberId, setMemberId] = useRecoilState(memberIdState);
-    const [nickname, setNickname] = useRecoilState(nicknameState);
-    const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
-    const { isLoading, subscription, user } = useUser()
 
     //only for signed in users
     useEffect(()=>{
-        if(!isLoading && !user){
+        if(!isLogin){
             router.replace('/')
         }
-    },[isLoading,user,router])
+    },[isLogin, router])
 
     const handleLogout =  async () => {
-        await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+        await LogoutProcess();
+        toast.success("로그아웃 되었습니다!");
         router.push("/");
     }
 
