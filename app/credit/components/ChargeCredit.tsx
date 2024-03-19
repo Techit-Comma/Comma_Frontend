@@ -6,8 +6,6 @@ import { toast } from 'react-hot-toast';
 import { GetCookie } from '@/libs/auth';
 import Modal from '@/components/Modal';
 import Payment from './Payment';
-import { ReissueTokens } from '@/libs/auth';
-import { SetterOrUpdater } from 'recoil';
 
 const ChargeCredit = () => {
   const router = useRouter();
@@ -22,6 +20,10 @@ const ChargeCredit = () => {
   }
 
   const closeModal = () => {
+    setOpen(false); 
+  }
+
+  const cancelPayment = () => {
     toast.error('결제를 취소하였습니다.')
     setOpen(false); 
   }
@@ -32,7 +34,8 @@ const ChargeCredit = () => {
     const accessToken = GetCookie('accessToken');
 
     if (!accessToken) {
-      toast.error('로그인이 필요합니다.')
+      closeModal(); 
+      toast.error('로그인이 필요합니다.');
       return;
     }
 
@@ -68,11 +71,6 @@ const ChargeCredit = () => {
     <div className="container my-4 space-y-4">
       <div className="card-body bg-base-100 dark:bg-gray-800">
         <form onSubmit={handleSubmit}>
-          <div className="flex">
-            <label className="label text-2xl text-primary-dark dark:text-primary font-bold mb-2" htmlFor="chargeAmount">
-              <i className="fa-solid fa-bolt me-3"></i>크레딧 충전
-            </label>
-          </div>
           <div>
             <select
               className="select select-bordered w-full max-w-xs text-primary-dark dark:text-primary mb-5"
@@ -93,7 +91,7 @@ const ChargeCredit = () => {
           <button type="submit" className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost">충전하기</button>
         </form>
       </div>
-      <Modal isOpen={isOpen} onChange={closeModal} title='크레딧 충전' description={'충전금액' + chargeAmount} ><Payment username={charger} chargeCode={chargeCode} chargeAmount={chargeAmount} /></Modal>
+      <Modal isOpen={isOpen} onChange={cancelPayment} title='크레딧 충전' description={'충전금액' + chargeAmount} ><Payment username={charger} chargeCode={chargeCode} chargeAmount={chargeAmount} onCloseModal={closeModal} /></Modal>
     </div>
   );
 };

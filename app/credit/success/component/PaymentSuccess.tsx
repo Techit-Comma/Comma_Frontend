@@ -13,9 +13,6 @@ const PaymentSuccess = () => {
   const amount = searchParams.get("amount");
   const paymentKey = searchParams.get("paymentKey");
 
-  console.log(amount);
-  console.log('중간지점1'); 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,9 +29,6 @@ const PaymentSuccess = () => {
           amount,
         };
 
-        console.log('중간지점2'); 
-
-
         const response = await fetch("http://localhost:8090/credit/confirm", {
           method: "POST",
           credentials: "include",
@@ -46,8 +40,6 @@ const PaymentSuccess = () => {
         });
 
         const json = await response.json();
-
-        console.log('중간지점3'); 
 
         if (!response.ok) {
           router.replace(

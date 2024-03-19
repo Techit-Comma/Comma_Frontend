@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -59,10 +59,10 @@ const CreditLogs = () => {
 
   return (
     <div className="card bg-gray-light dark:bg-gray-800 p-4">
-        <h1 className="text-white text-2xl font-semibold">출금 신청 내역</h1>
+      <h1 className="text-white text-2xl font-semibold">출금 신청 내역</h1>
 
-      <table className="table">
-        <thead className="bg-gray-200 dark:bg-gray-600 text-center text-primary-dark dark:text-primary text-lg font-bold">
+      <table>
+        <thead>
           <tr>
             <th>날짜</th>
             <th>은행명</th>
@@ -71,29 +71,23 @@ const CreditLogs = () => {
             <th>처리상태</th>
           </tr>
         </thead>
-        <tbody className="text-center text-primary-dark dark:text-primary">
+        <tbody>
           {withdrawLogs.map((log: any, index: number) => (
             <tr key={index}>
-              <td>
-                {new Date(log.applyDate).toLocaleDateString("ko-KR")}
-              </td>
+              <td>{log.applyDate}</td>
               <td>{log.bankName}</td>
               <td>{log.bankAccountNo}</td>
               <td>{log.withdrawAmount}</td>
               {log.withdrawDoneDate && (
                 <td>
                   {log.processResult} <br />
-                  {new Date(log.withdrawDoneDate).toLocaleDateString(
-                    "ko-KR"
-                  )}
+                  {new Date(log.withdrawDoneDate).toLocaleDateString("ko-KR")}
                 </td>
               )}
               {log.withdrawCancelDate && (
                 <td>
                   {log.processResult} <br />
-                  {new Date(log.withdrawCancelDate).toLocaleDateString(
-                    "ko-KR"
-                  )}
+                  {new Date(log.withdrawCancelDate).toLocaleDateString("ko-KR")}
                 </td>
               )}
               {!log.withdrawDoneDate && !log.withdrawCancelDate && (
@@ -113,7 +107,7 @@ const CreditLogs = () => {
             className="join-item btn btn-square"
             onClick={handlePreviousPage}
           >
-            <i className="fa-solid fa-caret-left" />
+            이전 페이지
           </button>
         )}
         {Array.from({ length: totalPages }, (_, index) => index + 1).map(
@@ -130,11 +124,8 @@ const CreditLogs = () => {
           )
         )}
         {totalPages > currentPage && (
-          <button
-            className="join-item btn btn-square"
-            onClick={handleNextPage}
-          >
-            <i className="fa-solid fa-caret-right" />
+          <button className="join-item btn btn-square" onClick={handleNextPage}>
+            다음 페이지
           </button>
         )}
       </div>
