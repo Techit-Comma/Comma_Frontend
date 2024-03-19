@@ -42,7 +42,7 @@ export function oauthLogin(setIsLogin:SetterOrUpdater<boolean>) {
 }
 
 export async function getUserInfo(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>,
-                                  setMemberId:SetterOrUpdater<string>, setNickname:SetterOrUpdater<string>, setProfileImageUrl:SetterOrUpdater<string>)
+                                  setMemberId:SetterOrUpdater<string>, setNickname:SetterOrUpdater<string>, setProfileImageUrl:SetterOrUpdater<string>, retryCount = 0)
 {
   const accessToken = GetCookie('accessToken');
   const response = await fetch(requestUrl+`/member/mypage`, {
@@ -55,12 +55,13 @@ export async function getUserInfo(requestUrl:string, setIsLogin:SetterOrUpdater<
   });
 
   if(response.status === 401){
-    const isReissue = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-    if(!isReissue) { // 토큰 재발급 실패 처리
+    const accessToken = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+    if(!accessToken || retryCount >= 3) {
       Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
       toast.error("재로그인이 필요합니다.")
       return;
     }
+    await getUserInfo(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl, retryCount + 1);
   }
 
   const responseData = await response.json();
@@ -91,7 +92,7 @@ export function Logout(setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOr
 }
 
 export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>, setUsername:SetterOrUpdater<string>,
-                                    setMemberId:SetterOrUpdater<string>, setNickname:SetterOrUpdater<string>, setProfileImageUrl:SetterOrUpdater<string>) {
+                                    setMemberId:SetterOrUpdater<string>, setNickname:SetterOrUpdater<string>, setProfileImageUrl:SetterOrUpdater<string>,  retryCount= 0) {
   const accessToken = GetCookie('accessToken');
   const response = await fetch(requestUrl + `/member/logout`, {
     method: 'POST',
@@ -103,17 +104,18 @@ export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdate
   });
 
   if(response.status === 401){
-    const isReissue = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-    if(!isReissue) { // 토큰 재발급 실패 처리
+    const accessToken = await ReissueTokens(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+    if(!accessToken || retryCount >= 3) {
       Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
       toast.error("재로그인이 필요합니다.")
       return;
     }
-    await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+    await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl, retryCount + 1);
   }
 
   Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
   toast.success('로그아웃 되었습니다.');
+
 }
 
 export async function ReissueTokens(requestUrl: string, setIsLogin: SetterOrUpdater<boolean>, setUsername: SetterOrUpdater<string>,
@@ -138,7 +140,7 @@ export async function ReissueTokens(requestUrl: string, setIsLogin: SetterOrUpda
   if (!response.ok) {
     // 토큰 재발급 요청이 실패한 경우, 로그아웃 상태로 간주
     Logout(setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-    return false;
+    return null;
   }
 
   const responseData = await response.json();
@@ -146,6 +148,7 @@ export async function ReissueTokens(requestUrl: string, setIsLogin: SetterOrUpda
 
   // 재로그인 (토큰 및 정보 재할당)
   Login(accessToken, refreshToken, setIsLogin);
-  return true;
+  await getUserInfo(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
+  return accessToken;
 }
 
