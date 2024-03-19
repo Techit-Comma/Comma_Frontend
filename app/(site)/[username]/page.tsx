@@ -1,12 +1,20 @@
 import Header from "@/components/Header";
+import UserProfile from "./component/UserProfile";
+import Navigator from "./component/Navigator";
 
+export default async function Home({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const username = params.username;
 
-export default async function Home({ params }: { params: { slug: string}}) {
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
       <Header>
-        <div className="mb-2">
-          <h1 className="text-white text-3xl font-semibold">크레딧 페이지</h1>
+        <UserProfile username={username} />
+        <div className="mt-5">
+          <Navigator username={username} />
         </div>
       </Header>
     </div>
