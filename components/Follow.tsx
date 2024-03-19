@@ -71,8 +71,6 @@ const Follow = () => {
         }
     }, [isLogin]); // 의존성 배열에 isLogin 추가
 
-
-
     return (
     <div className="flex flex-col">
         <div className="flex items-center justify-between px-5 pt-4">

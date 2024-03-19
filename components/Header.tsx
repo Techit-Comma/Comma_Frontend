@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 import {RxCaretLeft,RxCaretRight} from 'react-icons/rx';
@@ -7,7 +7,7 @@ import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 import Button from './Button';
 import useAuthModal from '@/hooks/useAuthModal';
-import { FaUserAlt } from 'react-icons/fa';
+import {FaBell, FaUserAlt} from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import {useRecoilState} from "recoil";
 import {
@@ -27,6 +27,13 @@ import {
     SetTokenCookie
 } from "@/libs/auth";
 import ProfileButton from "@/components/ProfileButton";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell} from "@fortawesome/free-solid-svg-icons";
+import {IconButton, ListItemIcon, ListItemText, MenuList, Paper} from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@material-ui/core/Divider";
+import {Badge} from "@mui/base";
+import NotificationButton from "@/components/NotificationButton";
 
 interface Props{
     children:React.ReactNode;
@@ -40,11 +47,6 @@ const Header: React.FC<Props> = ({children,className}) => {
     const [nickname, setNickname] = useRecoilState(nicknameState);
     const [profileImageUrl, setProfileImageUrl] = useRecoilState(profileImageUrlState);
     const router = useRouter()
-    const handleLogout =  async () => {
-        //reset any playing songs
-        router.refresh()
-        await LogoutProcess(requestUrl, setIsLogin, setUsername, setMemberId, setNickname, setProfileImageUrl);
-    }
     const authModal = useAuthModal()
 
     useEffect(() => {
@@ -75,8 +77,8 @@ const Header: React.FC<Props> = ({children,className}) => {
                     {isLogin?(
                         //logged in
                         <div className='flex gap-x-4 items-center'>
-                            <Button onClick={handleLogout} className='bg-white px-6 py-2'>Logout</Button>
-                            <ProfileButton onClick={()=>router.push('/account')} className='w-16 h-10' profileImageUrl={profileImageUrl}></ProfileButton>
+                            <NotificationButton/>
+                            <ProfileButton onClick={()=>router.push('/account')} className='w-10 h-10' profileImageUrl={profileImageUrl}></ProfileButton>
                         </div>
                     ):(
                         //not logged in
