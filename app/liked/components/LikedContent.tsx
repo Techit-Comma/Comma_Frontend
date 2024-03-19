@@ -2,11 +2,13 @@
 
 import LikeButton from "@/components/LikeButton"
 import MediaItem from "@/components/MediaItem"
-import { useUser } from "@/hooks/useUser"
 import { Song } from "@/types"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import {useEffect, useState} from "react"
 import useOnPlay from "@/hooks/useOnPlay"
+import {useRecoilState} from "recoil";
+import {loginState} from "@/store/store";
+import {CheckAccessToken} from "@/libs/auth";
 
 interface Props{
     songs: Song[]
@@ -14,14 +16,23 @@ interface Props{
 
 const LikedContent = ({songs}:Props) => {
     const router = useRouter()
-    const {isLoading, user} = useUser()
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [isLoading, setIsLoading] = useState(true);
     const onPlay = useOnPlay(songs)
 
-    useEffect(()=> {
-        if(!isLoading && !user){
-            router.replace('/') //not logged in go home
+    useEffect(() => {
+        // 로그인 상태 확인 로직
+        CheckAccessToken().then((loggedIn) => {
+            setIsLogin(loggedIn);
+            setIsLoading(false); // 로그인 상태 확인이 완료됨
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!isLoading && !isLogin) {
+            router.replace('/');
         }
-    },[isLoading, user, router])
+    }, [isLogin, isLoading, router]);
 
     if(songs.length === 0){
         return (
