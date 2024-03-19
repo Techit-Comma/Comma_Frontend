@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import useAlbumReleaseModal from '@/hooks/useAlbumReleaseModal';
 import {useRecoilState} from 'recoil';
 import {Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField} from "@mui/material";
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 
 interface AlbumReleaseFormProps {
     filePath: string;
@@ -104,8 +104,8 @@ const AlbumReleaseForm: React.FC<AlbumReleaseFormProps> = ({ filePath, imagePath
                     />
                     <Box mt={2} />
                     <FormGroup>
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
-                        <FormControlLabel required control={<Checkbox />} label="Required" />
+                        <FormControlLabel control={<Checkbox defaultChecked />} label="라이센스"/>
+                        <FormControlLabel required control={<Checkbox />} label="유료곡" />
                     </FormGroup>
                     <TextField
                         required
