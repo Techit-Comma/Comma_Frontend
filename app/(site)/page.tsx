@@ -24,8 +24,8 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const oauth = searchParams.get("oauth");
     const getUserInfo = async () => {
+      const oauth = searchParams.get("oauth");
       if (oauth) {
         setIsLogin(await oauthLogin());
         toast.success("로그인 되었습니다.");

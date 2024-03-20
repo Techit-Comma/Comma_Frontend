@@ -27,6 +27,17 @@ const AuthModal = () => {
     useEffect(()=>{
         if(isLogin){
             router.refresh()
+            const getUserInfo = async () => {
+                const userLoginState = await getLoginState();
+
+                setIsLogin(await CheckAccessToken());
+
+                if (userLoginState) {
+                    setUserInfos(userLoginState);
+                }
+            }
+
+            getUserInfo();
             onClose()
         }
     },[isLogin, router, onClose])
