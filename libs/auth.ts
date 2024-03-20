@@ -1,67 +1,10 @@
-import {SetterOrUpdater} from "recoil";
-import {toast} from "react-hot-toast";
-
-export async function LogoutProcess(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>) {
-  const accessToken = GetCookie('accessToken');
-  const response = await fetch(requestUrl+`/member/logout`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: accessToken,
-    }
-  });
-
-  if(!response.ok){
-    const isReissue = await ReissueTokens(requestUrl, setIsLogin);
-    if(isReissue) {
-      LogoutProcess(requestUrl, setIsLogin);
-    } else {
-      // 토큰 재발급 실패 처리
-      Logout(setIsLogin);
-      toast.error("재로그인이 필요합니다.")
-      return;
-    }
-  } else {
-    Logout(setIsLogin);
-    toast.success('로그아웃 되었습니다.');
-  }
-}
+import axiosClient from "@/libs/axiosClient";
+import {UserInfos} from "@/types";
 
 export function GetCookie(name: string): string | undefined { // 쿠키에서 Token 값 가져오기
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(';').shift();
-}
-
-export function CheckAccessToken(setIsLogin:SetterOrUpdater<boolean>): void { // 로그인 상태 전환
-  const accessToken = GetCookie('accessToken');
-
-  if (accessToken) {
-    // accessToken이 있을 경우, 로그인 상태로 간주
-    setIsLogin(true);
-  } else {
-    // accessToken이 없을 경우, 로그아웃 상태로 간주
-    setIsLogin(false);
-  }
-}
-
-export function Login(username:string, memberId:string, accessToken:string, refreshToken:string, setIsLogin:SetterOrUpdater<boolean>) {
-  SetTokenCookie('accessToken', accessToken, 1);
-  SetTokenCookie('refreshToken', refreshToken, 24 * 7);
-  localStorage.setItem('username', username);
-  localStorage.setItem('memberId', memberId);
-
-  CheckAccessToken(setIsLogin);
-}
-
-export function Logout(setIsLogin:SetterOrUpdater<boolean>) {
-  SetTokenCookie('accessToken', '', 0);
-  SetTokenCookie('refreshToken', '', 0);
-  localStorage.removeItem("memberId");
-  localStorage.removeItem("username")
-
-  CheckAccessToken(setIsLogin);
 }
 
 export function SetTokenCookie(name: string, value: string, hours: number): void {
@@ -74,35 +17,83 @@ export function SetTokenCookie(name: string, value: string, hours: number): void
   document.cookie = name + "=" + (value || "")  + expires + "; path=/; Secure";
 }
 
-export async function ReissueTokens(requestUrl:string, setIsLogin:SetterOrUpdater<boolean>) {
+export async function CheckAccessToken(): Promise<boolean> { // 로그인 상태 확인, 향후 API 보내 인증하는 형식으로 수정 필요
+  const accessToken = GetCookie('accessToken');
+
+  if (accessToken) {
+    // accessToken이 있을 경우, 로그인 상태로 간주
+    try {
+      await axiosClient.get('/member/check');
+      return true;
+    } catch (error) {
+      return false;
+    }
+  } else {
+    // accessToken이 없을 경우, 로그아웃 상태로 간주
+    return false;
+  }
+}
+
+export function Login(accessToken:string, refreshToken:string) {
+  SetTokenCookie('accessToken', accessToken, 1);
+  SetTokenCookie('refreshToken', refreshToken, 24 * 7);
+  return CheckAccessToken();
+}
+
+export function oauthLogin() {
+  return CheckAccessToken();
+}
+
+export async function getUserInfo(): Promise<UserInfos | undefined> {
+  try {
+    const response = await axiosClient.get<{ data: UserInfos }>('/member/mypage');
+    return response.data.data;
+  } catch (error) {
+    console.error('사용자 정보를 가져오는 데 실패했습니다.', error);
+    return undefined;
+  }
+}
+
+export async function getLoginState(): Promise<UserInfos | undefined> {
+  if (!await CheckAccessToken()) return undefined;
+  return await getUserInfo();
+}
+
+export function Logout() {
+  SetTokenCookie("accessToken", "", 0);
+  SetTokenCookie("refreshToken", "", 0);
+}
+
+export async function LogoutProcess() {
+  try {
+    await axiosClient.post('/member/logout');
+    Logout();
+  } catch (error) {
+    console.error('로그아웃에 실패했습니다.', error);
+  }
+}
+
+export async function ReissueTokens() {
   const _refreshToken = GetCookie('refreshToken');
 
   if (!_refreshToken) {
     // refreshToken이 없을 경우, 로그아웃 상태로 간주
-    setIsLogin(false);
-    return;
-  }
-
-  const response = await fetch(requestUrl+`/reissue`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ "refreshToken":_refreshToken }),
-  });
-
-  if (!response.ok) {
-    // 토큰 재발급 요청이 실패한 경우, 로그아웃 상태로 간주
-    setIsLogin(false);
-    await LogoutProcess(requestUrl, setIsLogin);
+    Logout();
     return false;
   }
+  try {
+    const response = await axiosClient.post('/reissue', {
+      "refreshToken": _refreshToken,
+    })
+    const responseData = await response.data.data;
+    await Login(responseData.accessToken, responseData.refreshToken);
 
-  const responseData = await response.json();
-  const { username, memberId, accessToken, refreshToken } = responseData.data;
+    return responseData.accessToken;
 
-  // 재로그인 (토큰 및 정보 재할당)
-  Login(username, memberId, accessToken, refreshToken, setIsLogin);
-  return true;
+  } catch (error) {
+    console.error('토큰 재발급에 실패했습니다.', error);
+    Logout();
+    return null;
+  }
 }
+

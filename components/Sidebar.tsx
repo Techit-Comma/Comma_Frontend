@@ -5,10 +5,11 @@ import {HiHome} from 'react-icons/hi'
 import {BiSearch} from 'react-icons/bi'
 import Box from './Box'
 import SidebarItem from './SidebarItem'
-import Library from './Library'
+import Playlist from './Playlist'
 import { Song } from '@/types'
 import usePlayer from '@/hooks/usePlayer'
 import { twMerge } from 'tailwind-merge'
+import Follow from "@/components/Follow";
 
 interface Props{
     children: React.ReactNode;
@@ -45,8 +46,11 @@ const Sidebar: React.FC<Props> = ({children, songs}) => {
                     </div>
                 </Box>
                 <Box className='overflow-y-auto h-full'>
-                    <Library songs={songs}/>
-                </Box>        
+                    <Follow/>
+                </Box>
+                <Box className='overflow-y-auto h-full'>
+                    <Playlist songs={songs}/>
+                </Box>
             </div> 
             <main className='h-full flex-1 overflow-y-auto py-2'>
                 {children}
