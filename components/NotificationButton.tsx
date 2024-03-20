@@ -95,9 +95,21 @@ function NotificationButton() {
   }, []);
 
   useEffect(() => {
+    let pollingInterval: ReturnType<typeof setInterval> | null = null;
+
     if (!isLoading && isLogin) {
-      getNotification();
+      getNotification(); // 최초 로그인 시 알림 정보 가져오기
+
+      pollingInterval = setInterval(async () => {
+        await getNotificationToLongPolling(); // 10분마다 LongPolling으로 알림 정보 갱신
+      }, 600000); // 600000밀리초 = 10분
     }
+
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval); // 설정한 interval 정리
+      }
+    };
   }, [isLogin, isLoading]);
 
   return (
