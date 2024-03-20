@@ -3,9 +3,7 @@ import {
   IconButton,
   Badge,
   Menu,
-  MenuItem,
   ListItemText,
-  ListItemIcon,
   ListItemAvatar, Avatar, ListItem
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,11 +11,9 @@ import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Divider from "@material-ui/core/Divider";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {
-  baseUrl,
-  loginState,
-} from "@/store/store";
+import {loginState} from "@/store/store";
 import axiosClient from "@/libs/axiosClient";
+import {CheckAccessToken} from "@/libs/auth";
 
 interface NotificationItem {
   notificationId: number;
@@ -34,8 +30,9 @@ function NotificationButton() {
   const [notificationList, setNotificationList] = useState<NotificationItem[]>();
 
   // 공통 변수
-  const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -90,10 +87,18 @@ function NotificationButton() {
   };
 
   useEffect(() => {
-    if (!isLogin) {
+    // 로그인 상태 확인 로직
+    CheckAccessToken().then((loggedIn) => {
+      setIsLogin(loggedIn);
+      setIsLoading(false); // 로그인 상태 확인이 완료됨
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && isLogin) {
       getNotification();
     }
-  }, [isLogin]);
+  }, [isLogin, isLoading]);
 
   return (
       <div>
@@ -122,20 +127,26 @@ function NotificationButton() {
               },
             }}
         >
-          {notificationList?.map((item, index) => [
-            <ListItem key={item.notificationId} button alignItems="flex-start" onClick={() => handleReadNotification(item.notificationId)}>
-              <ListItemAvatar>
-                <Avatar alt={item.publisherName} src={item.publisherImageUrl} />
-              </ListItemAvatar>
-              <ListItemText
-                  primary={item.message}
-                  secondary={`${item.publisherName} | ${new Date(item.createDate).toLocaleDateString()} `}
-                  secondaryTypographyProps={{ style: { color: 'white' } }}
-              />
-              {!item.isRead && <Badge color="primary" variant="dot" />}
-            </ListItem>,
-            index < notificationList.length - 1 ? <Divider key={`divider-${index}`} /> : null
-          ])}
+          {notificationList?.length !== 0 ? (
+              notificationList?.map((item, index) => [
+                <ListItem key={item.notificationId} button alignItems="flex-start" onClick={() => handleReadNotification(item.notificationId)}>
+                  <ListItemAvatar>
+                    <Avatar alt={item.publisherName} src={item.publisherImageUrl} />
+                  </ListItemAvatar>
+                  <ListItemText
+                      primary={item.message}
+                      secondary={`${item.publisherName} | ${new Date(item.createDate).toLocaleDateString()} `}
+                      secondaryTypographyProps={{ style: { color: 'white' } }}
+                  />
+                  {!item.isRead && <Badge color="primary" variant="dot" />}
+                </ListItem>,
+                index < notificationList?.length - 1 ? <Divider key={`divider-${index}`} /> : null
+              ])
+          ) : (
+              <ListItem button alignItems="flex-start">
+                <ListItemText primary="알림이 없습니다."/>
+              </ListItem>
+          )}
         </Menu>
       </div>
   );
