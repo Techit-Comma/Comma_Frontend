@@ -1,13 +1,12 @@
 'use client'
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { Box, Typography, Avatar, Grid } from '@material-ui/core';
 import Button from "@/components/Button";
-import useAlbumReleaseModal from '@/hooks/useAlbumReleaseModal';
-import {useRecoilState} from 'recoil';
 import {Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {makeStyles} from '@material-ui/core/styles';
-
+import { useRecoilValue } from 'recoil';
+import { imagePathState } from "@/store/store";
 interface AlbumReleaseFormProps {
     filePath: string;
     imagePath: string;
@@ -38,8 +37,7 @@ const AlbumReleaseForm: React.FC<AlbumReleaseFormProps> = ({ filePath, imagePath
     const [genre, setGenre] = useState("default");
     const [artist, setArtist] = useState("");
     const [releaseDate, setReleaseDate] = useState("");
-    const [coverImage, setCoverImage] = useState("");
-    const albumModal = useAlbumReleaseModal()
+    const [coverImage, setCoverImage] = useRecoilValue(imagePathState);
     const classes = useStyles();
 
 
