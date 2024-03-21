@@ -24,12 +24,12 @@ const Sidebar: React.FC<Props> = ({children, songs}) => {
         //routes is an array 
         {
             icon: HiHome,
-            label:'Home',
+            label:'홈',
             active:pathname !== '/search',
             href:'/'
         },{
             icon: BiSearch,
-            label:'Search',
+            label:'검색',
             active:pathname === '/search',
             href:'/search'
         }

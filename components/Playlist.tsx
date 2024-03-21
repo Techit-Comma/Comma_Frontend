@@ -36,7 +36,7 @@ const Playlist = ({songs}:Props) => {
             <div className="inline-flex items-center gap-x-2">
                 {/*all the weird 'components' are just icons we got from react-icons*/}
                 <TbPlaylist size={26} className='text-neutral-400'/>
-                <p className='text-neutral-400 font-medium text-md'>Playlist</p>
+                <p className='text-neutral-400 font-medium text-md'>플레이리스트</p>
             </div>
             <AiOutlinePlus onClick={onClick} size={20} className='text-neutral-400 cursor-pointer hover:text-white transition'/> {/*to create the color change once hover effect do hover:text-somecolor and transition, also set the default color too*/}
         </div>
