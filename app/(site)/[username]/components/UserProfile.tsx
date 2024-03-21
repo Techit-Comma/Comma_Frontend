@@ -13,6 +13,7 @@ interface Props {
 
 const UserProfile = ({ username }: Props) => {
   const [profileImage, setProfileImage] = useState("");
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,9 +49,20 @@ const UserProfile = ({ username }: Props) => {
     fetchData();
   }, [username]);
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   return (
     <div className="flex items-center">
-      <Image className="rounded-full" src={profileImage} width={200} height={200} alt="프로필 사진" />
+      <Image
+        className="rounded-full"
+        src={profileImage}
+        width={200}
+        height={200}
+        alt="프로필 사진"
+        onLoad={handleImageLoad}
+      />
       <div className="flex-col ms-10">
         <p className="text text-5xl">{username}</p>
         <Button variant="contained">후원하기</Button>

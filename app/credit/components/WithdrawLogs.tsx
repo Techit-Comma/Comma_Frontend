@@ -98,7 +98,7 @@ const CreditLogs = () => {
         </tbody>
       </table>
       {withdrawLogs.length === 0 && (
-        <p className="flex justify-center">출금 신청 내역이 없습니다</p>
+        <p>출금 신청 내역이 없습니다</p>
       )}
 
       <div className="join flex justify-center">

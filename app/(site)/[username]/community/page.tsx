@@ -1,12 +1,23 @@
+"use client"
 
 import Header from "@/components/Header";
-import UserProfile from "../component/UserProfile";
-import Navigator from "../component/Navigator";
+import UserProfile from "../components/UserProfile";
+import Navigator from "../components/Navigator";
+import WriteArticle from "./components/WriteArticle"
+import ArticleList from "./components/ArtitcleList";
+import { useRecoilState } from "recoil";
+import { UserInfos } from "@/types";
+import { userInfoState } from "@/store/store";
 
-export default async function Home({ params }: { params: { username: string } }) {  
-
-  const username = params.username; 
-
+export default function Home({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const username = params.username;
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const loginedUser = userInfos.username; 
+  console.log(loginedUser); 
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -16,8 +27,8 @@ export default async function Home({ params }: { params: { username: string } })
           <Navigator username={username} />
         </div>
       </Header>
-
-      <h1>커뮤니티</h1>
+      {loginedUser === username && <WriteArticle username={username} /> }
+      <ArticleList username={username} />
     </div>
   );
 }

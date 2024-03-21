@@ -81,6 +81,9 @@ const CreditLogs = () => {
             ))}
           </tbody>
         </table>
+        {creditLogs.length === 0 && (
+        <p>크레딧 내역이 없습니다</p>
+      )}
         <div className="join flex justify-center">
           {totalPages > 0 && (
             <button

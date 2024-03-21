@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
-import UserProfile from "./component/UserProfile";
-import Navigator from "./component/Navigator";
+import UserProfile from "./components/UserProfile";
+import Navigator from "./components/Navigator";
 
 export default async function Home({
   params,
@@ -9,6 +9,7 @@ export default async function Home({
 }) {
   const username = params.username;
 
+  
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
       <Header>

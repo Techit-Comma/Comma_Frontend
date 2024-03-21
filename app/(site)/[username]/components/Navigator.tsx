@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from "@mui/material";
 
 interface Props{
@@ -8,7 +10,7 @@ const Navigator = ({username}: Props) => {
 
     return (
         <div className="flex item-center">
-            <Button className="text text-xl">홈</Button>
+            <Button href={`/${username}`} className="text text-xl">홈</Button>
             <Button href={`/${username}/community`} className="text text-xl">커뮤니티</Button>
         </div>
 
