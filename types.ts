@@ -42,6 +42,7 @@ export interface UserInfos {
   memberId: string;
   username: string;
   nickname: string;
+  email: string;
   profileImageUrl: string;
 }
 
