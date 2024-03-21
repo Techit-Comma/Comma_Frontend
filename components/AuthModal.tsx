@@ -8,7 +8,7 @@ import {useRecoilState} from "recoil";
 import Button from '@mui/material/Button';
 import Divider from '@material-ui/core/Divider';
 import {toast} from "react-hot-toast";
-import {loginState, userInfoState} from "@/store/store";
+import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
@@ -27,17 +27,6 @@ const AuthModal = () => {
     useEffect(()=>{
         if(isLogin){
             router.refresh()
-            const getUserInfo = async () => {
-                const userLoginState = await getLoginState();
-
-                setIsLogin(await CheckAccessToken());
-
-                if (userLoginState) {
-                    setUserInfos(userLoginState);
-                }
-            }
-
-            getUserInfo();
             onClose()
         }
     },[isLogin, router, onClose])

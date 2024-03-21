@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation"
 import {useEffect, useState} from "react"
 import useOnPlay from "@/hooks/useOnPlay"
 import {useRecoilState} from "recoil";
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 import {CheckAccessToken} from "@/libs/auth";
+import {toast} from "react-hot-toast";
 
 interface Props{
     songs: Song[]
@@ -30,9 +31,10 @@ const LikedContent = ({songs}:Props) => {
 
     useEffect(() => {
         if (!isLoading && !isLogin) {
+            toast.error("로그인 후 이용 할 수 있습니다.")
             router.replace('/');
         }
-    }, [isLogin, isLoading, router]);
+    }, [isLoading, router]);
 
     if(songs.length === 0){
         return (
