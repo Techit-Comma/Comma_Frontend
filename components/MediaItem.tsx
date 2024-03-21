@@ -12,16 +12,16 @@ interface Props{
 const MediaItem = ({data, onClick}:Props) => {
 
     //getting image from db
-    const imageUrl = useLoadImage(data)
+    const imageUrl = data.image_path;
     const player = usePlayer()
 
     const handleClick = () => {
-        if(onClick){
-            return onClick(data.id)
-        }
-
-        //default turn on player
-        return player.setId(data.id)
+        // if(onClick){
+        //     return onClick(data.id)
+        // }
+        //
+        // //default turn on player
+        // return player.setId(data.id)
     }
 
     //creating the little image and the title and text thing you see on the sidebar

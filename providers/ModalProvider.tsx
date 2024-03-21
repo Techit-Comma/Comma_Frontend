@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import AuthModal from '@/components/AuthModal'
 import UploadModal from '@/components/UploadModal'
+import AlbumReleaseModal from "@/components/Album/AlbumReleaseModal";
 
 const ModalProvider = () => {
 
@@ -21,6 +22,7 @@ const ModalProvider = () => {
         <>
             <AuthModal/>
             <UploadModal/>
+            <AlbumReleaseModal/>
         </>
     )
 }
