@@ -29,7 +29,7 @@ const AccountContent = () => {
             toast.error("로그인 후 이용 할 수 있습니다.")
             router.replace('/');
         }
-    }, [isLogin, isLoading, router]);
+    }, [isLoading, router]);
 
     const handleLogout =  async () => {
         await LogoutProcess();
