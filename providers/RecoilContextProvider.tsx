@@ -15,11 +15,12 @@ export const loginState = atom({
 });
 
 export const userInfoState : RecoilState<UserInfos> = atom({
-  key: "username",
+  key: "userInfo",
   default: {
     memberId: "0",
     username: "",
     nickname: "",
+    email: "",
     profileImageUrl: "",
   }
 });
