@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Avatar, Box, Grid, Typography} from "@material-ui/core";
 import {useRecoilState} from "recoil";
-import {baseUrl} from "@/store/store";
+import {baseUrl} from "@/providers/RecoilContextProvider";
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
 import {Chip, Stack} from "@mui/material";

@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import {Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {makeStyles} from '@material-ui/core/styles';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { imagePathState, filePathState } from "@/store/store";
+import { imagePathState, filePathState } from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
 import {toast} from "react-hot-toast";
 import { useRouter } from "next/navigation"
@@ -84,7 +84,7 @@ const AlbumReleaseForm = () => {
         <form method="post" onSubmit={releaseSubmit}>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                    <Box className="flex flex-col m-5 items-center">
+                    <Box className="flex flex-col m-5">
                         <Box display="flex" justifyContent="flex-start" alignItems="center" width="400px" height="400px">
                             <Avatar variant="square"
                                     src={imgPath || "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
@@ -151,15 +151,15 @@ const AlbumReleaseForm = () => {
                     )}
                     <Box mt={2} />
                     {permit && (
-                    <TextField
-                        variant="outlined"
-                        label="가격"
-                        type="number"
-                        value={price}
-                        onChange={(e) => setPrice(parseInt(e.target.value))}
-                        className={classes.outlinedInput}
-                    />
-                        )}
+                        <TextField
+                            variant="outlined"
+                            label="가격"
+                            type="number"
+                            value={price}
+                            onChange={(e) => setPrice(parseInt(e.target.value))}
+                            className={classes.outlinedInput}
+                        />
+                    )}
                 </Grid>
             </Grid>
             <div>

@@ -1,7 +1,7 @@
 'use client'
 
 import {useRecoilState} from "recoil";
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-hot-toast";
 import {useRouter} from "next/navigation";

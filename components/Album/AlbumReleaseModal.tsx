@@ -4,7 +4,7 @@ import Modal from "../Modal";
 import Divider from '@material-ui/core/Divider';
 import React, { useState } from 'react';
 import { toast } from "react-hot-toast";
-import { baseUrl,filePathState, imagePathState } from "@/store/store";
+import { baseUrl,filePathState, imagePathState } from "@/providers/RecoilContextProvider";
 //MUI 파일 드롭존
 import { DropzoneArea } from 'material-ui-dropzone';
 //MUI Progress Step

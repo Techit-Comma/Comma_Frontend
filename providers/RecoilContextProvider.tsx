@@ -1,4 +1,7 @@
-import {atom, RecoilState} from "recoil";
+'use client';
+
+import {RecoilRoot, atom, RecoilState} from 'recoil';
+import React from 'react';
 import {UserInfos} from "@/types";
 
 export const baseUrl = atom({
@@ -30,3 +33,7 @@ export const imagePathState = atom({
   key: 'imagePathState',
   default: '',
 });
+
+export default function RecoilContextProvider({ children }: { children: React.ReactNode }) {
+  return <RecoilRoot>{children}</RecoilRoot>;
+}

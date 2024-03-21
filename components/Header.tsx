@@ -8,7 +8,7 @@ import { BiSearch } from 'react-icons/bi';
 import Button from './Button';
 import useAuthModal from '@/hooks/useAuthModal';
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/store/store";
+import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import ProfileButton from "@/components/ProfileButton";
 import NotificationButton from "@/components/NotificationButton";
 import {UserInfos} from "@/types";
