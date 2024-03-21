@@ -35,7 +35,7 @@ export default function Base({
     }
 
     getUserInfo();
-  }, []);
+  }, [isLogin, userInfos]);
 
   return (
     <html lang="en">
