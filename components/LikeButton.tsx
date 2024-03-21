@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/store/store";
+import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import {UserInfos} from "@/types";
 
 interface Props{
