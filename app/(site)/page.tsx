@@ -5,7 +5,7 @@ import PageContent from "./components/PageContent"
 import {CheckAccessToken, getLoginState, oauthLogin} from "@/libs/auth";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/store/store";
+import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import {useSearchParams, useRouter} from "next/navigation";
 import {useEffect} from "react";
 import {UserInfos} from "@/types";
@@ -24,7 +24,7 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const getUserInfo = async () => {
+    const setOauth = async () => {
       const oauth = searchParams.get("oauth");
       if (oauth) {
         setIsLogin(await oauthLogin());
@@ -32,17 +32,9 @@ export default function Home() {
 
         router.push('/');
       }
-
-      const userLoginState = await getLoginState();
-
-      setIsLogin(await CheckAccessToken());
-
-      if (userLoginState) {
-        setUserInfos(userLoginState);
-      }
     }
 
-    getUserInfo();
+    setOauth();
   }, []);
 
 

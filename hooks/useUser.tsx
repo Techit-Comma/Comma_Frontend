@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
 import {getUserInfo} from "@/libs/auth";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/store/store";
+import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import {UserInfos} from "@/types";
 
 type UserContextType = {

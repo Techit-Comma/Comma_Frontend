@@ -11,7 +11,7 @@ import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Divider from "@material-ui/core/Divider";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
 import {CheckAccessToken} from "@/libs/auth";
 

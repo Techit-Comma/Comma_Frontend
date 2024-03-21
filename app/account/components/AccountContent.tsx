@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faGears, faLock} from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 
 const AccountContent = () => {
     const router = useRouter();
@@ -44,7 +44,7 @@ const AccountContent = () => {
                 <ListItemButton component="a" href="#simple-list" className="mx-3 font-semibold">
                     <FontAwesomeIcon icon={faGears} className="mr-3 w-8" size="lg"/><ListItemText primary="개인정보 설정"/>
                 </ListItemButton>
-                <ListItemButton component="a" href="#simple-list" className="mx-3 font-semibold">
+                <ListItemButton component="a" href="/account/password" className="mx-3 font-semibold">
                     <FontAwesomeIcon icon={faLock} className="mr-3 w-8" size="lg"/><ListItemText primary="비밀번호 변경하기" />
                 </ListItemButton>
                 <ListItemButton component="a" onClick={handleLogout} className="mx-3 mb-5 font-semibold">

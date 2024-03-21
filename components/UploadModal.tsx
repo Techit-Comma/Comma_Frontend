@@ -9,7 +9,7 @@ import Button from './Button'
 import { toast } from 'react-hot-toast'
 import uniqid from 'uniqid'
 import { useRouter } from 'next/navigation'
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 import {useRecoilState} from "recoil";
 
 const UploadModal = () => {

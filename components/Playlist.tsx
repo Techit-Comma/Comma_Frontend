@@ -8,7 +8,7 @@ import { Song } from '@/types'
 import MediaItem from './MediaItem'
 import useOnPlay from '@/hooks/useOnPlay'
 import {useRecoilState} from "recoil";
-import {loginState} from "@/store/store";
+import {loginState} from "@/providers/RecoilContextProvider";
 
 interface Props{
     songs:Song[]
