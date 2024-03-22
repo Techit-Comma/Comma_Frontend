@@ -40,10 +40,10 @@ const AccountContent = () => {
         <div className="mb-7 px-6">
             <div className="flex flex-col gap-y-4 bg-neutral-800 rounded-xl">
                 <h1 className='text-white text-xl font-semibold m-5 mb-2.5'>보안 및 개인정보 보호</h1>
-                <ListItemButton component="a" href="/account/modify" className="mx-3 font-semibold">
+                <ListItemButton component="a" onClick={() => router.push("/account/modify")} className="mx-3 font-semibold">
                     <FontAwesomeIcon icon={faGears} className="mr-3 w-8" size="lg"/><ListItemText primary="개인정보 설정"/>
                 </ListItemButton>
-                <ListItemButton component="a" href="/account/modify/password" className="mx-3 font-semibold">
+                <ListItemButton component="a" onClick={() => router.push("/account/modify/password")} className="mx-3 font-semibold">
                     <FontAwesomeIcon icon={faLock} className="mr-3 w-8" size="lg"/><ListItemText primary="비밀번호 변경하기" />
                 </ListItemButton>
                 <ListItemButton component="a" onClick={handleLogout} className="mx-3 mb-5 font-semibold">
