@@ -1,32 +1,51 @@
 'use client'
 
 import MediaItem from "@/components/MediaItem"
-import { Song } from "@/types"
+import {AlbumData, Song} from "@/types"
 import LikeButton from "@/components/LikeButton"
-import useOnPlay from "@/hooks/useOnPlay"
+import { useRecoilValue } from "recoil"
+import { searchDataState } from "@/providers/RecoilContextProvider"
+import {useEffect, useState} from "react";
 
-interface Props{
-    songs:Song[]
-}
-const SearchContent = ({songs}:Props) => {
+const SearchContent = () => {
+    const searchData = useRecoilValue(searchDataState) as unknown as AlbumData[];
+    const [songs, setSongs] = useState<Song[]>([]);
 
-    const onPlay = useOnPlay(songs)
+    useEffect(() => {
+        if (Array.isArray(searchData)) {
+            const newSongs: Song[] = searchData.map(data => {
+                return {
+                    id: data.id.toString(),
+                    user_id: data.artistNickname,
+                    author: data.artistNickname,
+                    title: data.albumname,
+                    song_path: data.fileUrl,
+                    image_path: data.imgUrl,
+                };
+            });
 
-    if(songs.length===0){
+            setSongs(newSongs);
+        }
+
+        console.log(searchData.length);
+    }, [searchData]);
+
+
+    if(searchData.length===0){
         return(
-            <div className="flex flex-col gap-y-2 w-full px-6 text-neutral-400">No songs found.</div>
+            <div className="flex flex-col gap-y-2 w-full px-6 text-neutral-400">해당되는 음악을 찾을 수 없습니다.</div>
         )
     }
-    
+
     return (
         <div className="flex flex-col gap-y-2 w-full px-6">
             {songs.map((song)=>(
                 <div className="flex items-center gap-x-4 w-full" key={song.id}>
                     <div className="flex-1">
-                        <MediaItem onClick={(id:string)=>onPlay(id)} data={song}/>
+                        <MediaItem data={song}/>
                     </div>
                     {/*add like button here*/}
-                    <LikeButton songId={song.id}/>
+                    {/*<LikeButton songId={song.id}/>*/}
                 </div>
             ))}
         </div>

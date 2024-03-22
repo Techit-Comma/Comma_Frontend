@@ -2,9 +2,9 @@
 import useAlbumReleaseModal from "@/hooks/useAlbumReleaseModal";
 import Modal from "../Modal";
 import Divider from '@material-ui/core/Divider';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { toast } from "react-hot-toast";
-import { baseUrl,filePathState, imagePathState } from "@/providers/RecoilContextProvider";
+import {baseUrl, filePathState, imagePathState, loginState} from "@/providers/RecoilContextProvider";
 //MUI 파일 드롭존
 import { DropzoneArea } from 'material-ui-dropzone';
 //MUI Progress Step
@@ -12,21 +12,33 @@ import HorizontalLinearAlternativeLabelStepper from "@/components/Album/AlbumRel
 //MUI Circle Progress
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import {GetCookie} from "@/libs/auth";
+import {CheckAccessToken, GetCookie} from "@/libs/auth";
 import { useRecoilState } from 'recoil';
+import {useRouter} from "next/navigation";
 const AlbumReleaseModal = () => {
     const {onClose, isOpen} = useAlbumReleaseModal()
     const [step, setStep] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
     const [filePath, setFilePath] = useRecoilState(filePathState);
     const [imagePath, setImagePath] = useRecoilState(imagePathState);
 
-    const onChange = (open:boolean) => {
-        if(!open){
-            onClose()
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        // 로그인 상태 확인 로직
+        CheckAccessToken().then((loggedIn) => {
+            setIsLogin(loggedIn);
+            setIsLoading(false); // 로그인 상태 확인이 완료됨
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!isLoading && !isLogin) {
+            onClose();
         }
-    }
+    }, [isLoading, router]);
 
     async function handleAudioUpload(file: File) {
         console.log('handleFileUpload called');
@@ -104,8 +116,13 @@ const AlbumReleaseModal = () => {
         }
     }
 
+    const onChange = (open:boolean) =>{
+        if(!open){
+        }
+    }
+
     return (
-        <Modal title='앨범 등록하기' description={step === 0 ? "앨범 파일을 등록해주세요." : "앨범 이미지를 변경해주세요."} isOpen={isOpen} onChange={onChange}>
+        <Modal title='앨범 등록하기' description={step === 0 ? "앨범 파일을 등록해주세요." : "앨범 이미지를 변경해주세요."} isOpen={isOpen}  onChange={onChange}>
             <HorizontalLinearAlternativeLabelStepper activeStep={step}/>
             {isLoading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

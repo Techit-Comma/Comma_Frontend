@@ -34,7 +34,7 @@ const PlayerContent = ({song, songUrl}:Props) => {
 
         if (matches && matches.length > 0) {
             const match = matches[0]; // 첫 번째 일치 항목을 사용합니다.
-            return `https://93vswghb2545.edge.naverncp.com/hls/nFxFqLx6-cT9DRRzYgr~-w__/music/output/${match}_,64,128,kbps.m4a.smil/master.m3u8`;
+            return `https://93vswghb2545.edge.naverncp.com/hls/nFxFqLx6-cT9DRRzYgr~-w__/music/output/${match}_,64,128,256,kbps.m4a.smil/master.m3u8`;
         }
         console.log("Failed to make CDN url");
         return "";
