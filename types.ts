@@ -9,6 +9,18 @@ export interface Song {
   image_path: string;
 }
 
+export type AlbumData = {
+  id: number;
+  imgUrl: string;
+  fileUrl: string;
+  albumname: string;
+  artistNickname: string;
+  genre: string;
+  licenseDescription: string;
+  permit: boolean;
+  price: number;
+};
+
 export interface Product {
   id: string;
   active?: boolean;

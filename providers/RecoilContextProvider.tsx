@@ -24,6 +24,17 @@ export const userInfoState : RecoilState<UserInfos> = atom({
     profileImageUrl: "",
   }
 });
+
+export const filePathState = atom({
+  key: 'filePathState',
+  default: '',
+});
+
+export const imagePathState = atom({
+  key: 'imagePathState',
+  default: '',
+});
+
 export default function RecoilContextProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;
 }
