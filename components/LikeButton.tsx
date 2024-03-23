@@ -27,9 +27,9 @@ const LikeButton = ({songId}:Props) => {
         }
 
         const fetchData = async () => {
-            //fetch the songs that are liked by current user
+            // fetch the songs that are liked by current user
             // const { data, error } = await supabaseClient.from('liked_songs').select('*').eq('user_id', user.id).eq('song_id', songId).single()
-
+            //
             // if(!error && data){
             //     setIsLiked(true)
             // }
@@ -45,26 +45,19 @@ const LikeButton = ({songId}:Props) => {
             return authModal.onOpen()
         }
 
-        // if(isLiked){
-        //     //pressing like on a liked song will unlike it
-        //     const {error} = await supabaseClient.from('liked_songs').delete().eq('user_id',user.id).eq('song_id',songId)
-        //
-        //     if(error){
-        //         toast.error(error.message)
-        //     }else{
-        //         setIsLiked(false)
-        //     }
-        // }else{
-        //     //like the song aka insert into song
-        //     const {error} = await supabaseClient.from('liked_songs').insert({song_id: songId, user_id: user.id})
-        //
-        //     if(error){
-        //         toast.error(error.message)
-        //     }else{
-        //         setIsLiked(true)
-        //         toast.success('Liked!')
-        //     }
-        // }
+        if(isLiked){
+            //pressing like on a liked song will unlike it
+            // const {error} = await supabaseClient.from('liked_songs').delete().eq('user_id',user.id).eq('song_id',songId)
+
+            setIsLiked(false)
+            toast.success('좋아요를 취소했습니다!')
+        }else{
+            //like the song aka insert into song
+            // const {error} = await supabaseClient.from('liked_songs').insert({song_id: songId, user_id: user.id})
+
+            setIsLiked(true)
+            toast.success('좋아요를 했습니다!')
+        }
         router.refresh()
     }
 

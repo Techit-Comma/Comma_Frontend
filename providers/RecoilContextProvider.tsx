@@ -35,6 +35,11 @@ export const imagePathState = atom({
   default: '',
 });
 
+export const searchDataState = atom({
+  key: 'searchDataState',
+  default: '',
+});
+
 export default function RecoilContextProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;
 }
