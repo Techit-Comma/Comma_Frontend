@@ -16,7 +16,7 @@ interface Props{
     songs: Song[]
 }
 
-const Sidebar: React.FC<Props> = ({children, songs}) => {
+const Sidebar: React.FC<Props> = ({children}) => {
     const player = usePlayer()
     const pathname=usePathname();
     const routes = useMemo(()=>[
@@ -36,7 +36,7 @@ const Sidebar: React.FC<Props> = ({children, songs}) => {
     ],[pathname])
 
     return (
-        <div className={twMerge(`flex h-full`,player.activeId && 'h-[calc(100%-80px)]')}>
+        <div className={twMerge(`flex h-full`,player.activeAlbum && 'h-[calc(100%-80px)]')}>
             <div className='hidden md:flex flex-col gap-y-2 bg-black h-full w-[300px] p-2'> {/*on med devices its flex mobile its hidden*/}
                 <Box>
                     <div className='flex flex-col gap-y-4 px-5 py-4'>
@@ -49,7 +49,7 @@ const Sidebar: React.FC<Props> = ({children, songs}) => {
                     <Follow/>
                 </Box>
                 <Box className='overflow-y-auto h-full'>
-                    <Playlist songs={songs}/>
+                    <Playlist />
                 </Box>
             </div> 
             <main className='h-full flex-1 overflow-y-auto py-2'>

@@ -24,14 +24,13 @@ interface PlaylistItem {
     producerNickname: string;
 }
 
-const Playlist = ({songs}:Props) => {
+const Playlist = () => {
 
     const authModal = useAuthModal()
     const uploadModal = useUploadModal()
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
     const [playlist, setPlaylist] = useState<PlaylistItem[]>();
-    const onPlay = useOnPlay(songs)
 
     const onClick = () => {
         //if not logged in send to auth 
