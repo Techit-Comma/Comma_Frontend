@@ -1,4 +1,5 @@
 'use client'
+
 import Header from "@/components/Header"
 import ListItem from "@/components/ListItem"
 import PageContent from "./components/PageContent"
@@ -7,14 +8,17 @@ import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
 import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
 import {useSearchParams, useRouter} from "next/navigation";
-import {useEffect} from "react";
-import {UserInfos} from "@/types";
+import {useEffect, useState} from "react";
+import {AlbumData, UserInfos} from "@/types";
+import axiosClient from "@/libs/axiosClient";
 
 export const revalidate = 0
 
 export default function Home() {
   const router = useRouter()
-  const songs = [] //get all the songs from the db
+  const [newAlbums, setNewAlbums] = useState<AlbumData[]>([]);
+  const [top10Albums, setTop10Albums] = useState<AlbumData[]>([]);
+  const [recommendAlbums, setRecommendAlbums] = useState<AlbumData[]>([]);
 
   // 페이지 및 전역 상태 관리
   const [isLogin, setIsLogin] = useRecoilState(loginState);
@@ -33,10 +37,51 @@ export default function Home() {
         router.push('/');
       }
     }
-
     setOauth();
   }, []);
 
+  async function getNewAlbums() {
+    try {
+      const response = await axiosClient.get(`/album/list`)
+      const responseData = await response.data.data.content;
+      setNewAlbums(responseData);
+    } catch (error) {
+      console.error('앨범 목록을 가져올 수 없습니다.', error);
+    }
+  }
+
+  async function getTop10Albums() {
+    try {
+      const response = await axiosClient.get(`/album/list/top10Albums`)
+      const responseData = await response.data.data;
+      setRecommendAlbums(responseData);
+    } catch (error) {
+      console.error('앨범 목록을 가져올 수 없습니다.', error);
+    }
+  }
+
+  async function getRecommendAlbums() {
+    try {
+      const response = await axiosClient.get(`/album/list/recommendAlbums`)
+      const responseData = await response.data.data;
+      setTop10Albums(responseData);
+    } catch (error) {
+      console.error('앨범 목록을 가져올 수 없습니다.', error);
+    }
+  }
+
+  useEffect(() => {
+    const getAlbums = async () => {
+      await getNewAlbums();
+      // await getTop10Albums();
+
+      if (isLogin) {
+        await getRecommendAlbums();
+      }
+    }
+
+    getAlbums();
+  }, [isLogin]);
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -54,7 +99,7 @@ export default function Home() {
               <h1 className="text-white text-2xl font-semibold">{userInfos.nickname}님을 위한 맞춤 곡</h1>
             </div>
             <div>
-              <PageContent songs={songs}/>
+              <PageContent albums={recommendAlbums}/>
             </div>
           </div>
       ) : (
@@ -65,7 +110,7 @@ export default function Home() {
           <h1 className="text-white text-2xl font-semibold">최근 가장 많이 재생된 곡</h1>
         </div>
         <div>
-          <PageContent songs={songs}/>
+          <PageContent albums={top10Albums}/>
         </div>
       </div>
       <div className="mt-2 mb-7 px-6">
@@ -73,7 +118,7 @@ export default function Home() {
           <h1 className="text-white text-2xl font-semibold">새로 나온 곡</h1>
         </div>
         <div>
-          <PageContent songs={songs}/>
+          <PageContent albums={newAlbums}/>
         </div>
       </div>
     </div>

@@ -10,6 +10,9 @@ import {Chip, Stack} from "@mui/material";
 import {AlbumData} from "@/types";
 import Header from "@/components/Header";
 import {Player} from "@/components/Player";
+import useOnPlay from "@/hooks/useOnPlay";
+import PlayButton from "@/components/PlayButton";
+import {FaPlay} from "react-icons/fa";
 
 const useStyles = makeStyles({
     // 기존 스타일 유지
@@ -33,77 +36,49 @@ const useStyles = makeStyles({
     },
 });
 
-export const AlbumInfoContent = () => {
-    const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
-    const [albumData, setAlbumData] = useState<AlbumData | null>(null);
-    const pathname = usePathname();
-    const [isMounted, setIsMounted] = useState(false);
+interface Props {
+    album: AlbumData
+}
+
+export const AlbumInfoContent = ({album}:Props) => {
+    const onPlay = useOnPlay([album]);
+
     const classes = useStyles();
-
-    useEffect(() => {
-        getAlbumData();
-        setIsMounted(true);
-    }, [pathname]);
-
-    if (!isMounted) {
-        return null;
-    }
-
-    async function getAlbumData() {
-        // 앨범 ID를 가져오기 위해 경로를 파싱합니다.
-        const albumId = pathname.split('/').pop();
-        console.log(albumData?.albumname);
-        const res = await fetch(`${requestUrl}/album/detail/${albumId}`, {
-            method: 'GET'
-        });
-
-        if (res.ok) {
-            const { data } = await res.json();
-            setAlbumData(data);
-        } else {
-            toast.error('앨범 불러오기 실패');
-        }
-    }
 
     return (
         <div>
-            <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
-                <Header className="from-bg-neutral-900">
-                    <div className="mb-20 flex flex-col gap-y-6">
-                        <h1 className="text-white text-3xl font-semibold">앨범 정보</h1>
-                        <div>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <Box className="flex flex-col mt-5  items-center">
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center"
-                                             width="400px"
-                                             height="400px">
-                                            <Avatar variant="square"
-                                                    src={albumData ? albumData.imgUrl : "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
-                                                    alt="Album Cover" style={{width: '100%', height: '100%'}}/>
-                                        </Box>
-                                        <Stack className="m-5" direction="row" spacing={1}>
-                                            {/*<Chip className={classes.chip} avatar={<Avatar>C</Avatar>} label={`Composer [ ${albumData?.artistNickname} ]`} />*/}
-                                            <Chip className={classes.chip} label={albumData?.permit ? '무료' : '유료'}/>
-                                            <Chip className={classes.chip} label={albumData?.genre}/>
-                                        </Stack>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} md={6} className="flex flex-col">
-                                    <Typography className={classes.Typography} variant="h2" gutterBottom>
-                                        {albumData?.albumname}
-                                    </Typography>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <Box className="flex flex-col mt-5  items-center">
+                        <Box display="flex" justifyContent="flex-start" alignItems="center"
+                             width="400px"
+                             height="400px">
+                            <Avatar variant="square"
+                                    src={album ? album.imgUrl : "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
+                                    alt="Album Cover" style={{width: '100%', height: '100%'}}/>
+                        </Box>
+                        <Stack className="m-5" direction="row" spacing={1}>
+                            {/*<Chip className={classes.chip} avatar={<Avatar>C</Avatar>} label={`Composer [ ${albumData?.artistNickname} ]`} />*/}
+                            <Chip className={classes.chip} label={album?.permit ? '무료' : '유료'}/>
+                            <Chip className={classes.chip} label={album?.genre}/>
+                        </Stack>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} md={6} className="flex flex-col">
+                    <Typography className={classes.Typography} variant="h2" gutterBottom>
+                        {album?.albumname}
+                    </Typography>
 
-                                    <Typography className={classes.Typography} variant="h5" gutterBottom>
-                                        {albumData?.licenseDescription}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </div>
-                </Header>
+                    <Typography className={classes.Typography} variant="h5" gutterBottom>
+                        {album?.licenseDescription}
+                    </Typography>
+                </Grid>
+            </Grid>
+            <div className="absolute bottom-8 right-10">
+                <button className='transition rounded-full flex items-center bg-blue-500 p-4' onClick={()=>onPlay(album)}>
+                    <FaPlay className='text-black'/>
+                </button>
             </div>
-            <Player albumData={albumData} /> {/* Player 컴포넌트에 albumData prop 전달 */}
         </div>
     );
 };
