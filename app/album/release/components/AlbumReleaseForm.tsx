@@ -188,11 +188,11 @@ const AlbumReleaseForm = () => {
                             className={classes.outlinedInput}
                         />
                     )}
+                    <div>
+                        <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
+                    </div>
                 </Grid>
             </Grid>
-            <div>
-            <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
-            </div>
         </form>
     );
 };
