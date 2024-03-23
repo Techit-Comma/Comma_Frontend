@@ -1,19 +1,20 @@
 import { create } from 'zustand';
+import {AlbumData} from "@/types";
 
 interface PlayerStore {
-  ids: string[];
-  activeId?: string;
-  setId: (id: string) => void;
-  setIds: (ids: string[]) => void;
+  albums: AlbumData[];
+  activeAlbum?: AlbumData;
+  setAlbum: (album: AlbumData) => void;
+  setAlbums: (albums: AlbumData[]) => void;
   reset: () => void;
 }
 
 const usePlayer = create<PlayerStore>((set) => ({
-  ids: [],
-  activeId: undefined,
-  setId: (id: string) => set({ activeId: id }),
-  setIds: (ids: string[]) => set({ ids }),
-  reset: () => set({ ids: [], activeId: undefined })
+  albums: [],
+  activeAlbum: undefined,
+  setAlbum: (album: AlbumData) => set({ activeAlbum: album }),
+  setAlbums: (albums: AlbumData[]) => set({ albums }),
+  reset: () => set({ albums: [], activeAlbum: undefined })
 }));
 
 export default usePlayer;

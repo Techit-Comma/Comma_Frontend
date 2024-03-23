@@ -7,8 +7,9 @@ import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from 'react-icons/hi2'
 import Slider from "./Slider";
 import usePlayer from "@/hooks/usePlayer";
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js'
+import {IoMdClose} from "react-icons/io";
 
 interface Props{
     song: Song;
@@ -42,30 +43,30 @@ const PlayerContent = ({song, songUrl}:Props) => {
 
     //play next song
     const onPlayNext = () =>{
-        if(player.ids.length===0){
+        if(player.albums.length === 0){
             return
         }
-        const currentIndex = player.ids.findIndex((id)=>id===player.activeId) //find current song index in playlist
-        const nextSong = player.ids[currentIndex+1] //find next song index in playlist
+        const currentIndex = player.albums.findIndex((album)=>album === player.activeAlbum) //find current song index in playlist
+        const nextSong = player.albums[currentIndex+1] //find next song index in playlist
 
         if(!nextSong){ //if current song is last song go back to start
-            return player.setId(player.ids[0])
+            return player.setAlbum(player.albums[0])
         }
-        player.setId(nextSong) //else play next song
+        player.setAlbum(nextSong) //else play next song
     }
 
     //play prev song
     const onPlayPrev = () =>{ //for going back a song
-        if(player.ids.length===0){
+        if(player.albums.length === 0){
             return
         }
-        const currentIndex = player.ids.findIndex((id)=>id===player.activeId) //find current song index in playlist
-        const prevSong = player.ids[currentIndex-1] //find prev song index in playlist
+        const currentIndex = player.albums.findIndex((album)=>album === player.activeAlbum) //find current song index in playlist
+        const prevSong = player.albums[currentIndex-1] //find prev song index in playlist
 
         if(!prevSong){ //if current song is first song go back to end
-            return player.setId(player.ids[player.ids.length-1])
+            return player.setAlbum(player.albums[player.albums.length-1])
         }
-        player.setId(prevSong) //else play prev song
+        player.setAlbum(prevSong) //else play prev song
     }
 
     // const [play,{pause, sound}] = useSound(songUrl,{
@@ -172,12 +173,15 @@ const PlayerContent = ({song, songUrl}:Props) => {
                                    onClick={onPlayNext}/>
             </div>
 
-            <div className="hidden md:flex w-full justify-end pr-2">
+            <div className="hidden md:flex w-full justify-end pr-10">
                 <div className="flex items-center gap-x-2 w-[120px]">
                     <VolumeIcon className="cursor-pointer" size={34} onClick={toggleMute}/>
                     <Slider value={volume} onChange={(value) => setVolume(value)}/>
                 </div>
             </div>
+            <button className='text-neutral-400 hover:text-white absolute top-[10px] right-[10px] infline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:outline-none' onClick={player.reset}>
+                <IoMdClose/>
+            </button>
             <audio ref={audioRef} hidden/>
         </div>
     )
