@@ -7,12 +7,14 @@ import PlayerContent from './PlayerContent'
 import {Song, AlbumData} from "@/types";
 
 interface PlayerProps {
-    albumData: AlbumData | null
+    albumData: AlbumData | undefined
 }
 
-export const Player = ({albumData}: PlayerProps) => {
-    const player = usePlayer()
-    const songUrl = albumData?.fileUrl;
+export const Player = () => {
+    const player = usePlayer();
+    const activeAlbum = player.activeAlbum;
+    const songUrl = player.activeAlbum?.fileUrl;
+
     const convertAlbumDataToSong = (albumData: AlbumData): Song => {
         return {
             id: albumData.id.toString(),
@@ -23,20 +25,14 @@ export const Player = ({albumData}: PlayerProps) => {
             image_path: albumData.imgUrl,
         };
     };
-    const song = albumData ? convertAlbumDataToSong(albumData) : null;
 
-    if(!song || !songUrl){
+    if(!songUrl || !activeAlbum){
         return null
     }
 
     return (
-        // <div className='fixed bottom-0 bg-black w-full py-2 h-[80px] px-4'>
-        //     <PlayerContent song={song} key={songUrl} songUrl={songUrl}/>
-        // </div>
         <div className='fixed bottom-0 left-0 right-0 bg-black py-2 h-[81px] px-4'>
-        {albumData?.fileUrl &&
-            <PlayerContent song={convertAlbumDataToSong(albumData)}
-                           songUrl={albumData.fileUrl}/>}
+            <PlayerContent song={convertAlbumDataToSong(activeAlbum)} songUrl={songUrl}/>
         </div>
     )
 }

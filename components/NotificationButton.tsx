@@ -14,6 +14,7 @@ import {useRecoilState} from "recoil";
 import {loginState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
 import {CheckAccessToken} from "@/libs/auth";
+import {useRouter} from "next/navigation";
 
 interface NotificationItem {
   notificationId: number;
@@ -26,6 +27,7 @@ interface NotificationItem {
 }
 
 function NotificationButton() {
+  const router = useRouter()
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationList, setNotificationList] = useState<NotificationItem[]>();
 
@@ -75,7 +77,7 @@ function NotificationButton() {
     }
   }
 
-  const handleReadNotification = async (notificationId:number) => {
+  const handleReadNotification = async (notificationId:number, redirectUrl:string) => {
     await readNotification(notificationId);
 
     // 알림 목록에서 해당 알림의 isRead 상태를 true로 업데이트
@@ -84,6 +86,7 @@ function NotificationButton() {
     );
 
     setNotificationList(updatedNotifications); // 업데이트된 알림 목록으로 상태 업데이트
+    router.push(redirectUrl);
   };
 
   useEffect(() => {
@@ -141,7 +144,7 @@ function NotificationButton() {
         >
           {notificationList?.length !== 0 ? (
               notificationList?.map((item, index) => [
-                <ListItem key={item.notificationId} button alignItems="flex-start" onClick={() => handleReadNotification(item.notificationId)}>
+                <ListItem key={item.notificationId} button alignItems="flex-start" onClick={() => handleReadNotification(item.notificationId, item.redirectUrl)}>
                   <ListItemAvatar>
                     <Avatar alt={item.publisherName} src={item.publisherImageUrl} />
                   </ListItemAvatar>

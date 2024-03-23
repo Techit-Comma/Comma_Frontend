@@ -6,9 +6,10 @@ import {useRecoilState} from "recoil";
 import {loginState} from "@/providers/RecoilContextProvider";
 import {CheckAccessToken} from "@/libs/auth";
 import {toast} from "react-hot-toast";
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import Input from "@/components/Input";
 import Divider from "@material-ui/core/Divider";
+import axiosClient from "@/libs/axiosClient";
 
 function PasswordChangeForm() {
 
@@ -35,10 +36,31 @@ function PasswordChangeForm() {
         }
     }, [isLoading, router]);
 
+    async function modifyPassword(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        if (formData) {
+            const jsonData: {[key: string]: string} = {};
+            for (let pair of formData.entries()) {
+                jsonData[pair[0]] = pair[1] as string;
+            }
+            try {
+                await axiosClient.put('/member/passwordModify', jsonData);
+
+                toast.success("비밀번호가 수정되었습니다.");
+                router.push("/account")
+            } catch (error) {
+                return undefined;
+            }
+        }
+    }
+
     return (
         <div className="container mx-auto my-4 space-y-4">
             <div className="flex flex-col items-center">
-                <form method="post" className="w-full">
+                <form method="post" onSubmit={modifyPassword} className="w-full">
                     <Box display="flex" flexDirection="column" alignItems="start" justifyContent="center">
                         <div className="flex flex-col m-2 mb-10 w-2/3">
                             <label htmlFor="password"
@@ -67,7 +89,7 @@ function PasswordChangeForm() {
                         <Button variant="outlined" color="primary" type="submit" className="mr-3 w-2/12">
                             수정
                         </Button>
-                        <Button variant="outlined" color="warning" className="w-2/12">
+                        <Button variant="outlined" color="warning" className="w-2/12" onClick={()=>router.back()}>
                             취소
                         </Button>
                     </Box>

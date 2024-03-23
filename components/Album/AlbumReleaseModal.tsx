@@ -53,7 +53,7 @@ const AlbumReleaseModal = () => {
             if (uploadRes.ok) {
                 if (statElement) statElement.innerHTML = '업로드 성공!';
                 toast.success('업로드 성공');
-                setFilePath(data.uploadUrl);
+                setFilePath(data.filePath);
                 setStep(1);
                 setIsLoading(false);
             } else {

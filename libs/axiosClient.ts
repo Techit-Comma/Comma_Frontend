@@ -35,6 +35,11 @@ axiosClient.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
       // 401 에러 감지 및 originalRequest._retry
+      // if (error.response.status === 401 && !originalRequest._retry) {
+      //   Logout();
+      //   return;
+      // }
+
       if (error.response.status === 401 && originalRequest._retry) {
         originalRequest._retry = false; // 재요청 플래그 설정
 
@@ -43,8 +48,6 @@ axiosClient.interceptors.response.use(
         originalRequest.headers['Authorization'] = `${accessToken}`; // 현재 요청에도 새 토큰 설정
 
         return axiosClient(originalRequest); // 요청 재실행
-      } else{
-        Logout();
       }
 
       if (error.response) {
@@ -65,6 +68,16 @@ axiosClient.interceptors.response.use(
             return Promise.reject(error);
           }
 
+          if (errorData.validMessages.newPassword) {
+            toast.error(errorData.validMessages.newPassword);
+            return Promise.reject(error);
+          }
+
+          if (errorData.validMessages.newPasswordCheck) {
+            toast.error(errorData.validMessages.newPasswordCheck);
+            return Promise.reject(error);
+          }
+
           if (errorData.validMessages.email) {
             toast.error(errorData.validMessages.email);
             return Promise.reject(error);
@@ -72,6 +85,7 @@ axiosClient.interceptors.response.use(
         }
         // 기타 에러 메시지 처리
         toast.error(errorData.message);
+        return Promise.reject(error);
       } else {
         // 네트워크 에러 등 기타 에러 처리
         toast.error("네트워크 오류가 발생했습니다.");
