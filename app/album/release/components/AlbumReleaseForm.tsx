@@ -106,13 +106,19 @@ const AlbumReleaseForm = () => {
         <form method="post" onSubmit={releaseSubmit}>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                    <Box className="flex flex-col m-5">
-                        <Box display="flex" justifyContent="flex-start" alignItems="center" width="400px" height="400px">
-                            <Avatar variant="square"
-                                    src={imgPath || "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
-                                    alt="Album Cover" style={{width: '100%', height: '100%'}}/>
-                        </Box>
-                    </Box>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '100%'
+                    }}>
+                        <img
+                            src={imgPath || "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
+                            alt="Album Cover"
+                            style={{width: '400px', height: '400px'}}
+                        />
+                    </div>
                 </Grid>
                 <Grid item xs={12} md={6} className="flex flex-col">
                     <TextField
@@ -124,7 +130,7 @@ const AlbumReleaseForm = () => {
                         className={`${classes.outlinedInput} ${classes.overlay}`}
                     />
 
-                    <Box mb={2} />
+                    <div className="mt-3"/>
 
                     <FormControl variant="outlined" className={classes.outlinedInput}>
                         <InputLabel id="genre-label" className={classes.overlay}>장르</InputLabel>
@@ -141,7 +147,7 @@ const AlbumReleaseForm = () => {
                             <MenuItem value="classical">Classical</MenuItem>
                         </Select>
                     </FormControl>
-                    <Box mt={2} />
+                    <div className="mt-3"/>
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -171,7 +177,7 @@ const AlbumReleaseForm = () => {
                             className={classes.outlinedInput}
                         />
                     )}
-                    <Box mt={2} />
+                    <div className="mt-3"/>
                     {permit && (
                         <TextField
                             variant="outlined"
@@ -185,7 +191,7 @@ const AlbumReleaseForm = () => {
                 </Grid>
             </Grid>
             <div>
-                <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
+            <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
             </div>
         </form>
     );

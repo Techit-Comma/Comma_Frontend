@@ -10,6 +10,20 @@ import {useRecoilState} from "recoil";
 import {searchDataState} from "@/providers/RecoilContextProvider";
 import {FormControl, InputLabel, MenuItem, NativeSelect, Select} from "@mui/material";
 import Box from "@mui/material/Box";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+    components: {
+        // Global settings for InputLabel
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    color: 'whitesmoke', // 레이블 텍스트 색상 변경
+                },
+            },
+        },
+    },
+});
 
 const SearchInput = () => {
     const router = useRouter()
@@ -29,9 +43,15 @@ const SearchInput = () => {
 
     },[debouncedValue, router])
 
+    useEffect(() => {
+        findAlbum();
+    }, [searchTag]);
+
     async function findAlbum() {
         if(debouncedValue.length === 0) { return; }
 
+        console.log("find" + debouncedValue);
+        console.log("find" + searchTag);
         const params = {
             kwTypes: searchTag,
             kw: debouncedValue,
@@ -50,11 +70,10 @@ const SearchInput = () => {
 
     const handleSearchTagChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSearchTag(event.target.value);
-        findAlbum();
     };
 
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <Box sx={{ minWidth: 120 }}>
                 <FormControl fullWidth>
                     <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -67,17 +86,16 @@ const SearchInput = () => {
                             name: 'searchTag',
                             id: 'uncontrolled-native',
                         }}
+                        sx={{ color: 'dimgray' }}  // Add this line
                     >
                         <option value="albumName">앨범 명</option>
                         <option value="albumGenre">앨범 장르</option>
                         <option value="memberNickname">작곡가 닉네임</option>
-                        <option value="freeAlbum">무료 앨범</option>
-                        <option value="paidAlbum">유료 앨범</option>
                     </NativeSelect>
                 </FormControl>
             </Box>
             <Input placeholder="어떤 음악을 찾고 싶으신가요?" value={value} onChange={(event)=>setValue(event.target.value)} className="mt-5"/>
-        </div>
+        </ThemeProvider>
     )
 }
 
