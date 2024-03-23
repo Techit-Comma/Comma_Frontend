@@ -6,10 +6,11 @@ import Button from "@/components/Button";
 import {Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {makeStyles} from '@material-ui/core/styles';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { imagePathState, filePathState } from "@/providers/RecoilContextProvider";
+import {imagePathState, filePathState, loginState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
 import {toast} from "react-hot-toast";
 import { useRouter } from "next/navigation"
+import {CheckAccessToken} from "@/libs/auth";
 
 const useStyles = makeStyles({
     outlinedInput: {
@@ -29,6 +30,9 @@ const useStyles = makeStyles({
             color: 'white',
         },
     },
+    overlay: {
+        zIndex: 0,
+    },
 });
 
 const AlbumReleaseForm = () => {
@@ -46,10 +50,28 @@ const AlbumReleaseForm = () => {
     const classes = useStyles();
     const router = useRouter();
 
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        console.log('imagePathState changed:', imgPath);
-        console.log('filePathState changed:', filePath);
-    }, [imgPath, filePath]);
+        // 로그인 상태 확인 로직
+        CheckAccessToken().then((loggedIn) => {
+            setIsLogin(loggedIn);
+            setIsLoading(false); // 로그인 상태 확인이 완료됨
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!isLoading && !isLogin) {
+            toast.error("로그인 후 이용 할 수 있습니다.")
+            router.replace('/');
+        }
+    }, [isLoading, router]);
+
+    // useEffect(() => {
+    //     console.log('imagePathState changed:', imgPath);
+    //     console.log('filePathState changed:', filePath);
+    // }, [imgPath, filePath]);
 
     async function releaseSubmit()  {
         const formData = new FormData();
@@ -84,13 +106,19 @@ const AlbumReleaseForm = () => {
         <form method="post" onSubmit={releaseSubmit}>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                    <Box className="flex flex-col m-5">
-                        <Box display="flex" justifyContent="flex-start" alignItems="center" width="400px" height="400px">
-                            <Avatar variant="square"
-                                    src={imgPath || "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
-                                    alt="Album Cover" style={{width: '100%', height: '100%'}}/>
-                        </Box>
-                    </Box>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '100%'
+                    }}>
+                        <img
+                            src={imgPath || "https://kv6d2rdb2209.edge.naverncp.com/GSctnLFiOr/defaultimage.jpg?type=f&w=300&h=300&ttype=jpg"}
+                            alt="Album Cover"
+                            style={{width: '400px', height: '400px'}}
+                        />
+                    </div>
                 </Grid>
                 <Grid item xs={12} md={6} className="flex flex-col">
                     <TextField
@@ -99,13 +127,13 @@ const AlbumReleaseForm = () => {
                         label="앨범 명"
                         value={albumname}
                         onChange={(e) => setTitle(e.target.value)}
-                        className={classes.outlinedInput}
+                        className={`${classes.outlinedInput} ${classes.overlay}`}
                     />
 
-                    <Box mb={2} />
+                    <div className="mt-3"/>
 
                     <FormControl variant="outlined" className={classes.outlinedInput}>
-                        <InputLabel id="genre-label">장르</InputLabel>
+                        <InputLabel id="genre-label" className={classes.overlay}>장르</InputLabel>
                         <Select
                             labelId="genre-label"
                             value={genre}
@@ -119,7 +147,7 @@ const AlbumReleaseForm = () => {
                             <MenuItem value="classical">Classical</MenuItem>
                         </Select>
                     </FormControl>
-                    <Box mt={2} />
+                    <div className="mt-3"/>
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -149,7 +177,7 @@ const AlbumReleaseForm = () => {
                             className={classes.outlinedInput}
                         />
                     )}
-                    <Box mt={2} />
+                    <div className="mt-3"/>
                     {permit && (
                         <TextField
                             variant="outlined"
@@ -160,11 +188,11 @@ const AlbumReleaseForm = () => {
                             className={classes.outlinedInput}
                         />
                     )}
+                    <div>
+                        <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
+                    </div>
                 </Grid>
             </Grid>
-            <div>
-                <Button type="submit" className='bg-white px-6 py-2 mt-20'>앨범 등록</Button>
-            </div>
         </form>
     );
 };
