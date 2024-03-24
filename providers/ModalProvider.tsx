@@ -6,6 +6,7 @@ import AuthModal from '@/components/AuthModal'
 import CreatePlaylistModal from '@/components/CreatePlaylistModal'
 import AlbumReleaseModal from "@/components/Album/AlbumReleaseModal";
 import PlaylistModal from "@/components/PlaylistModal";
+import DonationModal from "@/components/DonationModal";
 
 const ModalProvider = () => {
 
@@ -23,6 +24,7 @@ const ModalProvider = () => {
         <>
           <AuthModal/>
           <PlaylistModal/>
+          <DonationModal/>
           <CreatePlaylistModal/>
           <AlbumReleaseModal/>
         </>
