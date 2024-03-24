@@ -2,8 +2,21 @@
 
 import { useEffect } from "react";
 import { useState } from "react";
-import { GetCookie } from "@/libs/auth";
 import { toast } from "react-hot-toast";
+import axiosClient from "@/libs/axiosClient";
+import { format } from "date-fns";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Pagination,
+  Box,
+} from "@mui/material";
 
 const CreditLogs = () => {
   const [creditLogs, setCreditLogs] = useState([]);
@@ -13,23 +26,12 @@ const CreditLogs = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = GetCookie("accessToken");
-
-        const response = await fetch(
-          `http://localhost:8090/credit/creditlogs/mine?page=${currentPage}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${accessToken}`,
-            },
-          }
+        const response = await axiosClient.get(
+          `/credit/creditlogs/mine?page=${currentPage}`
         );
-        if (!response.ok) {
-          console.log("not ok");
-        }
-        const data = await response.json();
+
+        const data = await response.data;
+
         setCreditLogs(data.creditLogDtos.content);
         setTotalPages(data.creditLogDtos.totalPages);
       } catch (error) {
@@ -43,77 +45,75 @@ const CreditLogs = () => {
     fetchData();
   }, [currentPage]);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
   };
 
   return (
-    <div className="mt-2 mb-7 px-6">
-      <div className="fle justify-between items-center">
-        <h1 className="text-white text-2xl font-semibold">크레딧 내역</h1>
+    <Box margin={2}>
+      <div className="flex justify-between items-center">
+        <Typography
+          variant="h4"
+          component="h1"
+          color="white"
+          fontWeight="bold"
+          margin={2}
+        >
+          크레딧 내역
+        </Typography>
       </div>
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>날짜</th>
-              <th>이벤트 타입</th>
-              <th>변동 크레딧</th>
-              <th> 잔여 크레딧</th>
-            </tr>
-          </thead>
-          <tbody>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead sx={{backgroundColor: '#F5F5F5'}}>
+            <TableRow>
+              <TableCell align="center">날짜</TableCell>
+              <TableCell align="center">이벤트 타입</TableCell>
+              <TableCell align="center">변동 크레딧</TableCell>
+              <TableCell align="center">잔여 크레딧</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {creditLogs.map((log: any, index: number) => (
-              <tr key={index}>
-                <td>{log.createDate}</td>
-                <td>{log.eventType}</td>
-                <td>{log.creditChangeAmount}</td>
-                <td>{log.restCredit}</td>
-              </tr>
+              <TableRow key={index}>
+                <TableCell align="center">
+                  {format(new Date(log.createDate), "yyyy-MM-dd HH:mm")}
+                </TableCell>
+                <TableCell align="center">{log.eventType}</TableCell>
+                <TableCell align="center">{log.creditChangeAmount}</TableCell>
+                <TableCell align="center">{log.restCredit}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-        {creditLogs.length === 0 && (
-        <p>크레딧 내역이 없습니다</p>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {creditLogs.length === 0 && (
+        <Typography variant="body1" color="white">
+          크레딧 내역이 없습니다
+        </Typography>
       )}
-        <div className="join flex justify-center">
-          {totalPages > 0 && (
-            <button
-              className="join-item btn btn-square"
-              onClick={handlePreviousPage}
-            >이전 페이지</button>
-          )}
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-            (pageNumber) => (
-              <button
-                key={pageNumber}
-                className={`join-item btn btn-square${
-                  pageNumber === currentPage ? " btn-active" : ""
-                }`}
-                onClick={() => setCurrentPage(pageNumber)} // 수정: movePage -> setCurrentPage
-              >
-                {pageNumber}
-              </button>
-            )
-          )}
-          {totalPages > currentPage && (
-            <button
-              className="join-item btn btn-square"
-              onClick={handleNextPage}
-            >다음 페이지</button>
-          )}
-        </div>
-      </div>
-    </div>
+      <Box display="flex" justifyContent="center" margin={1}>
+        <Pagination
+          count={totalPages}
+          color="primary"
+          variant="outlined"
+          size="large"
+          shape="rounded"
+          page={currentPage}
+          onChange={handlePage}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#fff",
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              backgroundColor: "#3f51b5",
+            },
+          }}
+        />
+      </Box>
+    </Box>
   );
 };
+
+// {format(new Date(log.createDate), "yyyy-MM-dd HH:mm")}
 
 export default CreditLogs;

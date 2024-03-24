@@ -18,6 +18,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
+import axiosClient from "@/libs/axiosClient";
 
 interface Props {
   username: string;
@@ -63,32 +64,15 @@ export default function ArticleForm({ username }: Props) {
   useEffect(() => {
     const handleSubmit = async (event: any) => {
       event.preventDefault();
-      const accessToken = GetCookie("accessToken");
-
-      if (!accessToken) {
-        toast.error("로그인 해주세요.");
-        return;
-      }
 
       try {
-        const articleResponse = await fetch(
-          `http://localhost:8090/community/articles`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${accessToken}`,
-            },
-            body: JSON.stringify({ category, content, artistUsername }),
-          }
-        );
-        const articleResp = await articleResponse.json();
+        const articleResponse = await axiosClient.post(`/community/articles`, {
+          category,
+          content,
+          artistUsername,
+        });
 
-        if (!articleResponse.ok) {
-          toast.error(articleResp.message);
-          return;
-        }
+        const articleResp = await articleResponse.data;
 
         const articleId = articleResp.data.articleId;
 
@@ -99,13 +83,10 @@ export default function ArticleForm({ username }: Props) {
           }
           formData.append("articleId", articleId.toString());
           try {
-            await fetch(`http://localhost:8090/community/articles/images`, {
-              method: "POST",
-              credentials: "include",
+            await axiosClient.post("/community/articles/images", formData, {
               headers: {
-                Authorization: `${accessToken}`,
+                "Content-Type": "multipart/form-data",
               },
-              body: formData,
             });
           } catch (error) {
             console.error(error);
@@ -120,7 +101,6 @@ export default function ArticleForm({ username }: Props) {
         setCategory("");
 
         await router.push(`/${username}/community`);
-        
       } catch (error) {
         console.error("글 작성 오류:", error);
       }
@@ -136,7 +116,11 @@ export default function ArticleForm({ username }: Props) {
 
   return (
     <div>
-      <Card variant="outlined" sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
+      <Card
+        variant="outlined"
+        sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}
+        style={{ position: "relative", zIndex: 0 }}
+      >
         <form id="articleForm">
           <div className="mt-5">
             <Box sx={{ minWidth: 120 }}>

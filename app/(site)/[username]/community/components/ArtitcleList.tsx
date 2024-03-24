@@ -1,64 +1,51 @@
-"use client";
-import { GetCookie } from "@/libs/auth";
-import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Pagination } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import axiosClient from "@/libs/axiosClient";
-import Image from "next/image";
+import ProfileButton from "@/components/ProfileButton";
+import Comments from "./Comments";
+import { useRecoilState } from "recoil";
+import { userInfoState } from "@/providers/RecoilContextProvider";
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
   CardHeader,
-  CardMedia,
   Container,
   IconButton,
-  Menu,
-  MenuItem,
   Paper,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import React from "react";
 import Carousel from "react-material-ui-carousel";
-import ProfileButton from "@/components/ProfileButton";
-import { useRouter } from "next/navigation";
-import Comments from "./Comments";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Image from "next/image";
 import { UserInfos } from "@/types";
-import { useRecoilState } from "recoil";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import toast from "react-hot-toast";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import Modal from "./Modal";
+import EditArticle from "./EditArticle";
 
 interface Props {
   username: string;
 }
 
 const ArticleList = ({ username }: Props) => {
+  const router = useRouter();
   const [articles, setArticles] = useState([]);
   const [articleImages, setArticleImages] = useState(new Map());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [category, setCategory] = React.useState<string>("");
-  const router = useRouter();
+  const [category, setCategory] = useState<string>("");
   const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const showArticleId = (articleId: string) => {
-    console.log(articleId);
-  }
+  const [editModalOpenMap, setEditModalOpenMap] = useState<
+    Map<string, boolean>
+  >(new Map());
 
   useEffect(() => {
     loadArticles("");
-  }, []);
+  }, [currentPage]);
 
   const loadArticles = async (category: string) => {
     try {
@@ -74,28 +61,15 @@ const ArticleList = ({ username }: Props) => {
       }
 
       setArticleImages(imageMap);
-      console.log(articleImages);
       setArticles(data.data.articleList.content);
-      setTotalPages(data.totalPages);
+      setTotalPages(data.data.articleList.totalPages);
     } catch (error) {
       const errorObj = error as Error;
       toast.error(`게시글을 불러오는 데 실패하였습니다. (${errorObj.message})`);
     }
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleAlignment = (
+  const handleCategory = (
     event: React.MouseEvent<HTMLElement>,
     newCategory: string
   ) => {
@@ -105,14 +79,25 @@ const ArticleList = ({ username }: Props) => {
 
   const deleteArticle = async (articleId: string) => {
     try {
-      const response = await axiosClient.delete(
-        `/community/articles/${articleId}`
-      );
+      await axiosClient.delete(`/community/articles/${articleId}`);
 
-      toast.success("글을 삭제하였습니다.")
+      toast.success("글을 삭제하였습니다.");
+      loadArticles("");
     } catch (error) {
       toast.error("글 삭제에 실패하였습니다.");
     }
+  };
+
+  const handleEditModalOpen = (articleId: string) => {
+    setEditModalOpenMap((prevMap) => new Map(prevMap.set(articleId, true)));
+  };
+
+  const handleEditModalClose = (articleId: string) => {
+    setEditModalOpenMap((prevMap) => new Map(prevMap.set(articleId, false)));
+  };
+
+  const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
   };
 
   return (
@@ -123,8 +108,8 @@ const ArticleList = ({ username }: Props) => {
           fullWidth
           exclusive
           color="primary"
-          onChange={handleAlignment}
-          aria-label="cagtegory"
+          onChange={handleCategory}
+          aria-label="category"
           sx={{ width: "70%" }}
         >
           <ToggleButton value="" className="text text-white" aria-label="all">
@@ -164,7 +149,23 @@ const ArticleList = ({ username }: Props) => {
 
       {articles.map((article: any) => {
         return (
-          <Box key={article.id} p={2}>
+          <Box
+            key={article.id}
+            p={2}
+            style={{ position: "relative", zIndex: 0 }}
+          >
+            <Modal
+              isOpen={editModalOpenMap.get(article.id) ?? false}
+              onChange={() => handleEditModalClose(article.id)}
+              title="글 수정하기"
+            >
+              <EditArticle
+                onClose={() => handleEditModalClose(article.id)}
+                article={article}
+                articleImages={articleImages.get(article.id) ?? null}
+              />
+            </Modal>
+
             <Card sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
               <CardHeader
                 avatar={
@@ -178,26 +179,17 @@ const ArticleList = ({ username }: Props) => {
                   userInfos.username === username && (
                     <>
                       <IconButton
-                        id="basic-button"
-                        aria-controls={open ? "basic-menu" : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? "true" : undefined}
-                        onClick={handleClick}
+                        id="delete-button"
+                        onClick={() => deleteArticle(article.id)}
                       >
-                        <MoreVertIcon />
+                        <DeleteIcon />
                       </IconButton>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                          "aria-labelledby": "basic-button",
-                        }}
+                      <IconButton
+                        id="edit-button"
+                        onClick={() => handleEditModalOpen(article.id)}
                       >
-                        <MenuItem onClick={() => showArticleId(article.id)}>수정하기</MenuItem>
-                        <MenuItem onClick={() => deleteArticle(article.id)}>삭제하기</MenuItem>
-                      </Menu>
+                        <EditIcon />
+                      </IconButton>
                     </>
                   )
                 }
@@ -228,7 +220,6 @@ const ArticleList = ({ username }: Props) => {
               <CardContent>
                 <Typography variant="body2" color="text.secondary">
                   {article.content}
-                  {article.id}
                 </Typography>
               </CardContent>
               <Comments _articleId={article.id} />
@@ -236,35 +227,25 @@ const ArticleList = ({ username }: Props) => {
           </Box>
         );
       })}
-
-      <div className="join flex justify-center">
-        {totalPages > 0 && (
-          <button
-            className="join-item btn btn-square"
-            onClick={handlePreviousPage}
-          >
-            이전 페이지
-          </button>
-        )}
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (pageNumber) => (
-            <button
-              key={pageNumber}
-              className={`join-item btn btn-square ${
-                pageNumber === currentPage ? "btn-active" : ""
-              }`}
-              onClick={() => setCurrentPage(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          )
-        )}
-        {totalPages > currentPage && (
-          <button className="join-item btn btn-square" onClick={handleNextPage}>
-            다음 페이지
-          </button>
-        )}
-      </div>
+      <Box display="flex" justifyContent="center">
+        <Pagination
+          count={totalPages}
+          color="primary"
+          variant="outlined"
+          size="large"
+          shape="rounded"
+          page={currentPage}
+          onChange={handlePage}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#fff",
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              backgroundColor: "#3f51b5",
+            },
+          }}
+        />
+      </Box>
     </Container>
   );
 };

@@ -1,8 +1,21 @@
 "use client";
 
+import axiosClient from "@/libs/axiosClient";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { GetCookie } from "@/libs/auth";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+  Pagination,
+} from "@mui/material";
+import { format } from "date-fns";
 
 const CreditLogs = () => {
   const [withdrawLogs, setWithdrawLogs] = useState([]);
@@ -12,25 +25,11 @@ const CreditLogs = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = GetCookie("accessToken");
-
-        const response = await fetch(
-          `http://localhost:8090/credit/withdraws/mine?page=${currentPage}`, // 수정: $currentPage -> currentPage
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${accessToken}`,
-            },
-          }
+        const response = await axiosClient.get(
+          `/credit/withdraws/mine?page=${currentPage}`
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          toast.error(data.message);
-        }
+        const data = await response.data;
 
         setWithdrawLogs(data.withdraws.content);
         setTotalPages(data.withdraws.totalPages);
@@ -45,91 +44,92 @@ const CreditLogs = () => {
     fetchData();
   }, [currentPage]);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
   };
 
   return (
-    <div className="card bg-gray-light dark:bg-gray-800 p-4">
-      <h1 className="text-white text-2xl font-semibold">출금 신청 내역</h1>
-
-      <table>
-        <thead>
-          <tr>
-            <th>날짜</th>
-            <th>은행명</th>
-            <th>계좌번호</th>
-            <th>출금신청액</th>
-            <th>처리상태</th>
-          </tr>
-        </thead>
-        <tbody>
-          {withdrawLogs.map((log: any, index: number) => (
-            <tr key={index}>
-              <td>{log.applyDate}</td>
-              <td>{log.bankName}</td>
-              <td>{log.bankAccountNo}</td>
-              <td>{log.withdrawAmount}</td>
-              {log.withdrawDoneDate && (
-                <td>
-                  {log.processResult} <br />
-                  {new Date(log.withdrawDoneDate).toLocaleDateString("ko-KR")}
-                </td>
-              )}
-              {log.withdrawCancelDate && (
-                <td>
-                  {log.processResult} <br />
-                  {new Date(log.withdrawCancelDate).toLocaleDateString("ko-KR")}
-                </td>
-              )}
-              {!log.withdrawDoneDate && !log.withdrawCancelDate && (
-                <td>처리중</td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {withdrawLogs.length === 0 && (
-        <p>출금 신청 내역이 없습니다</p>
-      )}
-
-      <div className="join flex justify-center">
-        {totalPages > 0 && (
-          <button
-            className="join-item btn btn-square"
-            onClick={handlePreviousPage}
-          >
-            이전 페이지
-          </button>
-        )}
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (pageNumber) => (
-            <button
-              key={pageNumber}
-              className={`join-item btn btn-square${
-                pageNumber === currentPage ? " btn-active" : ""
-              }`}
-              onClick={() => setCurrentPage(pageNumber)} // 수정: movePage -> setCurrentPage
-            >
-              {pageNumber}
-            </button>
-          )
-        )}
-        {totalPages > currentPage && (
-          <button className="join-item btn btn-square" onClick={handleNextPage}>
-            다음 페이지
-          </button>
-        )}
+    <Box margin={2}>
+      <div className="flex justify-between items-center">
+        <Typography
+          variant="h4"
+          component="h1"
+          color="white"
+          fontWeight="bold"
+          margin={2}
+        >
+          출금 신청 내역
+        </Typography>
       </div>
-    </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead sx={{ backgroundColor: "#F5F5F5" }}>
+            <TableRow>
+              <TableCell align="center">날짜</TableCell>
+              <TableCell align="center">은행명</TableCell>
+              <TableCell align="center">계좌번호</TableCell>
+              <TableCell align="center">출금신청액</TableCell>
+              <TableCell align="center">처리상태</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {withdrawLogs.map((log: any, index: number) => (
+              <TableRow key={index}>
+                <TableCell align="center">
+                  {format(new Date(log.applyDate), "yyyy-MM-dd HH:mm")}
+                </TableCell>
+                <TableCell align="center">{log.bankName}</TableCell>
+                <TableCell align="center">{log.bankAccountNo}</TableCell>
+                <TableCell align="center">{log.withdrawAmount}</TableCell>
+                <TableCell align="center">
+                  {log.withdrawDoneDate ? (
+                    <>
+                      출금 완료 <br />
+                      {new Date(log.withdrawDoneDate).toLocaleDateString(
+                        "ko-KR"
+                      )}
+                    </>
+                  ) : log.withdrawCancelDate ? (
+                    <>
+                      출금 거절 <br />
+                      {new Date(log.withdrawCancelDate).toLocaleDateString(
+                        "ko-KR"
+                      )}
+                    </>
+                  ) : (
+                    "처리중"
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {withdrawLogs.length === 0 && (
+        <Typography variant="body1" className="text-white">
+          출금 신청 내역이 없습니다
+        </Typography>
+      )}
+      <Box display="flex" justifyContent="center" margin={1}>
+        <Pagination
+          count={totalPages}
+          color="primary"
+          variant="outlined"
+          size="large"
+          shape="rounded"
+          page={currentPage}
+          onChange={handlePage}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#fff",
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              backgroundColor: "#3f51b5",
+            },
+          }}
+        />
+      </Box>
+    </Box>
   );
 };
 

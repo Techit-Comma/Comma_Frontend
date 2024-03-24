@@ -6,6 +6,7 @@ import { GetCookie } from "@/libs/auth";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@mui/material";
+import axiosClient from "@/libs/axiosClient";
 
 interface Props {
   username: string;
@@ -18,27 +19,9 @@ const UserProfile = ({ username }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = GetCookie("accessToken");
+        const response = await axiosClient.get(`/member/${username}`);
 
-        if (!accessToken) {
-          toast.error("로그인이 필요합니다.");
-        }
-
-        const response = await fetch(
-          `http://localhost:8090/member/${username}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${accessToken}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          console.log("not ok");
-        }
-        const data = await response.json();
+        const data = await response.data;
         setProfileImage(data.data.profileImageUrl);
       } catch (error) {
         const errorObj = error as Error;
@@ -65,8 +48,12 @@ const UserProfile = ({ username }: Props) => {
       />
       <div className="flex-col ms-10">
         <p className="text text-5xl">{username}</p>
-        <Button variant="outlined" color="primary" >후원하기</Button>
-        <Button variant="outlined" color="warning" className="ms-2">팔로우</Button>
+        <Button variant="outlined" color="primary">
+          후원하기
+        </Button>
+        <Button variant="outlined" color="warning" className="ms-2">
+          팔로우
+        </Button>
       </div>
     </div>
   );

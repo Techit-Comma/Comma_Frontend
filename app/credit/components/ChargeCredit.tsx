@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast";
 import { GetCookie } from "@/libs/auth";
 import Modal from "@/components/Modal";
 import Payment from "./Payment";
+import axiosClient from "@/libs/axiosClient";
+import { Button } from "@mui/material";
 
 interface Props {
   onChange: () => void;
@@ -26,36 +28,18 @@ const ChargeCredit = ({ onChange }: Props) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    const accessToken = GetCookie("accessToken");
-
-    if (!accessToken) {
-      toast.error("로그인이 필요합니다.");
-      return;
-    }
-
     try {
-      const response = await fetch("http://localhost:8090/credit/charges", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${accessToken}`,
-        },
-        body: JSON.stringify({ chargeAmount }),
+      const response = await axiosClient.post("/credit/charges", {
+        chargeAmount,
       });
 
-      if (!response.ok) {
-        console.log("NOT OK");
-        return;
-      }
+      const resp = await response.data;
 
-      const resp = await response.json();
       setChargeId(resp.chargeId);
       setChargeCode(resp.chargeCode);
       setCharger(resp.username);
 
-      paymentReady(); 
-
+      paymentReady();
     } catch (error) {
       console.log("Error 발생");
     }
@@ -84,12 +68,9 @@ const ChargeCredit = ({ onChange }: Props) => {
               <option value="50000">50,000원</option>
             </select>
           </div>
-          <button
-            type="submit"
-            className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost"
-          >
+          <Button variant="outlined" color="warning" type="submit">
             충전하기
-          </button>
+          </Button>
         </form>
       </div>
       {isPaymentReady && (

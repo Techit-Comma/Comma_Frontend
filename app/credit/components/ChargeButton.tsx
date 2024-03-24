@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { useState } from "react";
-import { GetCookie } from "@/libs/auth";
 import Modal from "@/components/Modal";
 import ChargeCredit from "./ChargeCredit";
 import { toast } from "react-hot-toast";
-import WithdrawModal from "./WithdrawButton";
+import { Button, Box } from "@mui/material";
+import CreditModal from "./CreditModal"
 
 const CreditLogs = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,19 +20,16 @@ const CreditLogs = () => {
   };
 
   return (
-    <div className="mt-2 mb-7 px-6">
-      <div className="mb-2">
-        <button onClick={OpenModal}>충전하기</button>
-        <Modal
+      <Box margin={1}>
+        <Button variant="outlined" color="warning" onClick={OpenModal}>충전하기</Button>
+        <CreditModal
           onChange={closeModal}
           title="크레딧 충전"
-          description="금액을 선택하세요"
           isOpen={isOpen}
         >
           <ChargeCredit onChange={closeModal} />
-        </Modal>
-      </div>
-    </div>
+        </CreditModal>
+      </Box>
   );
 };
 
