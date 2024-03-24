@@ -15,7 +15,8 @@ interface Props{
     albums: AlbumData[]
 }
 
-const LikedContent = ({albums}:Props) => {
+const
+    LikedContent = ({albums}:Props) => {
     const router = useRouter()
     const [isLogin, setIsLogin] = useRecoilState(loginState);
     const [isLoading, setIsLoading] = useState(true);
