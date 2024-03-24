@@ -10,6 +10,7 @@ import usePlayer from "@/hooks/usePlayer";
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js'
 import {IoMdClose} from "react-icons/io";
+import AddPlaylistButton from "@/components/AddPlaylistButton";
 
 interface Props{
     song: Song;
@@ -18,9 +19,12 @@ interface Props{
 
 const PlayerContent = ({song, songUrl}:Props) => {
     const player = usePlayer();
-    const [volume, setVolume] = useState(0.1);
+    const [volume, setVolume] = useState(0.2);
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
 
     const Icon = isPlaying ? BsPauseFill : BsPlayFill
     const VolumeIcon = volume===0 ? HiSpeakerXMark:HiSpeakerWave
@@ -69,14 +73,6 @@ const PlayerContent = ({song, songUrl}:Props) => {
         player.setAlbum(prevSong) //else play prev song
     }
 
-    // const [play,{pause, sound}] = useSound(songUrl,{
-    //     volume:volume,
-    //     onplay:()=>setIsPlaying(true),
-    //     onend:()=>{setIsPlaying(false), onPlayNext()}, //stop current song and play next song
-    //     onpause:()=>setIsPlaying(false),
-    //     format:['m4a']
-    // })
-
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
@@ -87,6 +83,7 @@ const PlayerContent = ({song, songUrl}:Props) => {
     useEffect(() => {
         const audio = audioRef.current;
         let hls : Hls | undefined;
+
         if (audio && m3u8Url) {
             if (Hls.isSupported()) {
                 hls = new Hls();
@@ -106,36 +103,30 @@ const PlayerContent = ({song, songUrl}:Props) => {
                 }
             }
         }
-        else
-        {
-            if(audio === null){
-                console.log("audio is null");
-            }
-
-            if(m3u8Url === ""){
-                console.log("m3u8Url is empty");
-            }
-        }
 
         return () => {
             if (hls) {
                 hls.destroy();
             }
         };
-    }, [m3u8Url, isPlaying]);
+    }, [m3u8Url]); // m3u8Url이 변경될 때만 Hls 인스턴스를 생성하거나 파괴합니다.
+
+    const handlePlayPause = () => {
+        setIsPlaying(!isPlaying);
+    };
+
 
     // 재생 및 일시 정지 로직
-    const handlePlayPause = () => {
+    useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
 
-        if (!isPlaying) {
+        if (isPlaying) {
             audio.play();
         } else {
             audio.pause();
         }
-        setIsPlaying(!isPlaying);
-    };
+    }, [isPlaying]); // isPlaying이 변경될 때마다 오디오 요소의 play 또는 pause 메서드를 호출합니다.
 
     const toggleMute = () => {
         if (volume > 0) {
@@ -148,41 +139,55 @@ const PlayerContent = ({song, songUrl}:Props) => {
     };
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 h-full">
-            <div className="flex w-full justify-start">
-                <div className="flex items-center gap-x-4">
-                    <MediaItem data={song}/>
-                    <LikeButton songId={song.id}/>
-                </div>
+        <div className="player relative">
+            <div className="w-full h-1 bg-gray-200">
+                <div className="h-full bg-gradient-to-br from-neutral-900 via-neutral-900 to-blue-800" style={{ width: `${(currentTime / duration) * 100}%` }}></div>
             </div>
-            <div className="flex md:hidden col-auto w-full justify-end items-center"> {/*mobile play pause button*/}
-                <div onClick={handlePlayPause}
-                     className='h-10 w-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer'>
-                    <Icon size={30} className='text-black'/>
+            <div className="grid grid-cols-2 md:grid-cols-3 h-full px-4 pt-2">
+                <div className="flex w-full justify-start">
+                    <div className="flex items-center gap-x-4">
+                        <MediaItem data={song}/>
+                        <LikeButton songId={song.id}/>
+                        <AddPlaylistButton songId={song.id}/>
+                    </div>
                 </div>
-            </div>
+                <div
+                    className="flex md:hidden col-auto w-full justify-end items-center"> {/*mobile play pause button*/}
+                    <div onClick={handlePlayPause}
+                         className='h-10 w-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer'>
+                        <Icon size={30} className='text-black'/>
+                    </div>
+                </div>
 
-            <div className="hidden h-full md:flex justify-center items-center w-full max-w-[722px] gap-x-6">
-                <AiFillStepBackward size={30} className='text-neutral-400 cursor-pointer hover:text-white transition'
-                                    onClick={onPlayPrev}/>
-                <div className='flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer'
-                     onClick={handlePlayPause}>
-                    <Icon size={30} className='text-black'/>
+                <div
+                    className="hidden h-full md:flex justify-center items-center w-full max-w-[722px] gap-x-6">
+                    <AiFillStepBackward size={30}
+                                        className='text-neutral-400 cursor-pointer hover:text-white transition'
+                                        onClick={onPlayPrev}/>
+                    <div
+                        className='flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer'
+                        onClick={handlePlayPause}>
+                        <Icon size={30} className='text-black'/>
+                    </div>
+                    <AiFillStepForward size={30}
+                                       className='text-neutral-400 cursor-pointer hover:text-white transition'
+                                       onClick={onPlayNext}/>
                 </div>
-                <AiFillStepForward size={30} className='text-neutral-400 cursor-pointer hover:text-white transition'
-                                   onClick={onPlayNext}/>
-            </div>
 
-            <div className="hidden md:flex w-full justify-end pr-10">
-                <div className="flex items-center gap-x-2 w-[120px]">
-                    <VolumeIcon className="cursor-pointer" size={34} onClick={toggleMute}/>
-                    <Slider value={volume} onChange={(value) => setVolume(value)}/>
+                <div className="hidden md:flex w-full justify-end pr-10">
+                    <div className="flex items-center gap-x-2 w-[120px]">
+                        <VolumeIcon className="cursor-pointer" size={34} onClick={toggleMute}/>
+                        <Slider value={volume} onChange={(value) => setVolume(value)}/>
+                    </div>
                 </div>
+                <button
+                    className='text-neutral-400 hover:text-white absolute top-[10px] right-[10px] infline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:outline-none'
+                    onClick={player.reset}>
+                    <IoMdClose/>
+                </button>
+                <audio ref={audioRef} onLoadedMetadata={e => setDuration(e.target.duration)}
+                       onTimeUpdate={e => setCurrentTime(e.target.currentTime)} hidden/>
             </div>
-            <button className='text-neutral-400 hover:text-white absolute top-[10px] right-[10px] infline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:outline-none' onClick={player.reset}>
-                <IoMdClose/>
-            </button>
-            <audio ref={audioRef} hidden/>
         </div>
     )
 }

@@ -31,7 +31,7 @@ export const Player = () => {
     }
 
     return (
-        <div className='fixed bottom-0 left-0 right-0 bg-black py-2 h-[81px] px-4'>
+        <div className='fixed bottom-0 left-0 right-0 bg-black h-[80px]'>
             <PlayerContent song={convertAlbumDataToSong(activeAlbum)} songUrl={songUrl}/>
         </div>
     )

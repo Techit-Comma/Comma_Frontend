@@ -27,7 +27,6 @@ const MediaItem = ({data, onClick}: Props) => {
     const imageUrl = validateImageUrl(data.image_path);
 
     const handleClick = () => {
-        console.log("gdgd");
         router.push("/album/" + data.id);
         // if(onClick){
         //     return onClick(data.id);
