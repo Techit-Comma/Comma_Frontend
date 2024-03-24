@@ -13,6 +13,8 @@ import {
   CardMedia,
   Container,
   IconButton,
+  Menu,
+  MenuItem,
   Paper,
   ToggleButton,
   ToggleButtonGroup,
@@ -23,6 +25,10 @@ import Carousel from "react-material-ui-carousel";
 import ProfileButton from "@/components/ProfileButton";
 import { useRouter } from "next/navigation";
 import Comments from "./Comments";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { UserInfos } from "@/types";
+import { useRecoilState } from "recoil";
+import { userInfoState } from "@/providers/RecoilContextProvider";
 
 interface Props {
   username: string;
@@ -35,6 +41,20 @@ const ArticleList = ({ username }: Props) => {
   const [totalPages, setTotalPages] = useState(1);
   const [category, setCategory] = React.useState<string>("");
   const router = useRouter();
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const showArticleId = (articleId: string) => {
+    console.log(articleId);
+  }
 
   useEffect(() => {
     loadArticles("");
@@ -81,6 +101,18 @@ const ArticleList = ({ username }: Props) => {
   ) => {
     setCategory(newCategory);
     loadArticles(newCategory);
+  };
+
+  const deleteArticle = async (articleId: string) => {
+    try {
+      const response = await axiosClient.delete(
+        `/community/articles/${articleId}`
+      );
+
+      toast.success("글을 삭제하였습니다.")
+    } catch (error) {
+      toast.error("글 삭제에 실패하였습니다.");
+    }
   };
 
   return (
@@ -130,50 +162,80 @@ const ArticleList = ({ username }: Props) => {
         </div>
       )}
 
-      {articles.map((article: any) => (
-        <Box key={article.id} p={2}>
-          <Card sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
-            <CardHeader
-              avatar={
-                <ProfileButton
-                  onClick={() => router.push(`/${username}`)}
-                  className="w-10 h-10"
-                  profileImageUrl={article.userProfile}
-                ></ProfileButton>
-              }
-              action={<IconButton aria-label="settings"></IconButton>}
-              title={username}
-              subheader={article.createDate}
-            />
-            <Carousel>
-              {articleImages.has(article.id) &&
-                articleImages
-                  .get(article.id)
-                  .map((image: any, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-center"
-                    >
-                      <Paper elevation={0}>
-                        <Image
-                          height={450}
-                          width={450}
-                          src={image}
-                          alt="Paella dish"
-                        />
-                      </Paper>
-                    </div>
-                  ))}
-            </Carousel>
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                {article.content}
-              </Typography>
-            </CardContent>
-            <Comments _articleId={article.id} />
-          </Card>
-        </Box>
-      ))}
+      {articles.map((article: any) => {
+        return (
+          <Box key={article.id} p={2}>
+            <Card sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
+              <CardHeader
+                avatar={
+                  <ProfileButton
+                    onClick={() => router.push(`/${username}`)}
+                    className="w-10 h-10"
+                    profileImageUrl={article.userProfile}
+                  ></ProfileButton>
+                }
+                action={
+                  userInfos.username === username && (
+                    <>
+                      <IconButton
+                        id="basic-button"
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={handleClick}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem onClick={() => showArticleId(article.id)}>수정하기</MenuItem>
+                        <MenuItem onClick={() => deleteArticle(article.id)}>삭제하기</MenuItem>
+                      </Menu>
+                    </>
+                  )
+                }
+                title={username}
+                subheader={article.createDate}
+              />
+
+              <Carousel>
+                {articleImages.has(article.id) &&
+                  articleImages
+                    .get(article.id)
+                    .map((image: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center"
+                      >
+                        <Paper elevation={0}>
+                          <Image
+                            height={450}
+                            width={450}
+                            src={image}
+                            alt="Paella dish"
+                          />
+                        </Paper>
+                      </div>
+                    ))}
+              </Carousel>
+              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  {article.content}
+                  {article.id}
+                </Typography>
+              </CardContent>
+              <Comments _articleId={article.id} />
+            </Card>
+          </Box>
+        );
+      })}
 
       <div className="join flex justify-center">
         {totalPages > 0 && (

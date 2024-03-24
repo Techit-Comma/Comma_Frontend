@@ -7,67 +7,67 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
-
 function ProfileImageChange() {
-    const [profileImage, setProfileImage] = useState<File | null>(null);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(
+    userInfos.profileImageUrl
+  );
 
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setProfileImage(file);
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setPreviewUrl(reader.result);
         }
-        console.log(file);
-    };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-    const handleProfileImageChange = async () => {
-  
-        if (!profileImage) {
-            toast.error("이미지를 선택해주세요.");
-            return;
-        }
-    
+  const handleProfileImageChange = async () => {
+    if (!profileImage) {
+      toast.error("이미지를 선택해주세요.");
+      return;
+    }
 
-        
-        try {
-            const formData = new FormData();
-            formData.append('file', profileImage);
-    
-            const response = await axiosClient.post(
-                '/member/setProfileImage',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
-            );
+    try {
+      const formData = new FormData();
+      formData.append("file", profileImage);
 
-    
-            const data: any = response.data;
-    
-            setUserInfos(prevState => ({
-                ...prevState,
-                profileImageUrl: data.profileImageUrl
-            }));
+      const response = await axiosClient.post("/member/setProfileImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-            toast.success("프로필 이미지가 변경되었습니다.");
-    
-        } catch (error) {
-            toast.error("프로필 이미지를 변경하는 데 실패했습니다.");
-        }
-    };
+      const data: any = response.data;
+
+      setUserInfos((prevState) => ({
+        ...prevState,
+        profileImageUrl: data.profileImageUrl,
+      }));
+
+      toast.success("프로필 이미지가 변경되었습니다.");
+    } catch (error) {
+      toast.error("프로필 이미지를 변경하는 데 실패했습니다.");
+    }
+  };
 
   return (
     <Box p={2} display="flex" flexDirection="column" alignItems="center">
-      <Image
-        src={userInfos.profileImageUrl}
-        width={300}
-        height={300}
-        alt="profileImage"
-        className="rounded-full"
-      />
+      {previewUrl && (
+        <Image
+          src={previewUrl}
+          alt="profileImage"
+          width={300}
+          height={300}
+          className="rounded-full"
+        />
+      )}
       <label htmlFor="image-upload">
         <input
           id="image-upload"
