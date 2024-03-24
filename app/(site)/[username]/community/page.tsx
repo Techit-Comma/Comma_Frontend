@@ -7,7 +7,8 @@ import WriteArticle from "./components/WriteArticle"
 import ArticleList from "./components/ArtitcleList";
 import { useRecoilState } from "recoil";
 import { UserInfos } from "@/types";
-import { userInfoState } from "@/store/store";
+import { userInfoState } from "@/providers/RecoilContextProvider";
+import { Divider } from "@mui/material";
 
 export default function Home({
   params,
@@ -17,7 +18,7 @@ export default function Home({
   const username = params.username;
   const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
   const loginedUser = userInfos.username; 
-  console.log(loginedUser); 
+
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -28,6 +29,8 @@ export default function Home({
         </div>
       </Header>
       {loginedUser === username && <WriteArticle username={username} /> }
+      <Divider variant="middle" />
+
       <ArticleList username={username} />
     </div>
   );

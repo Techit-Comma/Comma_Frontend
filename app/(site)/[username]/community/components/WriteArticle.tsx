@@ -5,6 +5,19 @@ import { useRouter } from "next/navigation";
 import { GetCookie } from "@/libs/auth";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import React from "react";
 
 interface Props {
   username: string;
@@ -12,21 +25,18 @@ interface Props {
 
 export default function ArticleForm({ username }: Props) {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    category: "",
-    content: "",
-    artistUsername: username, // 초기값으로 받아온 username 사용
-  });
+  const artistUsername = username;
+  const [category, setCategory] = React.useState("");
+  const [content, setContent] = React.useState("");
   const [imageFiles, setImageFiles] = useState<FileList | null>(null);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-  const handleChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+  const handleCategory = (event: SelectChangeEvent) => {
+    setCategory(event.target.value as string);
+  };
+
+  const handleContent = (event: any) => {
+    setContent(event.target.value as string);
   };
 
   const updateImagePreviews = (files: FileList) => {
@@ -70,7 +80,7 @@ export default function ArticleForm({ username }: Props) {
               "Content-Type": "application/json",
               Authorization: `${accessToken}`,
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify({ category, content, artistUsername }),
           }
         );
         const articleResp = await articleResponse.json();
@@ -103,15 +113,14 @@ export default function ArticleForm({ username }: Props) {
         }
 
         toast.success("글 작성 성공");
-        setFormData({
-          category: "",
-          content: "",
-          artistUsername: username,
-        });
+
         setImageFiles(null);
         setImagePreviews([]);
+        setContent("");
+        setCategory("");
 
         await router.push(`/${username}/community`);
+        
       } catch (error) {
         console.error("글 작성 오류:", error);
       }
@@ -123,38 +132,44 @@ export default function ArticleForm({ username }: Props) {
     return () => {
       form.removeEventListener("submit", handleSubmit);
     };
-  }, [router, username, formData, imageFiles]);
+  }, [router, username, imageFiles, artistUsername, content, category]);
 
   return (
-    <div className="container bg-gray-light dark:bg-gray-800 w-full">
-      <div className="card card-body">
+    <div>
+      <Card variant="outlined" sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
         <form id="articleForm">
           <div className="mt-5">
-            <select
-              className="select select-bordered w-full max-w-xs text-primary-dark dark:text-primary bg-base-200 dark:bg-gray-600 ms-3"
-              name="category"
-              required
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option value="" disabled defaultValue={''}>
-                카테고리를 선택하세요
-              </option>
-              <option value="공지사항">공지사항</option>
-              <option value="홍보">홍보</option>
-              <option value="소통">소통</option>
-            </select>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl sx={{ width: 300, margin: 1 }}>
+                <InputLabel id="demo-simple-select-label">카테고리</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={category}
+                  label="Category"
+                  onChange={handleCategory}
+                >
+                  <MenuItem value={"공지사항"}>공지사항</MenuItem>
+                  <MenuItem value={"홍보"}>홍보</MenuItem>
+                  <MenuItem value={"소통"}>소통</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <FormControl sx={{ width: 600, margin: 1 }}>
+              <TextField
+                color="warning"
+                id="content"
+                name="content"
+                label="내용"
+                multiline
+                rows={4}
+                value={content}
+                onChange={handleContent}
+                defaultValue="내용을 입력하세요"
+              />
+            </FormControl>
           </div>
           <div className="flex items-center mt-5">
-            <textarea
-              className="textarea textarea-bordered w-8/12 text-primary-dark dark:text-primary bg-base-200 dark:bg-gray-600 ms-3"
-              name="content"
-              id="content"
-              placeholder="내용을 입력하세요"
-              required
-              value={formData.content}
-              onChange={handleChange}
-            />
             <input
               type="hidden"
               name="artistUsername"
@@ -162,34 +177,40 @@ export default function ArticleForm({ username }: Props) {
               value={username}
             />
           </div>
-          <div className="mt-5">
+          <div>
             <input
               className="ms-3"
               type="file"
               id="imageUpload"
               name="imageUpload"
               accept="image/*"
-              multiple 
+              multiple
               onChange={handleImageChange}
             />
           </div>
           <div className="flex items-center">
-          {imagePreviews.map((preview, index) => (
-            <div key={index}>
-              <Image src={preview} width={200} height={200} alt={`Image ${index + 1}`} />
-            </div>
-          ))}
+            {imagePreviews.map((preview, index) => (
+              <div key={index}>
+                <Image
+                  src={preview}
+                  width={200}
+                  height={200}
+                  alt={`Image ${index + 1}`}
+                />
+              </div>
+            ))}
           </div>
           <div className="flex items-center mt-5">
-            <button
-              className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost ms-3"
+            <Button
+              variant="contained"
+              sx={{ color: "primary.main" }}
               type="submit"
             >
               작성완료
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }

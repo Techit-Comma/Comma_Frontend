@@ -30,7 +30,7 @@ const CreditLogs = () => {
           description="금액을 선택하세요"
           isOpen={isOpen}
         >
-          <ChargeCredit />
+          <ChargeCredit onChange={closeModal} />
         </Modal>
       </div>
     </div>

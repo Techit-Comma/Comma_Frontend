@@ -4,6 +4,25 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import axiosClient from "@/libs/axiosClient";
 import Image from "next/image";
+import {
+  Avatar,
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Container,
+  IconButton,
+  Paper,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
+import React from "react";
+import Carousel from "react-material-ui-carousel";
+import ProfileButton from "@/components/ProfileButton";
+import { useRouter } from "next/navigation";
+import Comments from "./Comments";
 
 interface Props {
   username: string;
@@ -14,8 +33,8 @@ const ArticleList = ({ username }: Props) => {
   const [articleImages, setArticleImages] = useState(new Map());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedButton, setSelectedButton] = useState("");
-  const [currentCategory, setCurrentCategory] = useState("");
+  const [category, setCategory] = React.useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     loadArticles("");
@@ -44,12 +63,6 @@ const ArticleList = ({ username }: Props) => {
     }
   };
 
-  const selectButton = (category: any) => {
-    setSelectedButton(category);
-    setCurrentCategory(category);
-    loadArticles(category);
-  };
-
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -62,49 +75,52 @@ const ArticleList = ({ username }: Props) => {
     }
   };
 
+  const handleAlignment = (
+    event: React.MouseEvent<HTMLElement>,
+    newCategory: string
+  ) => {
+    setCategory(newCategory);
+    loadArticles(newCategory);
+  };
+
   return (
-    <div className="container my-4 space-y-4">
-      <div className="flex justify-center">
-        <button
-          className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost w-2/12 {selectedButton ===
-			''
-				? 'btn-disabled'
-				: ''}"
-          onClick={() => selectButton("")}
+    <Container>
+      <Box component="section" p={2} display="flex" justifyContent="center">
+        <ToggleButtonGroup
+          value={category}
+          fullWidth
+          exclusive
+          color="primary"
+          onChange={handleAlignment}
+          aria-label="cagtegory"
+          sx={{ width: "70%" }}
         >
-          전체
-        </button>
-        <div className="divider divider-horizontal" />
-        <button
-          className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost w-2/12 {selectedButton ===
-			'공지사항'
-				? 'btn-disabled'
-				: ''}"
-          onClick={() => selectButton("공지사항")}
-        >
-          공지사항
-        </button>
-        <div className="divider divider-horizontal" />
-        <button
-          className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost w-2/12 {selectedButton ===
-			'홍보'
-				? 'btn-disabled'
-				: ''}"
-          onClick={() => selectButton("홍보")}
-        >
-          홍보
-        </button>
-        <div className="divider divider-horizontal" />
-        <button
-          className="btn dark:btn-primary hover:btn-primary dark:hover:btn-ghost w-2/12 {selectedButton ===
-			'소통'
-				? 'btn-disabled'
-				: ''}"
-          onClick={() => selectButton("소통")}
-        >
-          소통
-        </button>
-      </div>
+          <ToggleButton value="" className="text text-white" aria-label="all">
+            전체
+          </ToggleButton>
+          <ToggleButton
+            value="공지사항"
+            className="text text-white"
+            aria-label="notice"
+          >
+            공지사항
+          </ToggleButton>
+          <ToggleButton
+            value="홍보"
+            className="text text-white"
+            aria-label="advertisement"
+          >
+            홍보
+          </ToggleButton>
+          <ToggleButton
+            value="소통"
+            className="text text-white"
+            aria-label="communication"
+          >
+            소통
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
 
       {articles.length === 0 && (
         <div className="flex justify-center">
@@ -115,26 +131,48 @@ const ArticleList = ({ username }: Props) => {
       )}
 
       {articles.map((article: any) => (
-        <div
-          key={article.id}
-          className="card w-auto bg-gray-light dark:bg-gray-800 shadow-xl"
-        >
-          {article.content}
-          <div className="flex items-center">
-            {articleImages.has(article.id) &&
-              articleImages
-                .get(article.id)
-                .map((image: any, index: number) => (
-                  <Image
-                    key={index}
-                    src={image}
-                    width={300}
-                    height={300}
-                    alt={"picture"}
-                  />
-                ))}
-          </div>
-        </div>
+        <Box key={article.id} p={2}>
+          <Card sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
+            <CardHeader
+              avatar={
+                <ProfileButton
+                  onClick={() => router.push(`/${username}`)}
+                  className="w-10 h-10"
+                  profileImageUrl={article.userProfile}
+                ></ProfileButton>
+              }
+              action={<IconButton aria-label="settings"></IconButton>}
+              title={username}
+              subheader={article.createDate}
+            />
+            <Carousel>
+              {articleImages.has(article.id) &&
+                articleImages
+                  .get(article.id)
+                  .map((image: any, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-center"
+                    >
+                      <Paper elevation={0}>
+                        <Image
+                          height={450}
+                          width={450}
+                          src={image}
+                          alt="Paella dish"
+                        />
+                      </Paper>
+                    </div>
+                  ))}
+            </Carousel>
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
+                {article.content}
+              </Typography>
+            </CardContent>
+            <Comments _articleId={article.id} />
+          </Card>
+        </Box>
       ))}
 
       <div className="join flex justify-center">
@@ -165,7 +203,7 @@ const ArticleList = ({ username }: Props) => {
           </button>
         )}
       </div>
-    </div>
+    </Container>
   );
 };
 

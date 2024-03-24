@@ -65,8 +65,8 @@ const UserProfile = ({ username }: Props) => {
       />
       <div className="flex-col ms-10">
         <p className="text text-5xl">{username}</p>
-        <Button variant="contained">후원하기</Button>
-        <Button variant="contained">팔로우</Button>
+        <Button variant="outlined" color="primary" >후원하기</Button>
+        <Button variant="outlined" color="warning" className="ms-2">팔로우</Button>
       </div>
     </div>
   );

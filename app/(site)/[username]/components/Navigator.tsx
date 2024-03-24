@@ -1,20 +1,23 @@
-'use client';
+"use client";
 
-import { Button } from "@mui/material";
+import { Button, ButtonGroup, Divider } from "@mui/material";
 
-interface Props{
-    username: string
+interface Props {
+  username: string;
 }
 
-const Navigator = ({username}: Props) => {
+const Navigator = ({ username }: Props) => {
+  return (
+    <div className="flex item-center">
+        <Button href={`/${username}`} sx={{ color: 'white' }} className="text text-xl ms-3">
+          홈
+        </Button>
+        <Divider orientation="vertical" variant="middle" flexItem sx={{ backgroundColor: 'white' }} />
+        <Button href={`/${username}/community`} sx={{ color: 'white' }}  className="text text-xl ms-3">
+          커뮤니티
+        </Button>
+    </div>
+  );
+};
 
-    return (
-        <div className="flex item-center">
-            <Button href={`/${username}`} className="text text-xl">홈</Button>
-            <Button href={`/${username}/community`} className="text text-xl">커뮤니티</Button>
-        </div>
-
-    );
-}
-
-export default Navigator; 
+export default Navigator;
