@@ -5,6 +5,8 @@ import usePlayer from '@/hooks/usePlayer'
 import useLoadSongUrl from '@/hooks/useLoadSongUrl'
 import PlayerContent from './PlayerContent'
 import {Song, AlbumData} from "@/types";
+import {useEffect} from "react";
+import axiosClient from "@/libs/axiosClient";
 
 interface PlayerProps {
     albumData: AlbumData | undefined
@@ -14,6 +16,10 @@ export const Player = () => {
     const player = usePlayer();
     const activeAlbum = player.activeAlbum;
     const songUrl = player.activeAlbum?.fileUrl;
+
+    useEffect(() => {
+        addStreamingCount().then(r => console.log("as"));
+    }, [activeAlbum]);
 
     const convertAlbumDataToSong = (albumData: AlbumData): Song => {
         return {
@@ -25,6 +31,15 @@ export const Player = () => {
             image_path: albumData.imgUrl,
         };
     };
+
+    async function addStreamingCount() {
+        try{
+            if(activeAlbum != null)
+            await axiosClient.post(`/album/${activeAlbum?.id}/streaming`,activeAlbum?.id);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     if(!songUrl || !activeAlbum){
         return null

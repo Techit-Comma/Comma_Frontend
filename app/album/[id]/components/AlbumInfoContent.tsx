@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     chip: {
         color: 'black !important',
         backgroundColor: 'whitesmoke !important',
-        width: '100px',
+        width: '140px',
     },
     Typography: {
         color: 'white',
@@ -59,7 +59,7 @@ export const AlbumInfoContent = ({album}:Props) => {
                         </Box>
                         <Stack className="m-5" direction="row" spacing={1}>
                             {/*<Chip className={classes.chip} avatar={<Avatar>C</Avatar>} label={`Composer [ ${albumData?.artistNickname} ]`} />*/}
-                            <Chip className={classes.chip} label={album?.permit ? '무료' : '유료'}/>
+                            <Chip className={classes.chip} label={album?.permit ? "유료 / " + album.price + "원" : '무료'}/>
                             <Chip className={classes.chip} label={album?.genre}/>
                         </Stack>
                     </Box>
