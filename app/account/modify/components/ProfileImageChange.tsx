@@ -3,7 +3,7 @@ import { userInfoState } from "@/providers/RecoilContextProvider";
 import { UserInfos } from "@/types";
 import { Box, Button } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
@@ -13,6 +13,10 @@ function ProfileImageChange() {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(
     userInfos.profileImageUrl
   );
+
+  useEffect(() => {
+    setPreviewUrl(userInfos.profileImageUrl);
+  }, [userInfos.profileImageUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
