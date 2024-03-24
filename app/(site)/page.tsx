@@ -52,9 +52,9 @@ export default function Home() {
 
   async function getTop10Albums() {
     try {
-      const response = await axiosClient.get(`/album/list/top10Albums`)
+      const response = await axiosClient.get(`/album/streamingTop10Albums`)
       const responseData = await response.data.data;
-      setRecommendAlbums(responseData);
+      setTop10Albums(responseData);
     } catch (error) {
       console.error('앨범 목록을 가져올 수 없습니다.', error);
     }
@@ -62,9 +62,9 @@ export default function Home() {
 
   async function getRecommendAlbums() {
     try {
-      const response = await axiosClient.get(`/album/list/recommendAlbums`)
+      const response = await axiosClient.get(`/album/recommendAlbum`)
       const responseData = await response.data.data;
-      setTop10Albums(responseData);
+      setRecommendAlbums(responseData);
     } catch (error) {
       console.error('앨범 목록을 가져올 수 없습니다.', error);
     }
@@ -73,11 +73,8 @@ export default function Home() {
   useEffect(() => {
     const getAlbums = async () => {
       await getNewAlbums();
-      // await getTop10Albums();
-
-      if (isLogin) {
-        await getRecommendAlbums();
-      }
+      await getTop10Albums();
+      await getRecommendAlbums();
     }
 
     getAlbums();
@@ -103,7 +100,14 @@ export default function Home() {
             </div>
           </div>
       ) : (
-          <div></div>
+          <div className="mt-2 mb-7 px-6">
+            <div className="fle justify-between items-center">
+              <h1 className="text-white text-2xl font-semibold">추천 곡</h1>
+            </div>
+            <div>
+              <PageContent albums={recommendAlbums}/>
+            </div>
+          </div>
       )}
       <div className="mt-2 mb-7 px-6">
         <div className="fle justify-between items-center">
