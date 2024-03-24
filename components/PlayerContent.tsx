@@ -1,5 +1,5 @@
 'use client'
-import { Song } from "@/types";
+import {AlbumData, Song} from "@/types";
 import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
 import {BsPauseFill,BsPlayFill} from 'react-icons/bs'
@@ -13,11 +13,10 @@ import {IoMdClose} from "react-icons/io";
 import AddPlaylistButton from "@/components/AddPlaylistButton";
 
 interface Props{
-    song: Song;
-    songUrl: string;
+    album: AlbumData;
 }
 
-const PlayerContent = ({song, songUrl}:Props) => {
+const PlayerContent = ({album}:Props) => {
     const player = usePlayer();
     const [volume, setVolume] = useState(0.2);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -30,7 +29,7 @@ const PlayerContent = ({song, songUrl}:Props) => {
     const VolumeIcon = volume===0 ? HiSpeakerXMark:HiSpeakerWave
 
     // m3u8 URL 변환
-    const m3u8Url = makeCdnUrl(songUrl); // 여기서 songUrl은 변환하기 전의 원본 URL
+    const m3u8Url = makeCdnUrl(album?.fileUrl); // 여기서 songUrl은 변환하기 전의 원본 URL
 
     //Audio
     function makeCdnUrl(filePath: string) {
@@ -146,9 +145,9 @@ const PlayerContent = ({song, songUrl}:Props) => {
             <div className="grid grid-cols-2 md:grid-cols-3 h-full px-4 pt-2">
                 <div className="flex w-full justify-start">
                     <div className="flex items-center gap-x-4">
-                        <MediaItem data={song}/>
-                        <LikeButton songId={song.id}/>
-                        <AddPlaylistButton songId={song.id}/>
+                        <MediaItem data={album}/>
+                        <LikeButton songId={album?.id}/>
+                        <AddPlaylistButton album={album}/>
                     </div>
                 </div>
                 <div

@@ -32,7 +32,7 @@ const PlaylistContent = ({albums}:Props) => {
             {albums?.map((album)=>(
                 <div className="flex items-center gap-x-4 w-full" key={album.id}>
                     <div className="flex-1">
-                        <MediaItem onClick={(id)=>onPlay(id)} data={album}/>
+                        <MediaItem onClick={(id)=>onPlay(album)} data={album}/>
                     </div>
                     <LikeButton songId={album.id}/>
                 </div>
