@@ -15,14 +15,31 @@ export const loginState = atom({
 });
 
 export const userInfoState : RecoilState<UserInfos> = atom({
-  key: "username",
+  key: "userInfo",
   default: {
     memberId: "0",
     username: "",
     nickname: "",
+    email: "",
     profileImageUrl: "",
   }
 });
+
+export const filePathState = atom({
+  key: 'filePathState',
+  default: '',
+});
+
+export const imagePathState = atom({
+  key: 'imagePathState',
+  default: '',
+});
+
+export const searchDataState = atom({
+  key: 'searchDataState',
+  default: '',
+});
+
 export default function RecoilContextProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;
 }
