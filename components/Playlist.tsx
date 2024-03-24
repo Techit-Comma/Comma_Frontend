@@ -4,16 +4,12 @@ import {TbPlaylist} from 'react-icons/tb'
 import {AiOutlinePlus} from 'react-icons/ai'
 import useAuthModal from '@/hooks/useAuthModal'
 import useCreatePlaylistModal from '@/hooks/useCreatePlaylistModal'
-import {PlaylistItem, Song} from '@/types'
+import {PlaylistItem} from '@/types'
 import {useRecoilState} from "recoil";
 import {loginState, playlistDataState, playlistState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/navigation";
-
-interface Props{
-    songs:Song[]
-}
 
 const Playlist = () => {
 

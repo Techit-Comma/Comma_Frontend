@@ -1,6 +1,6 @@
 import useLoadImage from "@/hooks/useLoadImage"
 import usePlayer from "@/hooks/usePlayer"
-import {AlbumData, Song} from "@/types"
+import {AlbumData} from "@/types"
 import Image from "next/image"
 import {useRouter} from "next/navigation";
 

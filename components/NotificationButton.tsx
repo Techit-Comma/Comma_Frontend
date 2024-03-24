@@ -50,8 +50,7 @@ function NotificationButton() {
       const responseData = response.data;
       setNotificationList(responseData);
     } catch (error) {
-      toast.error('알림 정보를 가져올 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
@@ -61,8 +60,7 @@ function NotificationButton() {
       const responseData = response.data;
       setNotificationList(responseData);
     } catch (error) {
-      toast.error('알림 정보를 가져올 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
@@ -72,8 +70,7 @@ function NotificationButton() {
         "notificationId": notificationId,
       });
     } catch (error) {
-      toast.error('알림을 읽을 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
