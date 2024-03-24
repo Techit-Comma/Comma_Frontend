@@ -19,7 +19,7 @@ interface Props{
 const PlayerContent = ({album}:Props) => {
     const player = usePlayer();
     const [volume, setVolume] = useState(0.2);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(true);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const [currentTime, setCurrentTime] = useState(0);
@@ -132,8 +132,8 @@ const PlayerContent = ({album}:Props) => {
             setVolume(0);
             if (audioRef.current) audioRef.current.volume = 0;
         } else {
-            setVolume(1);
-            if (audioRef.current) audioRef.current.volume = 1;
+            setVolume(0.5);
+            if (audioRef.current) audioRef.current.volume = 0.5;
         }
     };
 
@@ -185,7 +185,7 @@ const PlayerContent = ({album}:Props) => {
                     <IoMdClose/>
                 </button>
                 <audio ref={audioRef} onLoadedMetadata={e => setDuration(e.target.duration)}
-                       onTimeUpdate={e => setCurrentTime(e.target.currentTime)} hidden/>
+                       onTimeUpdate={e => setCurrentTime(e.target.currentTime)} onEnded={onPlayNext} hidden/>
             </div>
         </div>
     )
