@@ -36,6 +36,10 @@ export const followDataState : RecoilState<FollowItem[]> = atom({
   default: [],
 });
 
+export const followState = atom({
+  key: 'followState',
+  default: false,
+});
 
 export const playlistDataState : RecoilState<PlaylistItem[]> = atom({
   key: 'playlistDataState',

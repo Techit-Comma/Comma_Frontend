@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { Button } from "@mui/material";
 import axiosClient from "@/libs/axiosClient";
 import useDonationModal from "@/hooks/useDonationModal";
-import {followDataState, userInfoDataState} from "@/providers/RecoilContextProvider";
+import {followDataState, followState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {FollowItem} from "@/types";
 import {useRecoilState} from "recoil";
 
@@ -19,7 +19,9 @@ const UserProfile = ({ username }: Props) => {
   const donationModal = useDonationModal();
   const [followData, setFollowData] = useRecoilState<FollowItem[]>(followDataState);
   const [userInfo, setUserInfo] = useRecoilState(userInfoDataState)
-  const [followState, setFollowState] = useState(false);
+  const [followUpdate, setFollowUpdate] = useRecoilState(followState);
+
+  const [isFollow, setIsFollow] = useState(false);
   const [myPageState, setMyPageState] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -43,7 +45,7 @@ const UserProfile = ({ username }: Props) => {
     userInfo.username === username ? setMyPageState(true) : setMyPageState(false);
     if (!myPageState) {
       followData.map((data) =>
-          data.username === username ? setFollowState(true) : setFollowState(false));
+          data.username === username ? setIsFollow(true) : setIsFollow(false));
     }
 
   }, [username]);
@@ -57,7 +59,8 @@ const UserProfile = ({ username }: Props) => {
       toast.error(`정보를 불러오는 데 실패하였습니다. (${errorObj.message})`);
     }
 
-    setFollowState(true);
+    setIsFollow(true);
+    setFollowUpdate(true);
   }
 
   async function unFollow() {
@@ -69,7 +72,8 @@ const UserProfile = ({ username }: Props) => {
       toast.error(`정보를 불러오는 데 실패하였습니다. (${errorObj.message})`);
     }
 
-    setFollowState(false);
+    setIsFollow(false);
+    setFollowUpdate(true);
   }
 
 
@@ -97,7 +101,7 @@ const UserProfile = ({ username }: Props) => {
               <Button variant="outlined" color="primary" onClick={donationModal.onOpen}>
                 후원하기
               </Button>
-              {followState ? (
+              {isFollow ? (
                   <Button variant="outlined" color="warning" className="ms-2" onClick={() => unFollow()}>
                     언팔로우
                   </Button>
