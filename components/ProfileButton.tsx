@@ -7,6 +7,7 @@ import {faGear, faUser} from "@fortawesome/free-solid-svg-icons";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement>{
     profileImageUrl?: string;
+    username?: string;
 }
 
 const ProfileButton = forwardRef<HTMLButtonElement, Props>(({
@@ -15,6 +16,7 @@ const ProfileButton = forwardRef<HTMLButtonElement, Props>(({
     disabled,
     type = 'button',
     profileImageUrl,
+    username,
     ...props
 },ref)=>{
   const router = useRouter()
@@ -67,7 +69,7 @@ const ProfileButton = forwardRef<HTMLButtonElement, Props>(({
                 },
               }}
           >
-            <ListItem button className="w-full m-2" alignItems="center">
+            <ListItem button className="w-full m-2" alignItems="center" onClick={()=>router.push(`/${username}`)}>
               <div>
                 <FontAwesomeIcon icon={faUser} className="mr-2.5"/> 프로필
               </div>
