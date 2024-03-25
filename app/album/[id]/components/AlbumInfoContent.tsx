@@ -3,27 +3,30 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Avatar, Box, Grid, Typography} from "@material-ui/core";
 import {useRecoilState} from "recoil";
-import {baseUrl} from "@/providers/RecoilContextProvider";
+import {baseUrl, userInfoState} from "@/providers/RecoilContextProvider";
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
-import {Chip, Stack} from "@mui/material";
-import {AlbumData} from "@/types";
+import {Chip, IconButton, Stack} from "@mui/material";
+import {AlbumData, UserInfos} from "@/types";
 import Header from "@/components/Header";
 import {Player} from "@/components/Player";
 import useOnPlay from "@/hooks/useOnPlay";
 import PlayButton from "@/components/PlayButton";
 import {FaPlay} from "react-icons/fa";
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import Button from '@mui/material/Button';
 
 const useStyles = makeStyles({
     // 기존 스타일 유지
     chip: {
         color: 'black !important',
         backgroundColor: 'whitesmoke !important',
-        width: '100px',
+        width: '140px',
     },
     Typography: {
         color: 'white',
         fontWeight: 'bold',
+        marginBottom: '20px',
     },
     // 재생 버튼 스타일 추가
     playButton: {
@@ -42,9 +45,10 @@ interface Props {
 
 export const AlbumInfoContent = ({album}:Props) => {
     const onPlay = useOnPlay([album]);
-
     const classes = useStyles();
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
 
+    // @ts-ignore
     return (
         <div>
             <Grid container spacing={3}>
@@ -59,7 +63,7 @@ export const AlbumInfoContent = ({album}:Props) => {
                         </Box>
                         <Stack className="m-5" direction="row" spacing={1}>
                             {/*<Chip className={classes.chip} avatar={<Avatar>C</Avatar>} label={`Composer [ ${albumData?.artistNickname} ]`} />*/}
-                            <Chip className={classes.chip} label={album?.permit ? '무료' : '유료'}/>
+                            <Chip className={classes.chip} label={album?.permit ? "유료 / " + album.price + "원" : '무료'}/>
                             <Chip className={classes.chip} label={album?.genre}/>
                         </Stack>
                     </Box>
@@ -72,6 +76,18 @@ export const AlbumInfoContent = ({album}:Props) => {
                     <Typography className={classes.Typography} variant="h5" gutterBottom>
                         {album?.licenseDescription}
                     </Typography>
+
+                    {userInfos.nickname != album?.artistNickname && userInfos.username != null && (
+                    <Button
+                        size="large"
+                        variant="contained"
+                        startIcon={<ShoppingCartIcon />}
+                        style={{ width: 300 , fontWeight: 'bold'}}
+                        onClick={() => {toast.error("크레딧이 부족합니다.")}}>
+                        구매하기
+                    </Button>
+                        )}
+
                 </Grid>
             </Grid>
             <div className="absolute bottom-8 right-10">

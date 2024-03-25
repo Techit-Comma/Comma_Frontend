@@ -7,6 +7,7 @@ import CreatePlaylistModal from '@/components/CreatePlaylistModal'
 import AlbumReleaseModal from "@/components/Album/AlbumReleaseModal";
 import PlaylistModal from "@/components/PlaylistModal";
 import DonationModal from "@/components/DonationModal";
+import AlbumDeleteModal from "@/components/Album/AlbumDeleteModal";
 
 const ModalProvider = () => {
 
@@ -27,6 +28,7 @@ const ModalProvider = () => {
           <DonationModal/>
           <CreatePlaylistModal/>
           <AlbumReleaseModal/>
+          <AlbumDeleteModal/>
         </>
     )
 }
