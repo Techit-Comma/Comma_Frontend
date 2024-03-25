@@ -15,7 +15,7 @@ export default async function Home({
       <Header>
         <UserProfile username={username} />
         <div className="mt-5">
-          <Navigator username={username} />
+          <Navigator tabValue="홈" username={username} />
         </div>
       </Header>
     </div>

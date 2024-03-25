@@ -7,6 +7,7 @@ import {
   Chip,
   Divider,
   FormControl,
+  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -22,6 +23,7 @@ const Comments = ({ _articleId }: Props) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const articleId = _articleId;
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleContent = (event: any) => {
     setContent(event.target.value as string);
@@ -58,7 +60,6 @@ const Comments = ({ _articleId }: Props) => {
       setContent("");
       toast.success("댓글이 작성되었습니다.");
 
-      // 댓글이 추가되면 댓글 목록을 다시 불러옴
       loadComments(articleId);
     } catch (error) {
       const errorObj = error as Error;
@@ -71,35 +72,51 @@ const Comments = ({ _articleId }: Props) => {
     addComment();
   };
 
+  const handleFocus = () => {
+    setIsFocused(true); // 텍스트 필드가 포커스를 받으면 포커스 여부를 true로 설정
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false); // 텍스트 필드에서 포커스가 벗어나면 포커스 여부를 false로 설정
+  };
+
   return (
     <div>
       <Divider>댓글</Divider>
-
-      <form onSubmit={handleSubmit}>
-        <FormControl fullWidth>
-          <TextField
-            color="warning"
-            id="content"
-            name="content"
-            label="내용"
-            multiline
-            rows={1}
-            value={content}
-            onChange={handleContent}
-            defaultValue="내용을 입력하세요"
-          />
-        </FormControl>
-        <Button
-          variant="contained"
-          sx={{ color: "primary.main" }}
-          type="submit"
-        >
-          댓글 작성하기
-        </Button>
-      </form>
+      <Box>
+        <form onSubmit={handleSubmit}>
+          <FormControl fullWidth>
+            <TextField
+              color="warning"
+              id="content"
+              name="content"
+              label="댓글을 작성해보세요"
+              multiline
+              rows={1}
+              value={content}
+              onChange={handleContent}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              defaultValue="내용을 입력하세요"
+            />
+          </FormControl>
+          {isFocused && (
+            <Box marginTop={1}>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="submit"
+              >
+                댓글 작성하기
+              </Button>
+            </Box>
+          )}
+        </form>
+      </Box>
       {comments.map((comment: any, index: number) => (
         <div key={comment.commentId}>
           <Box
+            margin={1}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -118,7 +135,7 @@ const Comments = ({ _articleId }: Props) => {
               variant="outlined"
             />
           </Box>
-          {index < comments.length - 1 && <Divider variant="middle"  />}
+          {index < comments.length - 1 && <Divider variant="middle" />}
         </div>
       ))}
     </div>

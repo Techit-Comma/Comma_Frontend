@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Button, Pagination } from "@mui/material";
+import { Pagination, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosClient from "@/libs/axiosClient";
 import ProfileButton from "@/components/ProfileButton";
@@ -26,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "./Modal";
 import EditArticle from "./EditArticle";
+import { ThemeProvider } from "@emotion/react";
 
 interface Props {
   username: string;
@@ -100,7 +101,14 @@ const ArticleList = ({ username }: Props) => {
     setCurrentPage(value);
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', // 다크 모드 사용 설정
+    },
+  });
+  
   return (
+    <ThemeProvider theme={theme}>
     <Container>
       <Box component="section" p={2} display="flex" justifyContent="center">
         <ToggleButtonGroup
@@ -247,6 +255,7 @@ const ArticleList = ({ username }: Props) => {
         />
       </Box>
     </Container>
+    </ThemeProvider>
   );
 };
 

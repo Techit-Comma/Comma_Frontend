@@ -12,6 +12,8 @@ import {
   Input,
   InputLabel,
   Select,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 
 interface ApplyWithdrawProps {
@@ -62,61 +64,73 @@ const ApplyWithdraw: React.FC<ApplyWithdrawProps> = ({ onCloseModal }) => {
     };
   }, [onCloseModal, router]);
 
+  const theme = createTheme({
+    palette: {
+      mode: "dark", // 다크 모드 사용 설정
+    },
+  });
+
   return (
-    <Box sx={{ width: 400, height: 300}}>
-      <form id="withdrawForm">
-        <Box display="flex" flexDirection="column" margin={2} sx={{backgroundColor: "#e0e0e0" }}>
-          <Box margin={2}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="bankName">은행명</InputLabel>
-              <Select
-                native
-                inputProps={{
-                  name: "bankName",
-                  id: "bankName",
-                }}
-                required
-              >
-                <option value="" disabled selected>
-                  은행을 선택하세요
-                </option>
-                <option value="신한은행">신한은행</option>
-                <option value="국민은행">국민은행</option>
-                <option value="하나은행">하나은행</option>
-                <option value="우리은행">우리은행</option>
-              </Select>
-            </FormControl>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ width: 400, height: 300 }}>
+        <form id="withdrawForm">
+          <Box
+            display="flex"
+            flexDirection="column"
+            margin={2}
+          >
+            <Box margin={2}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="bankName">은행명</InputLabel>
+                <Select
+                  native
+                  inputProps={{
+                    name: "bankName",
+                    id: "bankName",
+                  }}
+                  required
+                >
+                  <option value="" disabled selected>
+                    은행을 선택하세요
+                  </option>
+                  <option value="신한은행">신한은행</option>
+                  <option value="국민은행">국민은행</option>
+                  <option value="하나은행">하나은행</option>
+                  <option value="우리은행">우리은행</option>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box margin={2}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="bankAccountNo">계좌번호</InputLabel>
+                <Input
+                  id="bankAccountNo"
+                  type="text"
+                  placeholder="계좌번호를 입력하세요 ('-' 없이)"
+                  required
+                />
+              </FormControl>
+            </Box>
+            <Box margin={2}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="withdrawAmount">출금신청액</InputLabel>
+                <Input
+                  id="withdrawAmount"
+                  type="text"
+                  placeholder="금액을 입력하세요"
+                  required
+                />
+              </FormControl>
+            </Box>
           </Box>
-          <Box margin={2}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="bankAccountNo">계좌번호</InputLabel>
-              <Input
-                id="bankAccountNo"
-                type="text"
-                placeholder="계좌번호를 입력하세요 ('-' 없이)"
-                required
-              />
-            </FormControl>
+          <Box display="flex" justifyContent="center">
+            <Button variant="outlined" color="warning" type="submit">
+              출금 신청하기
+            </Button>
           </Box>
-          <Box margin={2}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="withdrawAmount">출금신청액</InputLabel>
-              <Input
-                id="withdrawAmount"
-                type="text"
-                placeholder="금액을 입력하세요"
-                required
-              />
-            </FormControl>
-          </Box>
-        </Box>
-        <Box display="flex" justifyContent="center">
-          <Button variant="outlined" color="warning" type="submit">
-            출금 신청하기
-          </Button>
-        </Box>
-      </form>
-    </Box>
+        </form>
+      </Box>
+    </ThemeProvider>
   );
 };
 

@@ -16,9 +16,11 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
+  createTheme,
 } from "@mui/material";
 import React from "react";
 import axiosClient from "@/libs/axiosClient";
+import { ThemeProvider } from "@emotion/react";
 
 interface Props {
   username: string;
@@ -114,87 +116,96 @@ export default function ArticleForm({ username }: Props) {
     };
   }, [router, username, imageFiles, artistUsername, content, category]);
 
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', 
+    },
+  });
+
   return (
-    <div>
-      <Card
-        variant="outlined"
-        sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}
-        style={{ position: "relative", zIndex: 0 }}
-      >
-        <form id="articleForm">
-          <div className="mt-5">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl sx={{ width: 300, margin: 1 }}>
-                <InputLabel id="demo-simple-select-label">카테고리</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={category}
-                  label="Category"
-                  onChange={handleCategory}
-                >
-                  <MenuItem value={"공지사항"}>공지사항</MenuItem>
-                  <MenuItem value={"홍보"}>홍보</MenuItem>
-                  <MenuItem value={"소통"}>소통</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-            <FormControl sx={{ width: 600, margin: 1 }}>
-              <TextField
-                color="warning"
-                id="content"
-                name="content"
-                label="내용"
-                multiline
-                rows={4}
-                value={content}
-                onChange={handleContent}
-                defaultValue="내용을 입력하세요"
-              />
-            </FormControl>
-          </div>
-          <div className="flex items-center mt-5">
-            <input
-              type="hidden"
-              name="artistUsername"
-              id="artistUsername"
-              value={username}
-            />
-          </div>
-          <div>
-            <input
-              className="ms-3"
-              type="file"
-              id="imageUpload"
-              name="imageUpload"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-            />
-          </div>
-          <div className="flex items-center">
-            {imagePreviews.map((preview, index) => (
-              <div key={index}>
-                <Image
-                  src={preview}
-                  width={200}
-                  height={200}
-                  alt={`Image ${index + 1}`}
+    <ThemeProvider theme={theme}>
+      <div>
+        <Card
+          sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}
+          style={{ position: "relative", zIndex: 0 }}
+        >
+          <form id="articleForm">
+            <div className="mt-5">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl sx={{ width: 300, margin: 1 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    카테고리
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={category}
+                    label="Category"
+                    onChange={handleCategory}
+                  >
+                    <MenuItem value={"공지사항"}>공지사항</MenuItem>
+                    <MenuItem value={"홍보"}>홍보</MenuItem>
+                    <MenuItem value={"소통"}>소통</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <FormControl sx={{ width: 600, margin: 1 }}>
+                <TextField
+                  color="warning"
+                  id="content"
+                  name="content"
+                  label="내용"
+                  multiline
+                  rows={4}
+                  value={content}
+                  onChange={handleContent}
+                  defaultValue="내용을 입력하세요"
                 />
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center mt-5">
-            <Button
-              variant="contained"
-              sx={{ color: "primary.main" }}
-              type="submit"
-            >
-              작성완료
-            </Button>
-          </div>
-        </form>
-      </Card>
-    </div>
+              </FormControl>
+            </div>
+            <div className="flex items-center mt-5">
+              <input
+                type="hidden"
+                name="artistUsername"
+                id="artistUsername"
+                value={username}
+              />
+            </div>
+            <div>
+              <input
+                className="ms-3"
+                type="file"
+                id="imageUpload"
+                name="imageUpload"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+              />
+            </div>
+            <div className="flex items-center">
+              {imagePreviews.map((preview, index) => (
+                <div key={index}>
+                  <Image
+                    src={preview}
+                    width={200}
+                    height={200}
+                    alt={`Image ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center mt-5">
+              <Button
+                variant="outlined"
+                color="primary"
+                type="submit"
+              >
+                작성완료
+              </Button>
+            </div>
+          </form>
+        </Card>
+      </div>
+    </ThemeProvider>
   );
 }

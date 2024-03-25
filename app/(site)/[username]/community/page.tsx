@@ -25,7 +25,7 @@ export default function Home({
       <Header>
         <UserProfile username={username} />
         <div className="mt-5">
-          <Navigator username={username} />
+          <Navigator tabValue="커뮤니티" username={username} />
         </div>
       </Header>
       {loginedUser === username && <WriteArticle username={username} /> }
