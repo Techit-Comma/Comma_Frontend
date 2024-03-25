@@ -91,7 +91,7 @@ const UserProfile = ({ username }: Props) => {
         onLoad={handleImageLoad}
       />
       <div className="flex-col ms-10">
-        <p className="text text-5xl">{username}</p>
+        <p className="text text-5xl mb-5">{username}</p>
         {myPageState ? (
             <>
             </>

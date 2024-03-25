@@ -8,11 +8,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faGears, faLock, faCoins, faHandHoldingDollar} from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 
 const AccountContent = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [userInfo, setUserInfo] = useRecoilState(userInfoDataState);
 
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
@@ -33,6 +34,7 @@ const AccountContent = () => {
     const handleLogout = async () => {
         await LogoutProcess();
         setIsLogin(false);
+        setUserInfo({email: "", memberId: "0", nickname: "", profileImageUrl: "", username: ""});
         toast.success("로그아웃 되었습니다!");
         router.push("/");
     }
