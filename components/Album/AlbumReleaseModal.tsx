@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import {CheckAccessToken, GetCookie} from "@/libs/auth";
 import { useRecoilState } from 'recoil';
 import {useRouter} from "next/navigation";
+import axiosClient from "@/libs/axiosClient";
 const AlbumReleaseModal = () => {
     const {onClose, onOpen, isOpen} = useAlbumReleaseModal()
     const [step, setStep] = useState(0);
@@ -50,10 +51,21 @@ const AlbumReleaseModal = () => {
         if (res.ok) {
             const { data } = await res.json();
 
+            const encodedFilePath = encodeURIComponent(data.filePath);
+            axiosClient.get(`/streaming/status?filePath=${encodedFilePath}`)
+            .then(response => {
+                // 응답을 받아 이벤트 처리
+                setIsLoading(true);
+                handleEvent(response.data);
+            })
+            .catch(error => {
+                // 에러 처리
+                console.error(error);
+            });
+
             // Presigned URL로 파일 업로드
             const uploadRes = await fetch(data.uploadUrl, { method: 'PUT', body: file });
 
-            console.log(data);
             if (uploadRes.ok) {
                 if (statElement) statElement.innerHTML = '업로드 성공!';
                 toast.success('업로드 성공');
@@ -69,6 +81,14 @@ const AlbumReleaseModal = () => {
             if (statElement) statElement.innerHTML = 'Presigned URL을 받아오는 데 실패했습니다.';
             toast.error('Presigned URL 받아오기 실패');
             setIsLoading(false);
+        }
+    }
+
+    async function handleEvent(event) {
+        const statElement = document.getElementById('stat');
+        const data = JSON.parse(event.data);
+        if (data[1] === "COMPLETE") {
+            if (statElement) setIsLoading(true);
         }
     }
 

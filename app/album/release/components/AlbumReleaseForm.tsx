@@ -68,11 +68,6 @@ const AlbumReleaseForm = () => {
         }
     }, [isLoading, router]);
 
-    // useEffect(() => {
-    //     console.log('imagePathState changed:', imgPath);
-    //     console.log('filePathState changed:', filePath);
-    // }, [imgPath, filePath]);
-
     async function releaseSubmit()  {
         const formData = new FormData();
 
