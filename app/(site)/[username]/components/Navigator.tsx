@@ -9,6 +9,7 @@ interface Props {
   tabValue: string; 
 }
 
+
 const Navigator = ({ username, tabValue }: Props) => {
   const router = useRouter();
   const [value, setValue] = React.useState(tabValue); 
