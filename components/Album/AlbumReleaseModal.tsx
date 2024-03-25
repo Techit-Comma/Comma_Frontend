@@ -16,29 +16,21 @@ import {CheckAccessToken, GetCookie} from "@/libs/auth";
 import { useRecoilState } from 'recoil';
 import {useRouter} from "next/navigation";
 const AlbumReleaseModal = () => {
-    const {onClose, isOpen} = useAlbumReleaseModal()
+    const {onClose, onOpen, isOpen} = useAlbumReleaseModal()
     const [step, setStep] = useState(0);
     const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
     const [filePath, setFilePath] = useRecoilState(filePathState);
     const [imagePath, setImagePath] = useRecoilState(imagePathState);
 
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
-        // 로그인 상태 확인 로직
-        CheckAccessToken().then((loggedIn) => {
-            setIsLogin(loggedIn);
-            setIsLoading(false); // 로그인 상태 확인이 완료됨
-        });
-    }, []);
-
-    useEffect(() => {
-        if (!isLoading && !isLogin) {
+    const onChange = (open:boolean) => {
+        if(!open){
             onClose();
         }
-    }, [isLoading, router]);
+    }
 
     async function handleAudioUpload(file: File) {
         console.log('handleFileUpload called');
@@ -113,11 +105,6 @@ const AlbumReleaseModal = () => {
             if (statElement) statElement.innerHTML = '업로드 실패!';
             toast.error('업로드 실패');
             setIsLoading(false);
-        }
-    }
-
-    const onChange = (open:boolean) =>{
-        if(!open){
         }
     }
 

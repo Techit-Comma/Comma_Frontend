@@ -3,7 +3,7 @@
 import Header from "@/components/Header"
 import ListItem from "@/components/ListItem"
 import PageContent from "./components/PageContent"
-import {CheckAccessToken, getLoginState, oauthLogin} from "@/libs/auth";
+import {oauthLogin} from "@/libs/auth";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
 import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";

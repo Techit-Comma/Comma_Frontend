@@ -33,7 +33,6 @@ const UserProfile = ({ username }: Props) => {
 
         const data = await response.data;
         setProfileImage(data.data.profileImageUrl);
-        console.log(profileImage);
       } catch (error) {
         const errorObj = error as Error;
         toast.error(`정보를 불러오는 데 실패하였습니다. (${errorObj.message})`);

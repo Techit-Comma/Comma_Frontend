@@ -26,7 +26,6 @@ export default function Base({
   useEffect(() => {
     const getUserInfo = async () => {
       const userLoginState = await getLoginState();
-
       setIsLogin(await CheckAccessToken());
 
       if (userLoginState) {
@@ -34,8 +33,9 @@ export default function Base({
       }
     }
 
+    getUserInfo();
+
     if (isLogin || userInfoUpdate) {
-      getUserInfo();
       setUserInfoUpdate(false);
     }
   }, [isLogin, userInfoUpdate]);
@@ -44,10 +44,10 @@ export default function Base({
     <html lang="en">
       <body className={font.className}>
         <ToasterProvider/>
-        <ModalProvider/>
         <Sidebar>
           {children}
         </Sidebar>
+        <ModalProvider/>
         <Player/>
       </body>
     </html>

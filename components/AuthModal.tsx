@@ -12,7 +12,7 @@ import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {CheckAccessToken, getLoginState, Login} from "@/libs/auth";
+import {Login} from "@/libs/auth";
 import axiosClient from "@/libs/axiosClient";
 import {UserInfos} from "@/types";
 

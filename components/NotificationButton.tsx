@@ -84,7 +84,7 @@ function NotificationButton() {
 
 
   useEffect(() => {
-    getNotification().finally(() => setIsLoading(false));
+    getNotification();
     const pollingInterval = setInterval(() => {
       getNotificationToLongPolling();
     }, 600000);
