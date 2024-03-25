@@ -14,7 +14,7 @@ import axiosClient from "@/libs/axiosClient";
 
 export const revalidate = 0
 
-export default function Home() {
+export default function Main() {
   const router = useRouter()
   const [newAlbums, setNewAlbums] = useState<AlbumData[]>([]);
   const [top10Albums, setTop10Albums] = useState<AlbumData[]>([]);
@@ -78,7 +78,7 @@ export default function Home() {
     }
 
     getAlbums();
-  }, [isLogin]);
+  }, []);
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">

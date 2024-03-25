@@ -19,7 +19,6 @@ export default function Base({
 }: {
   children: React.ReactNode
 }) {
-  const userSongs = []
   const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
 
@@ -42,7 +41,7 @@ export default function Base({
       <body className={font.className}>
         <ToasterProvider/>
         <ModalProvider/>
-        <Sidebar songs={userSongs}>
+        <Sidebar>
           {children}
         </Sidebar>
         <Player/>

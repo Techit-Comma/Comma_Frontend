@@ -30,8 +30,9 @@ const AccountContent = () => {
         }
     }, [isLoading, router]);
 
-    const handleLogout =  async () => {
+    const handleLogout = async () => {
         await LogoutProcess();
+        setIsLogin(false);
         toast.success("로그아웃 되었습니다!");
         router.push("/");
     }
