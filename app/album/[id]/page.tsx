@@ -76,7 +76,7 @@ export default function AlbumInfoPage() {
                     <h1 className="text-white text-3xl font-semibold">앨범 정보</h1>
                     {!isLoading && albumData?.artistNickname === userInfos.nickname && (
                         <div>
-                            <IconButton color="primary" aria-label="edit">
+                            <IconButton color="primary" aria-label="edit" onClick={() => {toast.error("수정할 수 없습니다.")}}>
                                 <EditIcon fontSize="large"/>
                             </IconButton>
                             <IconButton color="secondary" aria-label="delete" onClick={handleDelete}>
