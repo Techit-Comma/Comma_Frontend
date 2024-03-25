@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { Button } from "@mui/material";
 import axiosClient from "@/libs/axiosClient";
 import useDonationModal from "@/hooks/useDonationModal";
-import {followDataState} from "@/providers/RecoilContextProvider";
+import {followDataState, userInfoState} from "@/providers/RecoilContextProvider";
 import {FollowItem} from "@/types";
 import {useRecoilState} from "recoil";
 
@@ -18,7 +18,9 @@ interface Props {
 const UserProfile = ({ username }: Props) => {
   const donationModal = useDonationModal();
   const [followData, setFollowData] = useRecoilState<FollowItem[]>(followDataState);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState)
   const [followState, setFollowState] = useState(false);
+  const [myPageState, setMyPageState] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -36,9 +38,12 @@ const UserProfile = ({ username }: Props) => {
     };
 
     fetchData();
+    userInfo.username === username ? setMyPageState(true) : setMyPageState(false);
 
-    followData.map((data) =>
-        data.username === username ? setFollowState(true) : setFollowState(false));
+    if (!myPageState) {
+      followData.map((data) =>
+          data.username === username ? setFollowState(true) : setFollowState(false));
+    }
 
   }, [username]);
 
@@ -83,17 +88,24 @@ const UserProfile = ({ username }: Props) => {
       />
       <div className="flex-col ms-10">
         <p className="text text-5xl">{username}</p>
-        <Button variant="outlined" color="primary" onClick={donationModal.onOpen}>
-          후원하기
-        </Button>
-        {followState ? (
-          <Button variant="outlined" color="warning" className="ms-2" onClick={() => unFollow()}>
-            언팔로우
-          </Button>
+        {myPageState ? (
+            <>
+            </>
         ) : (
-          <Button variant="outlined" color="success" className="ms-2" onClick={() => follow()}>
-            팔로우
-          </Button>
+            <>
+              <Button variant="outlined" color="primary" onClick={donationModal.onOpen}>
+                후원하기
+              </Button>
+              {followState ? (
+                  <Button variant="outlined" color="warning" className="ms-2" onClick={() => unFollow()}>
+                    언팔로우
+                  </Button>
+              ) : (
+                  <Button variant="outlined" color="success" className="ms-2" onClick={() => follow()}>
+                    팔로우
+                  </Button>
+              )}
+            </>
         )}
       </div>
     </div>
