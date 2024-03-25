@@ -6,19 +6,17 @@ import {BiSearch} from 'react-icons/bi'
 import Box from './Box'
 import SidebarItem from './SidebarItem'
 import Playlist from './Playlist'
-import { Song } from '@/types'
 import usePlayer from '@/hooks/usePlayer'
 import { twMerge } from 'tailwind-merge'
 import Follow from "@/components/Follow";
 
 interface Props{
     children: React.ReactNode;
-    songs: Song[]
 }
 
 const Sidebar: React.FC<Props> = ({children}) => {
     const player = usePlayer()
-    const pathname=usePathname();
+    const pathname= usePathname();
     const routes = useMemo(()=>[
         //I think this is just defining the urls for the home and search page
         //routes is an array 

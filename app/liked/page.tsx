@@ -1,11 +1,12 @@
 import Header from "@/components/Header";
 import Image from "next/image";
 import LikedContent from "./components/LikedContent";
+import {AlbumData} from "@/types";
 
 export const revalidate = 0;
 
 const Liked = async () => {
-    const songs = [];
+    const albums:AlbumData[] = [];
 
     return (
         <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -16,13 +17,13 @@ const Liked = async () => {
                             <Image fill src='/images/liked.png' alt='playlist' className="object-cover"/>
                         </div>
                         <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
-                            <p className="hidden md:block font-semibold text-sm">Playlist</p>
-                            <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">Liked Songs</h1>
+                            <p className="hidden md:block font-semibold text-sm m-2">Playlist</p>
+                            <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">좋아요 표시한 노래</h1>
                         </div>
                     </div>
                 </div>
             </Header>
-            <LikedContent songs={songs}/>
+            <LikedContent albums={albums}/>
         </div>
     )
 }

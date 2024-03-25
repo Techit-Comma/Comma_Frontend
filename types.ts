@@ -21,6 +21,13 @@ export type AlbumData = {
   price: number;
 };
 
+export type PlaylistItem = {
+  playlistId: number;
+  title: string;
+  producerUsername: string;
+  producerNickname: string;
+}
+
 export interface Product {
   id: string;
   active?: boolean;

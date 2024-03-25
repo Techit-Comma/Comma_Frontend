@@ -1,6 +1,6 @@
 'use client'
 
-import {AlbumData, Song} from "@/types"
+import {AlbumData} from "@/types"
 import SongItem from "@/components/SongItem"
 import useOnPlay from "@/hooks/useOnPlay"
 
