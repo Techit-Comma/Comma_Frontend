@@ -2,7 +2,7 @@
 
 import {RecoilRoot, atom, RecoilState} from 'recoil';
 import React from 'react';
-import {UserInfos} from "@/types";
+import {UserInfos, PlaylistItem} from "@/types";
 
 export const baseUrl = atom({
   key: "url",
@@ -23,6 +23,16 @@ export const userInfoState : RecoilState<UserInfos> = atom({
     email: "",
     profileImageUrl: "",
   }
+});
+
+export const playlistDataState : RecoilState<PlaylistItem[]> = atom({
+  key: 'playlistDataState',
+  default: [],
+});
+
+export const playlistState = atom({
+  key: 'playlistState',
+  default: false,
 });
 
 export const filePathState = atom({

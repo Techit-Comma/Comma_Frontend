@@ -1,3 +1,5 @@
+'use client'
+
 import React, {useEffect, useState} from 'react';
 import {
   IconButton,
@@ -9,11 +11,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Divider from "@material-ui/core/Divider";
-import {toast} from "react-hot-toast";
-import {useRecoilState} from "recoil";
-import {loginState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
-import {CheckAccessToken} from "@/libs/auth";
 import {useRouter} from "next/navigation";
 
 interface NotificationItem {
@@ -29,12 +27,10 @@ interface NotificationItem {
 function NotificationButton() {
   const router = useRouter()
   const [anchorEl, setAnchorEl] = useState(null);
-  const [notificationList, setNotificationList] = useState<NotificationItem[]>();
+  const [notificationList, setNotificationList] = useState<NotificationItem[]>([]);
 
   // 공통 변수
-  const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [isLoading, setIsLoading] = useState(true);
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,8 +46,7 @@ function NotificationButton() {
       const responseData = response.data;
       setNotificationList(responseData);
     } catch (error) {
-      toast.error('알림 정보를 가져올 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
@@ -61,8 +56,7 @@ function NotificationButton() {
       const responseData = response.data;
       setNotificationList(responseData);
     } catch (error) {
-      toast.error('알림 정보를 가져올 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
@@ -72,8 +66,7 @@ function NotificationButton() {
         "notificationId": notificationId,
       });
     } catch (error) {
-      toast.error('알림을 읽을 수 없습니다.', error);
-      return undefined;
+      console.log(error);
     }
   }
 
@@ -89,31 +82,15 @@ function NotificationButton() {
     router.push(redirectUrl);
   };
 
+
   useEffect(() => {
-    // 로그인 상태 확인 로직
-    CheckAccessToken().then((loggedIn) => {
-      setIsLogin(loggedIn);
-      setIsLoading(false); // 로그인 상태 확인이 완료됨
-    });
+    getNotification().finally(() => setIsLoading(false));
+    const pollingInterval = setInterval(() => {
+      getNotificationToLongPolling();
+    }, 600000);
+    return () => clearInterval(pollingInterval);
   }, []);
 
-  useEffect(() => {
-    let pollingInterval: ReturnType<typeof setInterval> | null = null;
-
-    if (!isLoading && isLogin) {
-      getNotification(); // 최초 로그인 시 알림 정보 가져오기
-
-      pollingInterval = setInterval(async () => {
-        await getNotificationToLongPolling(); // 10분마다 LongPolling으로 알림 정보 갱신
-      }, 600000); // 600000밀리초 = 10분
-    }
-
-    return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval); // 설정한 interval 정리
-      }
-    };
-  }, [isLogin, isLoading]);
 
   return (
       <div>

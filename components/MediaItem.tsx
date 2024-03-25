@@ -1,11 +1,11 @@
 import useLoadImage from "@/hooks/useLoadImage"
 import usePlayer from "@/hooks/usePlayer"
-import { Song } from "@/types"
+import {AlbumData} from "@/types"
 import Image from "next/image"
 import {useRouter} from "next/navigation";
 
 interface Props{
-    data: Song
+    data: AlbumData
     onClick?:(id:string) => void
 }
 
@@ -24,10 +24,9 @@ const MediaItem = ({data, onClick}: Props) => {
         }
     }
 
-    const imageUrl = validateImageUrl(data.image_path);
+    const imageUrl = validateImageUrl(data.imgUrl);
 
     const handleClick = () => {
-        console.log("gdgd");
         router.push("/album/" + data.id);
         // if(onClick){
         //     return onClick(data.id);
@@ -43,8 +42,8 @@ const MediaItem = ({data, onClick}: Props) => {
                 <Image fill src={imageUrl} alt='media item' className="object-cover"/>
             </div>
             <div className="flex flex-col gap-y-1 overflow-hidden">
-                <p className="text-white truncate">{data.title}</p>
-                <p className="text-neutral-400 text-sm truncate">{data.author}</p>
+                <p className="text-white truncate">{data.albumname}</p>
+                <p className="text-neutral-400 text-sm truncate">{data.artistNickname}</p>
             </div>
         </div>
     )

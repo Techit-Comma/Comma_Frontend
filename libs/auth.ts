@@ -88,12 +88,12 @@ export async function ReissueTokens() {
     const responseData = await response.data.data;
     await Login(responseData.accessToken, responseData.refreshToken);
 
-    return responseData.accessToken;
+    return true;
 
   } catch (error) {
     console.error('토큰 재발급에 실패했습니다.', error);
     Logout();
-    return null;
+    return false;
   }
 }
 

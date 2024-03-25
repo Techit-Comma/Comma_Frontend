@@ -35,13 +35,13 @@ axiosClient.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
       // 401 에러 감지 및 originalRequest._retry
-      // if (error.response.status === 401 && !originalRequest._retry) {
-      //   Logout();
-      //   return;
-      // }
-
       if (error.response.status === 401 && originalRequest._retry) {
-        originalRequest._retry = false; // 재요청 플래그 설정
+        Logout();
+        return;
+      }
+
+      if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true; // 재요청 플래그 설정
 
         const accessToken = await ReissueTokens(); // 토큰 재발급
         axios.defaults.headers.common['Authorization'] = `${accessToken}`; // 새 토큰으로 헤더 설정

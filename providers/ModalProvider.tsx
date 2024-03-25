@@ -3,8 +3,10 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import AuthModal from '@/components/AuthModal'
-import PlaylistModal from '@/components/PlaylistModal'
+import CreatePlaylistModal from '@/components/CreatePlaylistModal'
 import AlbumReleaseModal from "@/components/Album/AlbumReleaseModal";
+import PlaylistModal from "@/components/PlaylistModal";
+import DonationModal from "@/components/DonationModal";
 import AlbumDeleteModal from "@/components/Album/AlbumDeleteModal";
 
 const ModalProvider = () => {
@@ -21,10 +23,12 @@ const ModalProvider = () => {
 
     return (
         <>
-            <AuthModal/>
-            <PlaylistModal/>
-            <AlbumReleaseModal/>
-            <AlbumDeleteModal/>
+          <AuthModal/>
+          <PlaylistModal/>
+          <DonationModal/>
+          <CreatePlaylistModal/>
+          <AlbumReleaseModal/>
+          <AlbumDeleteModal/>
         </>
     )
 }

@@ -4,12 +4,13 @@ import LikeButton from "@/components/LikeButton"
 import MediaItem from "@/components/MediaItem"
 import {AlbumData, Song} from "@/types"
 import { useRouter } from "next/navigation"
-import {useEffect, useState} from "react"
+import React, {useEffect, useState} from "react"
 import useOnPlay from "@/hooks/useOnPlay"
 import {useRecoilState} from "recoil";
 import {loginState} from "@/providers/RecoilContextProvider";
 import {CheckAccessToken} from "@/libs/auth";
 import {toast} from "react-hot-toast";
+import {FaPlay} from "react-icons/fa";
 
 interface Props{
     albums: AlbumData[]
@@ -32,11 +33,16 @@ const PlaylistContent = ({albums}:Props) => {
             {albums?.map((album)=>(
                 <div className="flex items-center gap-x-4 w-full" key={album.id}>
                     <div className="flex-1">
-                        <MediaItem onClick={(id)=>onPlay(id)} data={album}/>
+                        <MediaItem onClick={(id)=>onPlay(album)} data={album}/>
                     </div>
                     <LikeButton songId={album.id}/>
                 </div>
             ))}
+            <div className="absolute bottom-8 right-10">
+                <button className='transition rounded-full flex items-center bg-blue-500 p-4' onClick={()=>onPlay(albums[0])}>
+                    <FaPlay className='text-black'/>
+                </button>
+            </div>
         </div>
     )
 }

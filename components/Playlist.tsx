@@ -3,41 +3,29 @@
 import {TbPlaylist} from 'react-icons/tb' 
 import {AiOutlinePlus} from 'react-icons/ai'
 import useAuthModal from '@/hooks/useAuthModal'
-import useUploadModal from '@/hooks/useUploadModal'
-import { Song } from '@/types'
-import MediaItem from './MediaItem'
-import useOnPlay from '@/hooks/useOnPlay'
+import useCreatePlaylistModal from '@/hooks/useCreatePlaylistModal'
+import {PlaylistItem} from '@/types'
 import {useRecoilState} from "recoil";
-import {loginState} from "@/providers/RecoilContextProvider";
+import {loginState, playlistDataState, playlistState} from "@/providers/RecoilContextProvider";
 import axiosClient from "@/libs/axiosClient";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/navigation";
-
-interface Props{
-    songs:Song[]
-}
-
-interface PlaylistItem {
-    playlistId: number;
-    title: string;
-    producerUsername: string;
-    producerNickname: string;
-}
 
 const Playlist = () => {
 
     const authModal = useAuthModal()
-    const uploadModal = useUploadModal()
+    const createPlaylistModal = useCreatePlaylistModal()
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [playlist, setPlaylist] = useState<PlaylistItem[]>();
+    const [playlist, setPlaylist] = useRecoilState<PlaylistItem[]>(playlistDataState);
+    const [playlistUpdate, setPlaylistUpdate] = useRecoilState(playlistState);
 
     const onClick = () => {
         //if not logged in send to auth 
         if(!isLogin){
             return authModal.onOpen()
         }
-        return uploadModal.onOpen()
+        return createPlaylistModal.onOpen()
     }
 
     async function getPlaylists() {
@@ -51,10 +39,11 @@ const Playlist = () => {
     }
 
     useEffect(() => {
-        if (isLogin) {
+        if (isLogin || playlistUpdate) {
             getPlaylists();
+            setPlaylistUpdate(false);
         }
-    }, [isLogin]); // 의존성 배열에 isLogin 추가
+    }, [isLogin, playlistUpdate]); // 의존성 배열에 isLogin 추가
   
     return (
     <div className="flex flex-col">
