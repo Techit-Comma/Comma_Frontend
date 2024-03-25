@@ -111,7 +111,9 @@ const ArticleList = ({ username }: Props) => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Box margin={1}>
       {loginedUser === username && <WriteArticle loadArticles={loadArticles}  username={username} />}
+      </Box>
       <Divider variant="middle" />
       <Container>
         <Box component="section" p={2} display="flex" justifyContent="center">
