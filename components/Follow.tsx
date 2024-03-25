@@ -1,22 +1,17 @@
 'use client'
 
 import {useRecoilState} from "recoil";
-import {loginState} from "@/providers/RecoilContextProvider";
+import {followDataState, loginState} from "@/providers/RecoilContextProvider";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-hot-toast";
 import {useRouter} from "next/navigation";
 import axiosClient from "@/libs/axiosClient";
-
-interface FollowItem {
-    memberId: number;
-    username: string;
-}
+import {FollowItem} from "@/types";
 
 const Follow = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-
-    const [followList, setFollowList] = useState<FollowItem[]>();
+    const [followList, setFollowList] = useRecoilState<FollowItem[]>(followDataState);
 
     async function getFollowList() {
         try {
@@ -45,7 +40,7 @@ const Follow = () => {
             {isLogin ? (
                 <div>
                     {followList?.map((item) => (
-                        <div key={item.memberId} onClick={() => router.push(`/member/${item.memberId}`)} className="hover:opacity-75 cursor-pointer">
+                        <div key={item.memberId} onClick={() => router.push(`/${item.username}`)} className="hover:opacity-75 cursor-pointer">
                             <a className="ml-3 text-sm text-neutral-400">{item.username}</a>
                         </div>
                     ))}

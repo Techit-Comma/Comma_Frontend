@@ -28,6 +28,11 @@ export type PlaylistItem = {
   producerNickname: string;
 }
 
+export type FollowItem = {
+  memberId: number;
+  username: string;
+}
+
 export interface Product {
   id: string;
   active?: boolean;
