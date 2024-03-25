@@ -48,7 +48,7 @@ const Header: React.FC<Props> = ({children,className}) => {
                         //logged in
                         <div className='flex gap-x-4 items-center'>
                             <NotificationButton />
-                            <ProfileButton className='w-10 h-10' profileImageUrl={userInfos.profileImageUrl}></ProfileButton>
+                            <ProfileButton className='w-10 h-10' profileImageUrl={userInfos.profileImageUrl} username={userInfos.username}></ProfileButton>
                         </div>
                     ):(
                         //not logged in
