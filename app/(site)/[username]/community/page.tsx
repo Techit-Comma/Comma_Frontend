@@ -16,20 +16,15 @@ export default function Home({
   params: { username: string };
 }) {
   const username = params.username;
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
-  const loginedUser = userInfos.username; 
-
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
       <Header>
         <UserProfile username={username} />
         <div className="mt-5">
-          <Navigator username={username} />
+          <Navigator tabValue="커뮤니티" username={username} />
         </div>
       </Header>
-      {loginedUser === username && <WriteArticle username={username} /> }
-      <Divider variant="middle" />
 
       <ArticleList username={username} />
     </div>

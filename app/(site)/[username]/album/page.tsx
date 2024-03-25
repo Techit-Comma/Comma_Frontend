@@ -39,7 +39,7 @@ export default function Album({
       <Header>
         <UserProfile username={username} />
         <div className="mt-5">
-          <Navigator username={username} />
+          <Navigator username={username} tabValue="앨범" />
         </div>
       </Header>
       <Divider variant="middle" />

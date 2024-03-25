@@ -14,6 +14,8 @@ import {
   Typography,
   Box,
   Pagination,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 import { format } from "date-fns";
 
@@ -48,88 +50,96 @@ const CreditLogs = () => {
     setCurrentPage(value);
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: "dark", // 다크 모드 사용 설정
+    },
+  });
+
   return (
-    <Box margin={2}>
-      <div className="flex justify-between items-center">
-        <Typography
-          variant="h4"
-          component="h1"
-          color="white"
-          fontWeight="bold"
-          margin={2}
-        >
-          출금 신청 내역
-        </Typography>
-      </div>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#F5F5F5" }}>
-            <TableRow>
-              <TableCell align="center">날짜</TableCell>
-              <TableCell align="center">은행명</TableCell>
-              <TableCell align="center">계좌번호</TableCell>
-              <TableCell align="center">출금신청액</TableCell>
-              <TableCell align="center">처리상태</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {withdrawLogs.map((log: any, index: number) => (
-              <TableRow key={index}>
-                <TableCell align="center">
-                  {format(new Date(log.applyDate), "yyyy-MM-dd HH:mm")}
-                </TableCell>
-                <TableCell align="center">{log.bankName}</TableCell>
-                <TableCell align="center">{log.bankAccountNo}</TableCell>
-                <TableCell align="center">{log.withdrawAmount}</TableCell>
-                <TableCell align="center">
-                  {log.withdrawDoneDate ? (
-                    <>
-                      출금 완료 <br />
-                      {new Date(log.withdrawDoneDate).toLocaleDateString(
-                        "ko-KR"
-                      )}
-                    </>
-                  ) : log.withdrawCancelDate ? (
-                    <>
-                      출금 거절 <br />
-                      {new Date(log.withdrawCancelDate).toLocaleDateString(
-                        "ko-KR"
-                      )}
-                    </>
-                  ) : (
-                    "처리중"
-                  )}
-                </TableCell>
+    <ThemeProvider theme={theme}>
+      <Box margin={2}>
+        <div className="flex justify-between items-center">
+          <Typography
+            variant="h4"
+            component="h1"
+            color="white"
+            fontWeight="bold"
+            margin={2}
+          >
+            출금 신청 내역
+          </Typography>
+        </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#2a3eb1" }}>
+              <TableRow>
+                <TableCell align="center">날짜</TableCell>
+                <TableCell align="center">은행명</TableCell>
+                <TableCell align="center">계좌번호</TableCell>
+                <TableCell align="center">출금신청액</TableCell>
+                <TableCell align="center">처리상태</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {withdrawLogs.length === 0 && (
-        <Typography variant="body1" className="text-white">
-          출금 신청 내역이 없습니다
-        </Typography>
-      )}
-      <Box display="flex" justifyContent="center" margin={1}>
-        <Pagination
-          count={totalPages}
-          color="primary"
-          variant="outlined"
-          size="large"
-          shape="rounded"
-          page={currentPage}
-          onChange={handlePage}
-          sx={{
-            "& .MuiPaginationItem-root": {
-              color: "#fff",
-            },
-            "& .MuiPaginationItem-page.Mui-selected": {
-              backgroundColor: "#3f51b5",
-            },
-          }}
-        />
+            </TableHead>
+            <TableBody>
+              {withdrawLogs.map((log: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell align="center">
+                    {format(new Date(log.applyDate), "yyyy-MM-dd HH:mm")}
+                  </TableCell>
+                  <TableCell align="center">{log.bankName}</TableCell>
+                  <TableCell align="center">{log.bankAccountNo}</TableCell>
+                  <TableCell align="center">{log.withdrawAmount}</TableCell>
+                  <TableCell align="center">
+                    {log.withdrawDoneDate ? (
+                      <>
+                        출금 완료 <br />
+                        {new Date(log.withdrawDoneDate).toLocaleDateString(
+                          "ko-KR"
+                        )}
+                      </>
+                    ) : log.withdrawCancelDate ? (
+                      <>
+                        출금 거절 <br />
+                        {new Date(log.withdrawCancelDate).toLocaleDateString(
+                          "ko-KR"
+                        )}
+                      </>
+                    ) : (
+                      "처리중"
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {withdrawLogs.length === 0 && (
+          <Typography variant="body1" className="text-white">
+            출금 신청 내역이 없습니다
+          </Typography>
+        )}
+        <Box display="flex" justifyContent="center" margin={1}>
+          <Pagination
+            count={totalPages}
+            color="primary"
+            variant="outlined"
+            size="large"
+            shape="rounded"
+            page={currentPage}
+            onChange={handlePage}
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#fff",
+              },
+              "& .MuiPaginationItem-page.Mui-selected": {
+                backgroundColor: "#3f51b5",
+              },
+            }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

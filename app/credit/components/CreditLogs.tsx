@@ -16,6 +16,8 @@ import {
   Typography,
   Pagination,
   Box,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 
 const CreditLogs = () => {
@@ -49,7 +51,14 @@ const CreditLogs = () => {
     setCurrentPage(value);
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', // 다크 모드 사용 설정
+    },
+  });
+  
   return (
+    <ThemeProvider theme={theme}>
     <Box margin={2}>
       <div className="flex justify-between items-center">
         <Typography
@@ -64,7 +73,7 @@ const CreditLogs = () => {
       </div>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead sx={{backgroundColor: '#F5F5F5'}}>
+          <TableHead sx={{backgroundColor: '#2a3eb1'}}>
             <TableRow>
               <TableCell align="center">날짜</TableCell>
               <TableCell align="center">이벤트 타입</TableCell>
@@ -111,6 +120,7 @@ const CreditLogs = () => {
         />
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 
