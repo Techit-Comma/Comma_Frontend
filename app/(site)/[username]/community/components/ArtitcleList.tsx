@@ -28,6 +28,7 @@ import Modal from "./Modal";
 import EditArticle from "./EditArticle";
 import { ThemeProvider } from "@emotion/react";
 import WriteArticle from "./WriteArticle";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   username: string;
@@ -112,7 +113,9 @@ const ArticleList = ({ username }: Props) => {
   return (
     <ThemeProvider theme={theme}>
       <Box margin={1}>
-      {loginedUser === username && <WriteArticle loadArticles={loadArticles}  username={username} />}
+        {loginedUser === username && (
+          <WriteArticle loadArticles={loadArticles} username={username} />
+        )}
       </Box>
       <Divider variant="middle" />
       <Container>
@@ -232,9 +235,7 @@ const ArticleList = ({ username }: Props) => {
                       ))}
                 </Carousel>
                 <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {article.content}
-                  </Typography>
+                    <ReactMarkdown>{article.content}</ReactMarkdown>
                 </CardContent>
                 <Comments _articleId={article.id} />
               </Card>

@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GetCookie } from "@/libs/auth";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import {
   Box,
   Button,
   Card,
-  Divider,
   FormControl,
   InputLabel,
   MenuItem,

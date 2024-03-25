@@ -23,7 +23,8 @@ const Comments = ({ _articleId }: Props) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const articleId = _articleId;
-  const [isFocused, setIsFocused] = useState(false);
+
+
 
   const handleContent = (event: any) => {
     setContent(event.target.value as string);
@@ -68,16 +69,8 @@ const Comments = ({ _articleId }: Props) => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // 폼의 기본 동작 방지
+    event.preventDefault();
     addComment();
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true); // 텍스트 필드가 포커스를 받으면 포커스 여부를 true로 설정
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false); // 텍스트 필드에서 포커스가 벗어나면 포커스 여부를 false로 설정
   };
 
   return (
@@ -95,22 +88,18 @@ const Comments = ({ _articleId }: Props) => {
               rows={1}
               value={content}
               onChange={handleContent}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
               defaultValue="내용을 입력하세요"
             />
           </FormControl>
-          {isFocused && (
             <Box marginTop={1}>
               <Button
                 variant="outlined"
-                color="primary"
+                color="warning"
                 type="submit"
               >
                 댓글 작성하기
               </Button>
             </Box>
-          )}
         </form>
       </Box>
       {comments.map((comment: any, index: number) => (
