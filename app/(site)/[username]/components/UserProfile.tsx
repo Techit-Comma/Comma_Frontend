@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { Button } from "@mui/material";
 import axiosClient from "@/libs/axiosClient";
 import useDonationModal from "@/hooks/useDonationModal";
-import {followDataState, userInfoState} from "@/providers/RecoilContextProvider";
+import {followDataState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {FollowItem} from "@/types";
 import {useRecoilState} from "recoil";
 
@@ -18,7 +18,7 @@ interface Props {
 const UserProfile = ({ username }: Props) => {
   const donationModal = useDonationModal();
   const [followData, setFollowData] = useRecoilState<FollowItem[]>(followDataState);
-  const [userInfo, setUserInfo] = useRecoilState(userInfoState)
+  const [userInfo, setUserInfo] = useRecoilState(userInfoDataState)
   const [followState, setFollowState] = useState(false);
   const [myPageState, setMyPageState] = useState(false);
   const [profileImage, setProfileImage] = useState("");
@@ -31,6 +31,7 @@ const UserProfile = ({ username }: Props) => {
 
         const data = await response.data;
         setProfileImage(data.data.profileImageUrl);
+        console.log(profileImage);
       } catch (error) {
         const errorObj = error as Error;
         toast.error(`정보를 불러오는 데 실패하였습니다. (${errorObj.message})`);
@@ -38,8 +39,8 @@ const UserProfile = ({ username }: Props) => {
     };
 
     fetchData();
-    userInfo.username === username ? setMyPageState(true) : setMyPageState(false);
 
+    userInfo.username === username ? setMyPageState(true) : setMyPageState(false);
     if (!myPageState) {
       followData.map((data) =>
           data.username === username ? setFollowState(true) : setFollowState(false));

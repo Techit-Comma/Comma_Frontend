@@ -5,7 +5,7 @@ import UserProfile from "../components/UserProfile";
 import Navigator from "../components/Navigator";
 import { useRecoilState } from "recoil";
 import {AlbumData, UserInfos} from "@/types";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import { userInfoDataState } from "@/providers/RecoilContextProvider";
 import { Divider } from "@mui/material";
 import AlbumContent from "@/app/(site)/[username]/album/components/AlbumContent";
 import axiosClient from "@/libs/axiosClient";
@@ -18,7 +18,7 @@ export default function Album({
 }) {
   const username = params.username;
   const [myAlbums, setMyAlbums] = useState<AlbumData[]>();
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
   async function getMyAlbums() {
     try {

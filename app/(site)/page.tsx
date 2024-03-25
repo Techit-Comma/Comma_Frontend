@@ -6,7 +6,7 @@ import PageContent from "./components/PageContent"
 import {CheckAccessToken, getLoginState, oauthLogin} from "@/libs/auth";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {useSearchParams, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {AlbumData, UserInfos} from "@/types";
@@ -22,7 +22,7 @@ export default function Main() {
 
   // 페이지 및 전역 상태 관리
   const [isLogin, setIsLogin] = useRecoilState(loginState);
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
   // Oauth 로그인 처리
   const searchParams = useSearchParams();

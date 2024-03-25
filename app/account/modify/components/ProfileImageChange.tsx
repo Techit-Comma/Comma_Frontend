@@ -1,5 +1,5 @@
 import axiosClient from "@/libs/axiosClient";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import { userInfoDataState } from "@/providers/RecoilContextProvider";
 import { UserInfos } from "@/types";
 import { Box, Button } from "@mui/material";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import { useRecoilState } from "recoil";
 
 function ProfileImageChange() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(
     userInfos.profileImageUrl
   );

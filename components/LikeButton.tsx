@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {UserInfos} from "@/types";
 
 interface Props{
@@ -18,7 +18,7 @@ const LikeButton = ({songId}:Props) => {
     const router = useRouter()
     const authModal = useAuthModal()
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const [isLiked, setIsLiked] = useState<boolean>(false)
 
     useEffect(()=>{

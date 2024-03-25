@@ -12,7 +12,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import useAlbumDeleteModal from "@/hooks/useAlbumDeleteModal";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {CheckAccessToken} from "@/libs/auth";
 export default function AlbumInfoPage() {
     const [isMounted, setIsMounted] = useState(false);
@@ -21,7 +21,7 @@ export default function AlbumInfoPage() {
     const {onOpen} = useAlbumDeleteModal();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
     const [isLoading, setIsLoading] = useState(true);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
     useEffect(() => {
         // 로그인 상태 확인 로직

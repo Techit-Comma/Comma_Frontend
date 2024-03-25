@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { Button, TextField, Box, Container, Paper } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
-import { loginState, userInfoState } from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState, userInfoState} from "@/providers/RecoilContextProvider";
 import { toast } from "react-hot-toast";
 import { UserInfos } from "@/types";
 import { CheckAccessToken } from "@/libs/auth";
@@ -15,7 +15,8 @@ import axiosClient from "@/libs/axiosClient";
 function AccountChangeForm() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useRecoilState(loginState);
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
+  const [userInfoUpdate, setUserInfoUpdate] = useRecoilState(userInfoState);
 
   const [isLoading, setIsLoading] = useState(true);
   const [username, setUsername] = useState("");
@@ -59,6 +60,7 @@ function AccountChangeForm() {
         toast.success("회원 정보가 수정되었습니다.");
         setNickname(nickname);
         setEmail(email);
+        setUserInfoUpdate(true);
 
         router.push("/account");
       } catch (error) {

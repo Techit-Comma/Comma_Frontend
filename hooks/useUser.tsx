@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
 import {getUserInfo} from "@/libs/auth";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {UserInfos} from "@/types";
 
 type UserContextType = {
@@ -20,7 +20,7 @@ export interface Props{
 export const MyUserContextProvider = (props:Props) => {
     const [isLoadingData, setIsLoadingData] = useState(false)
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
     const getUserDetails = () => getUserInfo();
 

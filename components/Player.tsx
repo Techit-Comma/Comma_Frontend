@@ -15,7 +15,7 @@ export const Player = () => {
     const activeAlbum = player.activeAlbum;
 
     useEffect(() => {
-        addStreamingCount().then(r => console.log("as"));
+        addStreamingCount();
     }, [activeAlbum]);
 
     if(!activeAlbum){

@@ -8,7 +8,7 @@ import ToasterProvider from '@/providers/ToasterProvider'
 import { Player } from '@/components/Player'
 import {useRecoilState} from "recoil";
 import React, {useEffect} from "react";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState, userInfoState} from "@/providers/RecoilContextProvider";
 import {UserInfos} from "@/types";
 import {CheckAccessToken, getLoginState} from "@/libs/auth";
 
@@ -20,7 +20,8 @@ export default function Base({
   children: React.ReactNode
 }) {
   const [isLogin, setIsLogin] = useRecoilState(loginState);
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
+  const [userInfoUpdate, setUserInfoUpdate] = useRecoilState(userInfoState);
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -33,8 +34,11 @@ export default function Base({
       }
     }
 
-    getUserInfo();
-  }, [isLogin]);
+    if (isLogin || userInfoUpdate) {
+      getUserInfo();
+      setUserInfoUpdate(false);
+    }
+  }, [isLogin, userInfoUpdate]);
 
   return (
     <html lang="en">

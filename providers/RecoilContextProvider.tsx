@@ -14,8 +14,8 @@ export const loginState = atom({
   default: false,
 });
 
-export const userInfoState : RecoilState<UserInfos> = atom({
-  key: "userInfo",
+export const userInfoDataState : RecoilState<UserInfos> = atom({
+  key: "userInfoDataState",
   default: {
     memberId: "0",
     username: "",
@@ -24,6 +24,12 @@ export const userInfoState : RecoilState<UserInfos> = atom({
     profileImageUrl: "",
   }
 });
+
+export const userInfoState = atom({
+  key: 'userInfoState',
+  default: false,
+});
+
 
 export const followDataState : RecoilState<FollowItem[]> = atom({
   key: "followDataState",

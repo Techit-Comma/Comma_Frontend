@@ -5,7 +5,7 @@ import axiosClient from "@/libs/axiosClient";
 import ProfileButton from "@/components/ProfileButton";
 import Comments from "./Comments";
 import { useRecoilState } from "recoil";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import { userInfoDataState } from "@/providers/RecoilContextProvider";
 import {
   Box,
   Card,
@@ -41,7 +41,7 @@ const ArticleList = ({ username }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [category, setCategory] = useState<string>("");
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
   const loginedUser = userInfos.username;
   const [editModalOpenMap, setEditModalOpenMap] = useState<
     Map<string, boolean>
