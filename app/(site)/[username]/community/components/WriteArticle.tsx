@@ -24,9 +24,10 @@ import { ThemeProvider } from "@emotion/react";
 
 interface Props {
   username: string;
+  loadArticles: (category: string) => Promise<void>;
 }
 
-export default function ArticleForm({ username }: Props) {
+export default function ArticleForm({ username, loadArticles }: Props) {
   const router = useRouter();
   const artistUsername = username;
   const [category, setCategory] = React.useState("");
@@ -102,6 +103,8 @@ export default function ArticleForm({ username }: Props) {
         setContent("");
         setCategory("");
 
+        loadArticles("");
+
         await router.push(`/${username}/community`);
       } catch (error) {
         console.error("글 작성 오류:", error);
@@ -114,11 +117,11 @@ export default function ArticleForm({ username }: Props) {
     return () => {
       form.removeEventListener("submit", handleSubmit);
     };
-  }, [router, username, imageFiles, artistUsername, content, category]);
+  }, [router, username, imageFiles, artistUsername, content, category, loadArticles]);
 
   const theme = createTheme({
     palette: {
-      mode: 'dark', 
+      mode: "dark",
     },
   });
 
@@ -163,7 +166,7 @@ export default function ArticleForm({ username }: Props) {
                 />
               </FormControl>
             </div>
-            <div className="flex items-center mt-5">
+            <div>
               <input
                 type="hidden"
                 name="artistUsername"
@@ -171,7 +174,7 @@ export default function ArticleForm({ username }: Props) {
                 value={username}
               />
             </div>
-            <div>
+            <Box margin={1}>
               <input
                 className="ms-3"
                 type="file"
@@ -180,29 +183,35 @@ export default function ArticleForm({ username }: Props) {
                 accept="image/*"
                 multiple
                 onChange={handleImageChange}
+                style={{ display: 'none' }} 
               />
-            </div>
+              <label htmlFor="imageUpload">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  component="span"
+                >
+                  사진 첨부
+                </Button>
+              </label>
+            </Box>
             <div className="flex items-center">
               {imagePreviews.map((preview, index) => (
-                <div key={index}>
+                <Box key={index} margin={1}>
                   <Image
                     src={preview}
                     width={200}
                     height={200}
                     alt={`Image ${index + 1}`}
                   />
-                </div>
+                </Box>
               ))}
             </div>
-            <div className="flex items-center mt-5">
-              <Button
-                variant="outlined"
-                color="primary"
-                type="submit"
-              >
+            <Box margin={1}>
+              <Button variant="outlined" color="warning" type="submit">
                 작성완료
               </Button>
-            </div>
+            </Box>
           </form>
         </Card>
       </div>
