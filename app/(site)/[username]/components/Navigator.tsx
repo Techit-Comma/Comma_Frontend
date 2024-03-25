@@ -5,10 +5,11 @@ import React from "react";
 
 interface Props {
   username: string;
+  tabValue: string; 
 }
 
-const Navigator = ({ username }: Props) => {
-  const [value, setValue] = React.useState("one");
+const Navigator = ({ username, tabValue }: Props) => {
+  const [value, setValue] = React.useState(tabValue); 
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -22,14 +23,14 @@ const Navigator = ({ username }: Props) => {
         aria-label="wrapped label tabs example"
       >
         <Tab
-          value="one"
+          value="홈"
           label="홈"
           className="text text-white"
           href={`/${username}`}
         />
-        <Tab value="three" label="앨범" className="text text-white" />
+        <Tab value="앨범" label="앨범" className="text text-white" />
         <Tab
-          value="two"
+          value="커뮤니티"
           label="커뮤니티"
           href={`/${username}/community`}
           className="text text-white"

@@ -10,6 +10,8 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 import Image from "next/image";
 import axiosClient from "@/libs/axiosClient";
@@ -112,9 +114,16 @@ const EditArticle = ({ article, onClose, articleImages }: Props) => {
     }
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', // 다크 모드 사용 설정
+    },
+  });
+
   return (
+    <ThemeProvider theme={theme}>
     <div>
-      <Card variant="outlined" sx={{ maxWidth: 750, p: 1, margin: "0 auto" }}>
+      <Card sx={{ minWidth: '100%', p: 1, margin: "0 auto"}}>
         <div className="mt-5">
           <Box sx={{ minWidth: 120 }}>
             <FormControl sx={{ width: 300, margin: 1 }}>
@@ -146,7 +155,7 @@ const EditArticle = ({ article, onClose, articleImages }: Props) => {
             />
           </FormControl>
         </div>
-        <div>
+        <Box marginTop={2} marginBottom={2}>
           <input
             className="ms-3"
             type="file"
@@ -156,8 +165,8 @@ const EditArticle = ({ article, onClose, articleImages }: Props) => {
             multiple
             onChange={handleImageChange}
           />
-        </div>
-        <div className="flex items-center">
+        </Box>
+        <Box display="flex" justifyContent="center" >
           {imagePreviews.map((preview, index) => (
             <div key={index} style={{ position: "relative" }}>
               <Image
@@ -177,10 +186,10 @@ const EditArticle = ({ article, onClose, articleImages }: Props) => {
               </Button>
             </div>
           ))}
-        </div>
+        </Box>
         <div className="flex items-center mt-5">
           <Button
-            variant="contained"
+            variant="outlined"
             sx={{ color: "primary.main" }}
             onClick={editArticle}
           >
@@ -189,6 +198,7 @@ const EditArticle = ({ article, onClose, articleImages }: Props) => {
         </div>
       </Card>
     </div>
+    </ThemeProvider>
   );
 };
 
