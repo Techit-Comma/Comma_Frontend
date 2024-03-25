@@ -8,15 +8,10 @@ interface Props {
   username: string;
   chargeCode: string;
   chargeAmount: string;
-  onCloseModal: () => void;
+  onChange: () => void;
 }
 
-export function Payment({
-  username,
-  chargeCode,
-  chargeAmount,
-  onCloseModal,
-}: Props) {
+export function Payment({ username, chargeCode, chargeAmount, onChange }: Props) {
   const widgetClientKey = "test_ck_5OWRapdA8dmGZpoK9jpA3o1zEqZK";
   const customerKey = username;
   const [paymentWidget, setPaymentWidget] = useState(null);
@@ -66,6 +61,10 @@ export function Payment({
 
   const handlePaymentRequest = async () => {
     try {
+      setTimeout(async () => {
+        onChange();
+      }, 1000);
+
       await paymentWidget?.requestPayment({
         orderId: chargeCode,
         orderName: "크레딧 충전",

@@ -1,10 +1,24 @@
-'use client'; 
+"use client";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { GetCookie } from "@/libs/auth";
 import ApproveButton from "./ApproveButton";
 import RejectButton from "./RejectButton";
+import axiosClient from "@/libs/axiosClient";
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+  Box,
+  Pagination,
+  TableContainer,
+  Paper,
+  Typography,
+} from "@mui/material";
 
 function Withdrawals() {
   const [withdraws, setWithdraws] = useState([]);
@@ -20,99 +34,115 @@ function Withdrawals() {
         return;
       }
 
-      const withdrawsResponse = await fetch(
-        `http://localhost:8090/admin/credit/withdraws?page=${currentPage}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${accessToken}`,
-          },
-        }
+      const withdrawsResponse = await axiosClient.get(
+        `/admin/credit/withdraws?page=${currentPage}`
       );
 
-      const data = await withdrawsResponse.json();
-
-      if (!withdrawsResponse.ok) {
-        toast.error(data.message);
-        return;
-      }
+      const data = await withdrawsResponse.data;
 
       setWithdraws(data.withdraws.content);
       setTotalPages(data.withdraws.totalPages);
     } catch (error) {
       toast.error("출금 신청 내역을 불러오는 데 실패하였습니다.");
     }
-  }, [currentPage]); 
+  }, [currentPage]);
 
   useEffect(() => {
     loadWithdraws();
   }, [currentPage, loadWithdraws]);
 
-  function previousPage() {
-    setCurrentPage((n) => Math.max(n - 1, 1));
-  }
-
-  function nextPage() {
-    setCurrentPage((n) => n + 1);
-  }
-
-  function movePage(pageNumber: any) {
-    setCurrentPage(pageNumber);
-  }
+  const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
 
   return (
-    <div>
-      <p>출금 신청 내역</p>
-      <table>
-        <thead>
-          <tr>
-            <th>날짜</th>
-            <th>신청인</th>
-            <th>은행명</th>
-            <th>계좌번호</th>
-            <th>출금신청액</th>
-            <th>처리상태</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {withdraws.map((log: any, index: number) => (
-            <tr key={index}>
-              <td>{new Date(log.applyDate).toLocaleDateString("ko-KR")}</td>
-              <td>{log.applicantName}</td>
-              <td>{log.bankName}</td>
-              <td>{log.bankAccountNo}</td>
-              <td>{log.withdrawAmount}</td>
-              <td>
-                {log.withdrawDoneDate ? "출금 완료" : ""}
-                {log.withdrawCancelDate ? "출금 거절" : ""}
-                {log.withdrawDoneDate === null && log.withdrawCancelDate === null
-                  ? "미처리"
-                  : ""}
-              </td>
-              {log.withdrawDoneDate === null && log.withdrawCancelDate === null && (
-                <td>
-                  <ApproveButton withdrawId={log.id} loadWithdraws={loadWithdraws} />
-                  <RejectButton withdrawId={log.id} loadWithdraws={loadWithdraws} />
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div>
-        {currentPage > 1 && <button onClick={previousPage}>이전 페이지</button>}
-        {[...Array(totalPages)].map((_, index) => (
-          <button key={index} onClick={() => movePage(index + 1)}>
-            {index + 1}
-          </button>
-        ))}
-        {currentPage < totalPages && <button onClick={nextPage}>다음 페이지</button>}
+    <Box>
+      <div className="flex justify-between items-center">
+        <Typography
+          variant="h4"
+          component="h1"
+          color="white"
+          fontWeight="bold"
+          margin={2}
+        >
+          출금 신청 내역
+        </Typography>
       </div>
-    </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead sx={{backgroundColor: '#e0e0e0'}}>
+            <TableRow>
+              <TableCell>날짜</TableCell>
+              <TableCell>신청인</TableCell>
+              <TableCell>은행명</TableCell>
+              <TableCell>계좌번호</TableCell>
+              <TableCell>출금신청액</TableCell>
+              <TableCell>처리상태</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {withdraws.map((log: any, index: number) => (
+              <TableRow key={index}>
+                <TableCell>
+                  {new Date(log.applyDate).toLocaleDateString("ko-KR")}
+                </TableCell>
+                <TableCell>{log.applicantName}</TableCell>
+                <TableCell>{log.bankName}</TableCell>
+                <TableCell>{log.bankAccountNo}</TableCell>
+                <TableCell>{log.withdrawAmount}</TableCell>
+                <TableCell>
+                  {log.withdrawDoneDate ? "출금 완료" : ""}
+                  {log.withdrawCancelDate ? "출금 거절" : ""}
+                  {log.withdrawDoneDate === null &&
+                  log.withdrawCancelDate === null
+                    ? "미처리"
+                    : ""}
+                </TableCell>
+                {log.withdrawDoneDate === null &&
+                  log.withdrawCancelDate === null && (
+                    <TableCell>
+                      <ApproveButton
+                        withdrawId={log.id}
+                        loadWithdraws={loadWithdraws}                      
+                      />
+                      <RejectButton
+                        withdrawId={log.id}
+                        loadWithdraws={loadWithdraws}
+                      />
+                    </TableCell>
+                  )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {withdraws.length === 0 && (
+        <Typography variant="body1" color="white">
+          출금 신청 내역이 없습니다
+        </Typography>
+      )}
+
+      <Box display="flex" justifyContent="center" margin={1}>
+        <Pagination
+          count={totalPages}
+          color="primary"
+          variant="outlined"
+          size="large"
+          shape="rounded"
+          page={currentPage}
+          onChange={handlePage}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "#fff",
+            },
+            "& .MuiPaginationItem-page.Mui-selected": {
+              backgroundColor: "#3f51b5",
+            },
+          }}
+        />
+      </Box>
+    </Box>
   );
 }
 
