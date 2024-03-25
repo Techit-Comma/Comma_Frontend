@@ -6,7 +6,7 @@ import {useRecoilState} from "recoil";
 import {baseUrl, userInfoState} from "@/providers/RecoilContextProvider";
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
-import {Chip, IconButton, Stack} from "@mui/material";
+import {Chip, IconButton, Link, Stack} from "@mui/material";
 import {AlbumData, UserInfos} from "@/types";
 import Header from "@/components/Header";
 import {Player} from "@/components/Player";
@@ -72,6 +72,14 @@ export const AlbumInfoContent = ({album}:Props) => {
                     <Typography className={classes.Typography} variant="h2" gutterBottom>
                         {album?.albumname}
                     </Typography>
+
+                    <Link href={`/${album?.artistUsername}`}>
+                        <a>
+                            <Typography className={classes.Typography} gutterBottom>
+                                Artist : {album?.artistUsername}
+                            </Typography>
+                        </a>
+                    </Link>
 
                     <Typography className={classes.Typography} variant="h5" gutterBottom>
                         {album?.licenseDescription}

@@ -18,6 +18,8 @@ import {
   TableContainer,
   Paper,
   Typography,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 
 function Withdrawals() {
@@ -55,94 +57,102 @@ function Withdrawals() {
     setCurrentPage(value);
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', // 다크 모드 사용 설정
+    },
+  });
+  
   return (
-    <Box>
-      <div className="flex justify-between items-center">
-        <Typography
-          variant="h4"
-          component="h1"
-          color="white"
-          fontWeight="bold"
-          margin={2}
-        >
-          출금 신청 내역
-        </Typography>
-      </div>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{backgroundColor: '#e0e0e0'}}>
-            <TableRow>
-              <TableCell>날짜</TableCell>
-              <TableCell>신청인</TableCell>
-              <TableCell>은행명</TableCell>
-              <TableCell>계좌번호</TableCell>
-              <TableCell>출금신청액</TableCell>
-              <TableCell>처리상태</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {withdraws.map((log: any, index: number) => (
-              <TableRow key={index}>
-                <TableCell>
-                  {new Date(log.applyDate).toLocaleDateString("ko-KR")}
-                </TableCell>
-                <TableCell>{log.applicantName}</TableCell>
-                <TableCell>{log.bankName}</TableCell>
-                <TableCell>{log.bankAccountNo}</TableCell>
-                <TableCell>{log.withdrawAmount}</TableCell>
-                <TableCell>
-                  {log.withdrawDoneDate ? "출금 완료" : ""}
-                  {log.withdrawCancelDate ? "출금 거절" : ""}
-                  {log.withdrawDoneDate === null &&
-                  log.withdrawCancelDate === null
-                    ? "미처리"
-                    : ""}
-                </TableCell>
-                {log.withdrawDoneDate === null &&
-                  log.withdrawCancelDate === null && (
-                    <TableCell>
-                      <ApproveButton
-                        withdrawId={log.id}
-                        loadWithdraws={loadWithdraws}                      
-                      />
-                      <RejectButton
-                        withdrawId={log.id}
-                        loadWithdraws={loadWithdraws}
-                      />
-                    </TableCell>
-                  )}
+    <ThemeProvider theme={theme}>
+      <Box margin={2}>
+        <div className="flex justify-between items-center">
+          <Typography
+            variant="h4"
+            component="h1"
+            color="white"
+            fontWeight="bold"
+            margin={2}
+          >
+            출금 신청 내역
+          </Typography>
+        </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#2a3eb1" }}>
+              <TableRow>
+                <TableCell align="center">날짜</TableCell>
+                <TableCell align="center">신청인</TableCell>
+                <TableCell align="center">은행명</TableCell>
+                <TableCell align="center">계좌번호</TableCell>
+                <TableCell align="center">출금신청액</TableCell>
+                <TableCell align="center">처리상태</TableCell>
+                <TableCell />
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {withdraws.length === 0 && (
-        <Typography variant="body1" color="white">
-          출금 신청 내역이 없습니다
-        </Typography>
-      )}
+            </TableHead>
+            <TableBody>
+              {withdraws.map((log: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell align="center">
+                    {new Date(log.applyDate).toLocaleDateString("ko-KR")}
+                  </TableCell>
+                  <TableCell align="center">{log.applicantName}</TableCell>
+                  <TableCell align="center">{log.bankName}</TableCell>
+                  <TableCell align="center">{log.bankAccountNo}</TableCell>
+                  <TableCell align="center">{log.withdrawAmount}</TableCell>
+                  <TableCell align="center">
+                    {log.withdrawDoneDate ? "출금 완료" : ""}
+                    {log.withdrawCancelDate ? "출금 거절" : ""}
+                    {log.withdrawDoneDate === null &&
+                    log.withdrawCancelDate === null
+                      ? "미처리"
+                      : ""}
+                  </TableCell>
+                  {log.withdrawDoneDate === null &&
+                    log.withdrawCancelDate === null && (
+                      <TableCell>
+                        <ApproveButton
+                          withdrawId={log.id}
+                          loadWithdraws={loadWithdraws}
+                        />
+                        <RejectButton
+                          withdrawId={log.id}
+                          loadWithdraws={loadWithdraws}
+                        />
+                      </TableCell>
+                    )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {withdraws.length === 0 && (
+          <Typography variant="body1" color="white">
+            출금 신청 내역이 없습니다
+          </Typography>
+        )}
 
-      <Box display="flex" justifyContent="center" margin={1}>
-        <Pagination
-          count={totalPages}
-          color="primary"
-          variant="outlined"
-          size="large"
-          shape="rounded"
-          page={currentPage}
-          onChange={handlePage}
-          sx={{
-            "& .MuiPaginationItem-root": {
-              color: "#fff",
-            },
-            "& .MuiPaginationItem-page.Mui-selected": {
-              backgroundColor: "#3f51b5",
-            },
-          }}
-        />
+        <Box display="flex" justifyContent="center" margin={1}>
+          <Pagination
+            count={totalPages}
+            color="primary"
+            variant="outlined"
+            size="large"
+            shape="rounded"
+            page={currentPage}
+            onChange={handlePage}
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#fff",
+              },
+              "& .MuiPaginationItem-page.Mui-selected": {
+                backgroundColor: "#3f51b5",
+              },
+            }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 }
 

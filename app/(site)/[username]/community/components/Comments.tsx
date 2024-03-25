@@ -7,6 +7,7 @@ import {
   Chip,
   Divider,
   FormControl,
+  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -22,6 +23,8 @@ const Comments = ({ _articleId }: Props) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const articleId = _articleId;
+
+
 
   const handleContent = (event: any) => {
     setContent(event.target.value as string);
@@ -58,7 +61,6 @@ const Comments = ({ _articleId }: Props) => {
       setContent("");
       toast.success("댓글이 작성되었습니다.");
 
-      // 댓글이 추가되면 댓글 목록을 다시 불러옴
       loadComments(articleId);
     } catch (error) {
       const errorObj = error as Error;
@@ -67,39 +69,43 @@ const Comments = ({ _articleId }: Props) => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // 폼의 기본 동작 방지
+    event.preventDefault();
     addComment();
   };
 
   return (
     <div>
       <Divider>댓글</Divider>
-
-      <form onSubmit={handleSubmit}>
-        <FormControl fullWidth>
-          <TextField
-            color="warning"
-            id="content"
-            name="content"
-            label="내용"
-            multiline
-            rows={1}
-            value={content}
-            onChange={handleContent}
-            defaultValue="내용을 입력하세요"
-          />
-        </FormControl>
-        <Button
-          variant="contained"
-          sx={{ color: "primary.main" }}
-          type="submit"
-        >
-          댓글 작성하기
-        </Button>
-      </form>
+      <Box>
+        <form onSubmit={handleSubmit}>
+          <FormControl fullWidth>
+            <TextField
+              color="warning"
+              id="content"
+              name="content"
+              label="댓글을 작성해보세요"
+              multiline
+              rows={1}
+              value={content}
+              onChange={handleContent}
+              defaultValue="내용을 입력하세요"
+            />
+          </FormControl>
+            <Box marginTop={1}>
+              <Button
+                variant="outlined"
+                color="warning"
+                type="submit"
+              >
+                댓글 작성하기
+              </Button>
+            </Box>
+        </form>
+      </Box>
       {comments.map((comment: any, index: number) => (
         <div key={comment.commentId}>
           <Box
+            margin={1}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -118,7 +124,7 @@ const Comments = ({ _articleId }: Props) => {
               variant="outlined"
             />
           </Box>
-          {index < comments.length - 1 && <Divider variant="middle"  />}
+          {index < comments.length - 1 && <Divider variant="middle" />}
         </div>
       ))}
     </div>
