@@ -85,7 +85,7 @@ export const AlbumInfoContent = ({album}:Props) => {
                         {album?.licenseDescription}
                     </Typography>
 
-                    {userInfos.nickname != album?.artistNickname && userInfos.username != null && (
+                    {userInfos.nickname != album?.artistNickname && userInfos.username != "" && album.permit && (
                     <Button
                         size="large"
                         variant="contained"
@@ -95,7 +95,6 @@ export const AlbumInfoContent = ({album}:Props) => {
                         구매하기
                     </Button>
                         )}
-
                 </Grid>
             </Grid>
             <div className="absolute bottom-8 right-10">

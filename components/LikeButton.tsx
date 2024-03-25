@@ -7,13 +7,14 @@ import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import {useRecoilState} from "recoil";
 import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
-import {UserInfos} from "@/types";
+import {AlbumData, UserInfos} from "@/types";
+import axiosClient from "@/libs/axiosClient";
 
 interface Props{
-    songId: string;
+    data: AlbumData
 }
 
-const LikeButton = ({songId}:Props) => {
+const LikeButton = ({data}: Props) => {
 
     const router = useRouter()
     const authModal = useAuthModal()
@@ -35,8 +36,9 @@ const LikeButton = ({songId}:Props) => {
             // }
         }
 
-        fetchData()
-    },[songId])
+        getAlbumLike();
+        fetchData();
+    },[data])
 
     const Icon = isLiked ? AiFillHeart : AiOutlineHeart
 
@@ -46,19 +48,41 @@ const LikeButton = ({songId}:Props) => {
         }
 
         if(isLiked){
-            //pressing like on a liked song will unlike it
-            // const {error} = await supabaseClient.from('liked_songs').delete().eq('user_id',user.id).eq('song_id',songId)
-
-            setIsLiked(false)
+            await disLikeAlbum();
             toast.success('좋아요를 취소했습니다!')
         }else{
-            //like the song aka insert into song
-            // const {error} = await supabaseClient.from('liked_songs').insert({song_id: songId, user_id: user.id})
-
-            setIsLiked(true)
+            await likeAlbum();
             toast.success('좋아요를 했습니다!')
         }
         router.refresh()
+    }
+
+    async function getAlbumLike() {
+        try{
+            const res = await axiosClient.get(`/album/${data.id}/like`);
+            const resData = await res.data.data;
+            setIsLiked(!resData)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function likeAlbum() {
+        try{
+            await axiosClient.post(`/album/${data.id}/like`,data.id);
+            setIsLiked(true)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function disLikeAlbum() {
+        try{
+            await axiosClient.post(`/album/${data.id}/cancelLike`,data.id);
+            setIsLiked(false)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
