@@ -26,16 +26,6 @@ const LikeButton = ({songId}:Props) => {
             return
         }
 
-        const fetchData = async () => {
-            // fetch the songs that are liked by current user
-            // const { data, error } = await supabaseClient.from('liked_songs').select('*').eq('user_id', user.id).eq('song_id', songId).single()
-            //
-            // if(!error && data){
-            //     setIsLiked(true)
-            // }
-        }
-
-        fetchData()
     },[songId])
 
     const Icon = isLiked ? AiFillHeart : AiOutlineHeart
@@ -47,13 +37,11 @@ const LikeButton = ({songId}:Props) => {
 
         if(isLiked){
             //pressing like on a liked song will unlike it
-            // const {error} = await supabaseClient.from('liked_songs').delete().eq('user_id',user.id).eq('song_id',songId)
 
             setIsLiked(false)
             toast.success('좋아요를 취소했습니다!')
         }else{
             //like the song aka insert into song
-            // const {error} = await supabaseClient.from('liked_songs').insert({song_id: songId, user_id: user.id})
 
             setIsLiked(true)
             toast.success('좋아요를 했습니다!')
