@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { GetCookie } from "@/libs/auth";
 import { toast } from "react-hot-toast";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import axiosClient from "@/libs/axiosClient";
 
 const PaymentSuccess = () => {
   const router = useRouter();
@@ -16,37 +16,15 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = GetCookie("accessToken");
-
-        if (!accessToken) {
-          toast.error("로그인이 필요합니다.");
-          return;
-        }
-
         const requestData = {
           paymentKey,
           orderId,
           amount,
         };
 
-        const response = await fetch("http://localhost:8090/credit/confirm", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${accessToken}`,
-          },
-          body: JSON.stringify(requestData),
-        });
+        const response = await axiosClient.post("/credit/confirm", requestData);
 
-        const json = await response.json();
-
-        if (!response.ok) {
-          router.replace(
-            `/credit/charge/payment/fail?message=${json.message}&code=${json.code}`
-          );
-          return;
-        }
+        const json = await response.data;
 
         toast.success("결제가 완료되었습니다.");
         router.replace("/credit?msg=결제가 완료되었습니다.");
@@ -56,15 +34,19 @@ const PaymentSuccess = () => {
       }
     };
 
-    fetchData(); 
+    fetchData();
   }, [amount, orderId, paymentKey, router]);
 
   return (
     <div className="container my-4 space-y-4">
       <div className="card-body bg-base-100 dark:bg-gray-800">
         <h1>결제 성공</h1>
-        <p className="text-primary-dark dark:text-primary">주문번호 : {orderId}</p>
-        <p className="text-primary-dark dark:text-primary">충전금액 : {amount}</p>
+        <p className="text-primary-dark dark:text-primary">
+          주문번호 : {orderId}
+        </p>
+        <p className="text-primary-dark dark:text-primary">
+          충전금액 : {amount}
+        </p>
         <p className="text-primary-dark dark:text-primary">
           결제키 : {paymentKey}
         </p>
