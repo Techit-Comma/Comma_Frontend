@@ -5,6 +5,7 @@ import { useState } from 'react'
 import AuthModal from '@/components/AuthModal'
 import PlaylistModal from '@/components/PlaylistModal'
 import AlbumReleaseModal from "@/components/Album/AlbumReleaseModal";
+import AlbumDeleteModal from "@/components/Album/AlbumDeleteModal";
 
 const ModalProvider = () => {
 
@@ -23,6 +24,7 @@ const ModalProvider = () => {
             <AuthModal/>
             <PlaylistModal/>
             <AlbumReleaseModal/>
+            <AlbumDeleteModal/>
         </>
     )
 }
