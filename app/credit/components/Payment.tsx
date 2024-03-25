@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { loadPaymentWidget, ANONYMOUS } from "@tosspayments/payment-widget-sdk";
 import { toast } from "react-hot-toast";
+import { Box, Button } from "@mui/material";
 
 interface Props {
   username: string;
@@ -11,7 +12,12 @@ interface Props {
   onChange: () => void;
 }
 
-export function Payment({ username, chargeCode, chargeAmount, onChange }: Props) {
+export function Payment({
+  username,
+  chargeCode,
+  chargeAmount,
+  onChange,
+}: Props) {
   const widgetClientKey = "test_ck_5OWRapdA8dmGZpoK9jpA3o1zEqZK";
   const customerKey = username;
   const [paymentWidget, setPaymentWidget] = useState(null);
@@ -78,11 +84,19 @@ export function Payment({ username, chargeCode, chargeAmount, onChange }: Props)
   };
 
   return (
-    <div>
+    <Box>
       <div id="payment-widget" />
       <div id="agreement" />
-      <button onClick={handlePaymentRequest}>결제하기</button>
-    </div>
+      <Box marginTop={2}>
+        <Button
+          variant="outlined"
+          color="warning"
+          onClick={handlePaymentRequest}
+        >
+          결제하기
+        </Button>
+      </Box>
+    </Box>
   );
 }
 
