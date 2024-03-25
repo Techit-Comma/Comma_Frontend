@@ -15,6 +15,7 @@ export type AlbumData = {
   fileUrl: string;
   albumname: string;
   artistNickname: string;
+  artistUsername: string;
   genre: string;
   licenseDescription: string;
   permit: boolean;
