@@ -150,8 +150,8 @@ const DonationContent = () => {
                                 {!donationResponse ? (
                                     <Typography>후원 목록이 없습니다.</Typography>
                                 ) : (
-                                    donationResponse.map(donation => (
-                                        <Card sx={{ m: 2 }}>
+                                    donationResponse.map((donation, index) => (
+                                        <Card sx={{ m: 2 }} key={index}>
                                             <CardContent>
                                                 <Typography variant="h6">{donation.patronUsername}</Typography>
                                                 <Typography>{donation.message}</Typography>
@@ -169,8 +169,8 @@ const DonationContent = () => {
                                 {!donationResponseArt ? (
                                     <Typography>후원 받은 목록이 없습니다.</Typography>
                                 ) : (
-                                    donationResponseArt.map(donation => (
-                                        <Card sx={{ m: 2 }}>
+                                    donationResponseArt.map((donation, index) => (
+                                        <Card sx={{ m: 2 }} key={index}>
                                             <CardContent>
                                                 <Typography variant="h6">{donation.patronUsername}</Typography>
                                                 <Typography>{donation.message}</Typography>
