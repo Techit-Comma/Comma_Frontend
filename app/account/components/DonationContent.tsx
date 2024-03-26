@@ -6,7 +6,7 @@ import {CheckAccessToken, LogoutProcess} from "@/libs/auth";
 import {Card, CardContent, Checkbox, Container, FormControlLabel, TextField} from "@mui/material";
 import {toast} from "react-hot-toast";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {Box, Grid, Typography} from "@material-ui/core";
 import Button from "@mui/material/Button";
@@ -38,7 +38,7 @@ interface DonationUpdate {
 const DonationContent = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState<boolean>(loginState); // 로그인 상태를 나타내는 state의 타입을 지정합니다.
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태를 나타내는 state의 타입을 지정합니다.
     useEffect(() => {
         // 로그인 상태 확인 로직

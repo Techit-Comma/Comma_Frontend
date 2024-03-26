@@ -7,7 +7,7 @@ import WriteArticle from "./components/WriteArticle"
 import ArticleList from "./components/ArtitcleList";
 import { useRecoilState } from "recoil";
 import { UserInfos } from "@/types";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import { userInfoDataState } from "@/providers/RecoilContextProvider";
 import { Divider } from "@mui/material";
 
 export default function Home({

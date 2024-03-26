@@ -1,7 +1,7 @@
 'use client'
 
 import {useRecoilState} from "recoil";
-import {followDataState, loginState} from "@/providers/RecoilContextProvider";
+import {followDataState, followState, loginState} from "@/providers/RecoilContextProvider";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-hot-toast";
 import {useRouter} from "next/navigation";
@@ -12,6 +12,7 @@ const Follow = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
     const [followList, setFollowList] = useRecoilState<FollowItem[]>(followDataState);
+    const [followUpdate, setFollowUpdate] = useRecoilState(followState);
 
     async function getFollowList() {
         try {
@@ -24,10 +25,11 @@ const Follow = () => {
     }
 
     useEffect(() => {
-        if (isLogin) {
+        if (isLogin || followUpdate) {
             getFollowList();
+            setFollowUpdate(false);
         }
-    }, [isLogin]); // 의존성 배열에 isLogin 추가
+    }, [isLogin, followUpdate]); // 의존성 배열에 isLogin 추가
 
     return (
     <div className="flex flex-col">
@@ -36,11 +38,11 @@ const Follow = () => {
                 <p className='text-neutral-400 font-medium text-md'>팔로우 목록</p>
             </div>
         </div>
-        <div className='flex flex-col gap-y-2 mt-4 px-3'>
+        <div className='flex flex-col gap-y-2 mt-3 px-3'>
             {isLogin ? (
                 <div>
                     {followList?.map((item) => (
-                        <div key={item.memberId} onClick={() => router.push(`/${item.username}`)} className="hover:opacity-75 cursor-pointer">
+                        <div key={item.memberId} onClick={() => router.push(`/${item.username}`)} className="hover:opacity-75 cursor-pointer mt-1">
                             <a className="ml-3 text-sm text-neutral-400">{item.username}</a>
                         </div>
                     ))}

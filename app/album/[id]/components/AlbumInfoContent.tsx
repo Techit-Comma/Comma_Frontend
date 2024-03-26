@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Avatar, Box, Grid, Typography} from "@material-ui/core";
 import {useRecoilState} from "recoil";
-import {baseUrl, userInfoState} from "@/providers/RecoilContextProvider";
+import {baseUrl, userInfoDataState} from "@/providers/RecoilContextProvider";
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
 import {Chip, IconButton, Link, Stack} from "@mui/material";
@@ -46,7 +46,7 @@ interface Props {
 export const AlbumInfoContent = ({album}:Props) => {
     const onPlay = useOnPlay([album]);
     const classes = useStyles();
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
     // @ts-ignore
     return (

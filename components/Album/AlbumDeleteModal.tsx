@@ -15,22 +15,13 @@ const AlbumDeleteModal = () => {
     const {onClose, isOpen, albumId} = useAlbumDeleteModal()
 
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
-        // 로그인 상태 확인 로직
-        CheckAccessToken().then((loggedIn) => {
-            setIsLogin(loggedIn);
-            setIsLoading(false); // 로그인 상태 확인이 완료됨
-        });
-    }, []);
-
-    useEffect(() => {
-        if (!isLoading && !isLogin) {
+        if (!isLogin) {
             onClose();
         }
-    }, [isLoading, router]);
+    }, [isLogin]);
 
     const onChange = (open:boolean) =>{
         if(!open){

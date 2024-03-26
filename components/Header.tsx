@@ -8,7 +8,7 @@ import { BiSearch } from 'react-icons/bi';
 import Button from './Button';
 import useAuthModal from '@/hooks/useAuthModal';
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import ProfileButton from "@/components/ProfileButton";
 import NotificationButton from "@/components/NotificationButton";
 import {UserInfos} from "@/types";
@@ -20,7 +20,7 @@ interface Props{
 const Header: React.FC<Props> = ({children,className}) => {
     const router = useRouter()
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const authModal = useAuthModal()
 
     return (

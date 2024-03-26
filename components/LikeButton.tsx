@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {AlbumData, UserInfos} from "@/types";
 import axiosClient from "@/libs/axiosClient";
 
@@ -19,7 +19,7 @@ const LikeButton = ({data}: Props) => {
     const router = useRouter()
     const authModal = useAuthModal()
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const [isLiked, setIsLiked] = useState<boolean>(false)
 
     useEffect(()=>{
@@ -28,15 +28,9 @@ const LikeButton = ({data}: Props) => {
         }
 
         const fetchData = async () => {
-            // fetch the songs that are liked by current user
-            // const { data, error } = await supabaseClient.from('liked_songs').select('*').eq('user_id', user.id).eq('song_id', songId).single()
-            //
-            // if(!error && data){
-            //     setIsLiked(true)
-            // }
+            await getAlbumLike();
         }
 
-        getAlbumLike();
         fetchData();
     },[data])
 

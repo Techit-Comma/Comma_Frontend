@@ -35,19 +35,21 @@ axiosClient.interceptors.response.use(
     async error => {
       const originalRequest = error.config;
       // 401 에러 감지 및 originalRequest._retry
-      // if (error.response.status === 401 && originalRequest._retry) {
-      //   Logout();
-      //   return;
-      // }
+      if (error.response.status === 401 && originalRequest._retry) {
+        Logout();
+        return;
+      }
 
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true; // 재요청 플래그 설정
 
-        const accessToken = await ReissueTokens(); // 토큰 재발급
-        axios.defaults.headers.common['Authorization'] = `${accessToken}`; // 새 토큰으로 헤더 설정
-        originalRequest.headers['Authorization'] = `${accessToken}`; // 현재 요청에도 새 토큰 설정
+        const reissue = await ReissueTokens(); // 토큰 재발급
+        if (reissue) {
+          axios.defaults.headers.common['Authorization'] = `${reissue}`; // 새 토큰으로 헤더 설정
+          originalRequest.headers['Authorization'] = `${reissue}`; // 현재 요청에도 새 토큰 설정
 
-        return axiosClient(originalRequest); // 요청 재실행
+          return axiosClient(originalRequest); // 요청 재실행
+        }
       }
 
       if (error.response) {

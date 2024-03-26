@@ -1,8 +1,12 @@
 "use client";
 
 import { Box, Button, ButtonGroup, Divider, Tab, Tabs } from "@mui/material";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
+import axiosClient from "@/libs/axiosClient";
+import toast from "react-hot-toast";
+import {useRecoilState} from "recoil";
+import {userInfoDataState} from "@/providers/RecoilContextProvider";
 
 interface Props {
   username: string;
@@ -12,11 +16,20 @@ interface Props {
 
 const Navigator = ({ username, tabValue }: Props) => {
   const router = useRouter();
-  const [value, setValue] = React.useState(tabValue); 
+  const [value, setValue] = React.useState(tabValue);
+
+  const [userInfo, setUserInfo] = useRecoilState(userInfoDataState);
+  const [myPageState, setMyPageState] = useState(false);
+
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    userInfo.username === username ? setMyPageState(true) : setMyPageState(false);
+  }, [username]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -31,12 +44,16 @@ const Navigator = ({ username, tabValue }: Props) => {
           className="text text-white"
           onClick={() => router.replace(`/${username}`)}
         />
-        <Tab
-            value="앨범"
-            label="앨범"
-            onClick={() => router.replace(`/${username}/album`)}
-            className="text text-white"
-        />
+        {myPageState ? (
+            <Tab
+                value="앨범"
+                label="앨범"
+                onClick={() => router.replace(`/${username}/album`)}
+                className="text text-white"
+            />
+        ) : (
+            <></>
+        )}
         <Tab
           value="커뮤니티"
           label="커뮤니티"

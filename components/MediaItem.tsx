@@ -1,4 +1,3 @@
-import useLoadImage from "@/hooks/useLoadImage"
 import usePlayer from "@/hooks/usePlayer"
 import {AlbumData} from "@/types"
 import Image from "next/image"

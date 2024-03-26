@@ -33,14 +33,8 @@ const AlbumContent = ({albums}:Props) => {
                     <div className="flex-1">
                         <MediaItem onClick={(id)=>onPlay(album)} data={album}/>
                     </div>
-                    <LikeButton songId={album.id}/>
                 </div>
             ))}
-            <div className="absolute bottom-8 right-10">
-                <button className='transition opacity-0 rounded-full flex items-center bg-blue-500 p-4 drop-shadow-md translate translate-y-1/4 group-hover:opacity-100 group-hover:translate-y-0 hover:scale-110'>
-                    <FaPlus className='text-black'/>
-                </button>
-            </div>
         </div>
     )
 }

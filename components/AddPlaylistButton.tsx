@@ -12,7 +12,7 @@ import {
     AiOutlineUsergroupAdd, AiTwotoneFileAdd, AiTwotoneFolderAdd
 } from "react-icons/ai";
 import {useRecoilState} from "recoil";
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {AlbumData, UserInfos} from "@/types";
 import {faSquarePlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -28,7 +28,7 @@ const AddPlaylistButton = ({album}:Props) => {
     const authModal = useAuthModal()
     const playlistModal = usePlaylistModal();
     const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
     useEffect(()=>{
         if(!userInfos.memberId){

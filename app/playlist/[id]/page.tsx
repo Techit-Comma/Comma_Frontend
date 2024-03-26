@@ -46,7 +46,7 @@ const Playlist = () => {
                         </div>
                         <div className="flex flex-col gap-y-2 mt-4 md:mt-0 text-center md:text-left lg:text-left">
                             <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">{playlistDetail?.title}</h1>
-                            <a className="text-white text-md sm:text-lg lg:text-2xl font-bold m-2 cursor-pointer" onClick={() => router.push(`/member/${playlistDetail?.producerUsername}`)}>
+                            <a className="text-white text-md sm:text-lg lg:text-2xl font-bold m-2 cursor-pointer" onClick={() => router.push(`/${playlistDetail?.producerUsername}`)}>
                                 {playlistDetail?.producerNickname}
                             </a>
                             <p className="text-white text-xs m-2">{playlistDetail?.description}</p>

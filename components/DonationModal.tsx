@@ -3,7 +3,7 @@ import React, {FormEvent} from 'react'
 import Modal from './Modal'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {loginState, userInfoState} from "@/providers/RecoilContextProvider";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
 import {useRecoilState} from "recoil";
 import Button from "@mui/material/Button";
 import axiosClient from "@/libs/axiosClient";
@@ -17,7 +17,7 @@ const CreatePlaylistModal = () => {
 
   const donationModal = useDonationModal()
   const [isLogin, setIsLogin] = useRecoilState(loginState);
-  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoDataState);
 
   const router = useRouter()
 
