@@ -6,7 +6,7 @@ import {UserInfos, PlaylistItem, FollowItem} from "@/types";
 
 export const baseUrl = atom({
   key: "url",
-  default: "http://localhost:8090",
+  default: "https://api.com-ma.shop",
 });// https://---
 
 export const loginState = atom({

@@ -4,7 +4,7 @@ import {toast} from "react-hot-toast";
 
 // Axios 인스턴스 생성
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:8090',
+  baseURL: 'https://api.com-ma.shop',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
