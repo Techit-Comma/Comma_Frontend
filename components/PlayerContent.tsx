@@ -146,7 +146,7 @@ const PlayerContent = ({album}:Props) => {
                 <div className="flex w-full justify-start">
                     <div className="flex items-center gap-x-4">
                         <MediaItem data={album}/>
-                        <LikeButton songId={album?.id}/>
+                        <LikeButton data={album}/>
                         <AddPlaylistButton album={album}/>
                     </div>
                 </div>

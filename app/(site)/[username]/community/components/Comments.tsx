@@ -7,6 +7,7 @@ import {
   Chip,
   Divider,
   FormControl,
+  IconButton,
   Paper,
   TextField,
   Typography,
@@ -14,6 +15,11 @@ import {
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { useRecoilState } from "recoil";
+import { UserInfos } from "@/types";
+import { userInfoState } from "@/providers/RecoilContextProvider";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface Props {
   _articleId: string;
@@ -22,12 +28,17 @@ interface Props {
 const Comments = ({ _articleId }: Props) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
+  const [editCommentId, setEditCommentId] = useState(null);
+  const [editContent, setEditContent] = useState("");
   const articleId = _articleId;
-
-
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
 
   const handleContent = (event: any) => {
     setContent(event.target.value as string);
+  };
+
+  const handleEditContent = (event: any) => {
+    setEditContent(event.target.value as string);
   };
 
   useEffect(() => {
@@ -73,6 +84,35 @@ const Comments = ({ _articleId }: Props) => {
     addComment();
   };
 
+  const deleteComment = async (commentId: string) => {
+    try {
+      await axiosClient.delete(`community/comments/${commentId}`);
+      toast.success("댓글을 삭제하였습니다.");
+      loadComments(articleId);
+    } catch (error) {
+      toast.error("댓글 삭제에 실패하였습니다.");
+    }
+  };
+
+  const selectEditComment = (commentId: any, commentContent: string) => {
+    setEditCommentId(commentId);
+    setEditContent(commentContent);
+  };
+
+  const editComment = async () => {
+    try {
+      await axiosClient.put(`/community/comments/${editCommentId}`, {
+        content: editContent,
+      });
+      toast.success("댓글을 수정하였습니다.");
+      loadComments(articleId);
+      setEditCommentId(null);
+      setEditContent("");
+    } catch (error) {
+      toast.error("댓글 수정에 실패하였습니다.");
+    }
+  };
+
   return (
     <div>
       <Divider>댓글</Divider>
@@ -91,15 +131,11 @@ const Comments = ({ _articleId }: Props) => {
               defaultValue="내용을 입력하세요"
             />
           </FormControl>
-            <Box marginTop={1}>
-              <Button
-                variant="outlined"
-                color="warning"
-                type="submit"
-              >
-                댓글 작성하기
-              </Button>
-            </Box>
+          <Box marginTop={1}>
+            <Button variant="outlined" color="warning" type="submit">
+              댓글 작성하기
+            </Button>
+          </Box>
         </form>
       </Box>
       {comments.map((comment: any, index: number) => (
@@ -116,13 +152,59 @@ const Comments = ({ _articleId }: Props) => {
               <Avatar alt={comment.username} src={comment.profileUrl} />
               <div className="flex-col items-start justify-center ml-2">
                 <Typography variant="subtitle1">{comment.username}</Typography>
-                <Typography variant="body1">{comment.content}</Typography>
+                {editCommentId === comment.commentId ? (
+                  <Box>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={1}
+                      value={editContent}
+                      onChange={handleEditContent}
+                    />
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={editComment}
+                    >
+                      저장
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="warning"
+                      onClick={() => setEditCommentId(null)}
+                    >
+                      취소
+                    </Button>
+                  </Box>
+                ) : (
+                  <Typography variant="body1">{comment.content}</Typography>
+                )}
               </div>
             </div>
-            <Chip
-              label={format(new Date(comment.createDate), "yyyy-MM-dd HH:mm")}
-              variant="outlined"
-            />
+            <Box display="flex-col" justifyContent="end">
+              <Chip
+                label={format(new Date(comment.createDate), "yyyy-MM-dd HH:mm")}
+                variant="outlined"
+              />
+              {userInfos.username === comment.username && (
+                <Box display="flex" justifyContent="end">
+                  <IconButton
+                    id="delete-button"
+                    onClick={() => deleteComment(comment.commentId)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton
+                    id="edit-button"
+                    onClick={() =>
+                      selectEditComment(comment.commentId, comment.content)
+                    }
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
           </Box>
           {index < comments.length - 1 && <Divider variant="middle" />}
         </div>
