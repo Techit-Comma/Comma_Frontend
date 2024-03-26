@@ -20,10 +20,10 @@ const ProfileButton = forwardRef<HTMLButtonElement, Props>(({
     ...props
 },ref)=>{
   const router = useRouter()
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as Element);
   };
 
   const handleClose = () => {

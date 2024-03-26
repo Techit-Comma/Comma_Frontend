@@ -47,7 +47,7 @@ const CreatePlaylistModal = () => {
                 setPlaylistUpdate(true);
                 createPlaylistModal.onClose();
             } catch (error) {
-                toast.error('재생목록 생성에 실패했습니다.', error);
+                console.error(error);
                 return undefined;
             }
         }

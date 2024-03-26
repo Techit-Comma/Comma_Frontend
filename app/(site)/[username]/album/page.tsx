@@ -63,7 +63,7 @@ export default function Album({
         </div>
       </Header>
       <Divider variant="middle" />
-      <AlbumContent albums={myAlbums}/>
+      <AlbumContent albums={myAlbums || []}/>
       <div className="absolute bottom-8 right-10">
         <button className='transition rounded-full flex items-center bg-blue-500 p-4' onClick={() => router.push("/album/release")}>
           <FaPlus className='text-black'/>

@@ -98,7 +98,7 @@ const DonationContent = () => {
         setDonationUpdateCheck(updatedChecks);
     };
 
-    const handleDonationRegularUpdateRequest = async (donation: Donation) => {
+    const handleDonationRegularUpdateRequest = async (donation: RegularDonation) => {
         setDonationUpdate((prev) => ({
             ...prev,
             artistName: donation.artistUsername,
@@ -142,7 +142,7 @@ const DonationContent = () => {
         <div className="mb-7 px-6">
             <ThemeProvider theme={theme}>
                 <Container>
-                    <Box sx={{ my: 4, spaceY: 4 }} >
+                    <Box sx={{ my: 4, marginTop: 4, marginBottom: 4 }} >
                         <Grid container spacing={2}>
                             {/* 후원 목록 */}
                             <Grid item xs={12} md={4}>
@@ -193,9 +193,13 @@ const DonationContent = () => {
                                             <CardContent>
                                                 <Typography>Me ➡ {donation.amount}원 ➡ {donation.artistUsername}</Typography>
                                                 <Typography>매월 {donation.executeDay}일</Typography>
-                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                                                    <Button variant="outlined" onClick={() => handleDonationRegularUpdateRequest(index)}>후원일 수정</Button>
-                                                    <Button variant="outlined" onClick={() => handleDonationRegularDelete(donation.artistUsername, donation.executeDay)}>후원 취소</Button>
+                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                                                    <Box sx={{ mr: 1 }}>
+                                                        <Button variant="outlined" onClick={() => handleDonationRegularUpdateRequest(donation)}>후원일 수정</Button>
+                                                    </Box>
+                                                    <Box sx={{ mr: 1 }}>
+                                                        <Button variant="outlined" onClick={() => handleDonationRegularDelete(donation.artistUsername, donation.executeDay)}>후원 취소</Button>
+                                                    </Box>
                                                 </Box>
                                             </CardContent>
                                         </Card>

@@ -26,14 +26,14 @@ interface NotificationItem {
 
 function NotificationButton() {
   const router = useRouter()
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const [notificationList, setNotificationList] = useState<NotificationItem[]>([]);
 
   // 공통 변수
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as Element);
   };
 
   const handleClose = () => {

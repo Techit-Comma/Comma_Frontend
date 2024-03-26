@@ -54,7 +54,7 @@ const Playlist = () => {
                     </div>
                 </div>
             </Header>
-            <PlaylistContent albums={playlistDetail?.albumList}/>
+            <PlaylistContent albums={playlistDetail?.albumList || []}/>
         </div>
     )
 }

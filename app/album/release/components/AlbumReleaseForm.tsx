@@ -91,7 +91,7 @@ const AlbumReleaseForm = () => {
                 toast.success("앨범 등록이 완료되었습니다.");
                 router.push("/");
             } catch (error) {
-                toast.error('앨범 등록에 실패했습니다.', error);
+                console.error('앨범 등록에 실패했습니다.', error);
                 return undefined;
             }
         }

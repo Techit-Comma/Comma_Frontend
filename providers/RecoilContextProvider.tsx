@@ -31,17 +31,18 @@ export const userInfoState = atom({
 });
 
 
-export const followDataState : RecoilState<FollowItem[]> = atom({
+export const followDataState: RecoilState<FollowItem[]> = atom<FollowItem[]>({
   key: "followDataState",
   default: [],
 });
+
 
 export const followState = atom({
   key: 'followState',
   default: false,
 });
 
-export const playlistDataState : RecoilState<PlaylistItem[]> = atom({
+export const playlistDataState : RecoilState<PlaylistItem[]> = atom<PlaylistItem[]>({
   key: 'playlistDataState',
   default: [],
 });

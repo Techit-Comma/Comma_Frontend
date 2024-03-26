@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
 import { UserInfos } from "@/types";
-import { userInfoState } from "@/providers/RecoilContextProvider";
+import {userInfoDataState, userInfoState} from "@/providers/RecoilContextProvider";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
@@ -31,7 +31,7 @@ const Comments = ({ _articleId }: Props) => {
   const [editCommentId, setEditCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const articleId = _articleId;
-  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoState);
+  const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
 
   const handleContent = (event: any) => {
     setContent(event.target.value as string);

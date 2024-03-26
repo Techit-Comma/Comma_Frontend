@@ -50,7 +50,7 @@ const
                     <div className="flex-1">
                         <MediaItem onClick={(id)=>onPlay(album)} data={album}/>
                     </div>
-                    <LikeButton songId={album.id}/>
+                    <LikeButton data={album}/>
                 </div>
             ))}
         </div>

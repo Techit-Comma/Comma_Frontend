@@ -47,7 +47,7 @@ const AuthModal = () => {
             const response = await axiosClient.get('/oauth/google');
             window.location.href = response.data;
         } catch (error) {
-            toast.error('Google 로그인에 실패했습니다.', error);
+            console.error('Google 로그인에 실패했습니다.', error);
             return undefined;
         }
     }
@@ -57,7 +57,7 @@ const AuthModal = () => {
             const response = await axiosClient.get('/oauth/github');
             window.location.href = response.data;
         } catch (error) {
-            toast.error('Github 로그인에 실패했습니다.', error);
+            console.error('Github 로그인에 실패했습니다.', error);
             return undefined;
         }
     }
@@ -85,7 +85,7 @@ const AuthModal = () => {
                 toast.success("로그인 되었습니다.");
                 onClose();
             } catch (error) {
-                toast.error('로그인에 실패했습니다.', error);
+                console.error('로그인에 실패했습니다.', error);
                 return undefined;
             }
         }
@@ -114,7 +114,7 @@ const AuthModal = () => {
                 toast.success("회원가입이 완료되었습니다.");
                 setFormState(false);
             } catch (error) {
-                toast.error('회원가입에 실패했습니다.', error);
+                console.error('회원가입에 실패했습니다.', error);
                 return undefined;
             }
         }

@@ -1,5 +1,5 @@
 'use client'
-import {AlbumData, Song} from "@/types";
+import {AlbumData} from "@/types";
 import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
 import {BsPauseFill,BsPlayFill} from 'react-icons/bs'
@@ -184,8 +184,11 @@ const PlayerContent = ({album}:Props) => {
                     onClick={player.reset}>
                     <IoMdClose/>
                 </button>
-                <audio ref={audioRef} onLoadedMetadata={e => setDuration(e.target.duration)}
-                       onTimeUpdate={e => setCurrentTime(e.target.currentTime)} onEnded={onPlayNext} hidden/>
+                <audio ref={audioRef}
+                       onLoadedMetadata={(e: React.SyntheticEvent<HTMLAudioElement>) => setDuration(e.currentTarget.duration)}
+                       onTimeUpdate={(e: React.SyntheticEvent<HTMLAudioElement>) => setCurrentTime(e.currentTarget.currentTime)}
+                       onEnded={onPlayNext}
+                       hidden/>
             </div>
         </div>
     )

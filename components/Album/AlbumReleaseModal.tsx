@@ -84,9 +84,9 @@ const AlbumReleaseModal = () => {
         }
     }
 
-    async function handleEvent(event) {
+    async function handleEvent(event: string) {
         const statElement = document.getElementById('stat');
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(event);
         if (data[1] === "COMPLETE") {
             if (statElement) setIsLoading(true);
         }

@@ -13,22 +13,22 @@ interface Props {
 }
 
 export function Payment({
-  username,
-  chargeCode,
-  chargeAmount,
-  onChange,
-}: Props) {
+                          username,
+                          chargeCode,
+                          chargeAmount,
+                          onChange,
+                        }: Props) {
   const widgetClientKey = "test_ck_5OWRapdA8dmGZpoK9jpA3o1zEqZK";
   const customerKey = username;
-  const [paymentWidget, setPaymentWidget] = useState(null);
+  const [paymentWidget, setPaymentWidget]: [any, any] = useState(null);
   const paymentMethodsWidgetRef = useRef(null);
 
   useEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
         const loadedWidget = await loadPaymentWidget(
-          widgetClientKey,
-          customerKey
+            widgetClientKey,
+            customerKey
         );
         setPaymentWidget(loadedWidget);
       } catch (error) {
@@ -45,9 +45,9 @@ export function Payment({
     }
 
     const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
-      "#payment-widget",
-      { value: chargeAmount },
-      { variantKey: "DEFAULT" }
+        "#payment-widget",
+        { value: chargeAmount },
+        { variantKey: "DEFAULT" }
     );
 
     paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
@@ -56,7 +56,7 @@ export function Payment({
   }, [paymentWidget, chargeAmount]);
 
   useEffect(() => {
-    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
+    const paymentMethodsWidget: any = paymentMethodsWidgetRef.current;
 
     if (paymentMethodsWidget == null) {
       return;
@@ -84,19 +84,19 @@ export function Payment({
   };
 
   return (
-    <Box>
-      <div id="payment-widget" />
-      <div id="agreement" />
-      <Box marginTop={2}>
-        <Button
-          variant="outlined"
-          color="warning"
-          onClick={handlePaymentRequest}
-        >
-          결제하기
-        </Button>
+      <Box>
+        <div id="payment-widget" />
+        <div id="agreement" />
+        <Box marginTop={2}>
+          <Button
+              variant="outlined"
+              color="warning"
+              onClick={handlePaymentRequest}
+          >
+            결제하기
+          </Button>
+        </Box>
       </Box>
-    </Box>
   );
 }
 

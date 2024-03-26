@@ -18,7 +18,7 @@ const theme = createTheme({
     },
 });
 
-export default function HorizontalLinearAlternativeLabelStepper({ activeStep }) {
+export default function HorizontalLinearAlternativeLabelStepper({ activeStep }: { activeStep: number }) {
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{ width: '100%' }} className="m-3">
