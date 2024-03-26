@@ -2,41 +2,55 @@
 
 import LikeButton from "@/components/LikeButton"
 import MediaItem from "@/components/MediaItem"
-import { useUser } from "@/hooks/useUser"
-import { Song } from "@/types"
+import {AlbumData} from "@/types"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import {useEffect, useState} from "react"
 import useOnPlay from "@/hooks/useOnPlay"
+import {useRecoilState} from "recoil";
+import {loginState} from "@/providers/RecoilContextProvider";
+import {CheckAccessToken} from "@/libs/auth";
+import {toast} from "react-hot-toast";
 
 interface Props{
-    songs: Song[]
+    albums: AlbumData[]
 }
 
-const LikedContent = ({songs}:Props) => {
+const
+    LikedContent = ({albums}:Props) => {
     const router = useRouter()
-    const {isLoading, user} = useUser()
-    const onPlay = useOnPlay(songs)
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [isLoading, setIsLoading] = useState(true);
+    const onPlay = useOnPlay(albums)
 
-    useEffect(()=> {
-        if(!isLoading && !user){
-            router.replace('/') //not logged in go home
+    useEffect(() => {
+        // 로그인 상태 확인 로직
+        CheckAccessToken().then((loggedIn) => {
+            setIsLogin(loggedIn);
+            setIsLoading(false); // 로그인 상태 확인이 완료됨
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!isLoading && !isLogin) {
+            toast.error("로그인 후 이용 할 수 있습니다.")
+            router.replace('/');
         }
-    },[isLoading, user, router])
+    }, [isLoading, router]);
 
-    if(songs.length === 0){
+    if(albums.length === 0){
         return (
-            <div className="flex flex-col gap-y-2 w-full px-6 text-neutral-400">No liked songs.</div>
+            <div className="flex flex-col gap-y-2 w-full px-6 text-neutral-400">좋아요한 곡이 없습니다.</div>
         )
     }
 
     return (
         <div className="flex flex-col gap-y-2 w-full p-6">
-            {songs.map((song)=>(
-                <div className="flex items-center gap-x-4 w-full" key={song.id}>
+            {albums.map((album)=>(
+                <div className="flex items-center gap-x-4 w-full" key={album.id}>
                     <div className="flex-1">
-                        <MediaItem onClick={(id)=>onPlay(id)} data={song}/>
+                        <MediaItem onClick={(id)=>onPlay(album)} data={album}/>
                     </div>
-                    <LikeButton songId={song.id}/>
+                    <LikeButton songId={album.id}/>
                 </div>
             ))}
         </div>

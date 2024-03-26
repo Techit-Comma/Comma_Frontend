@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 import {RxCaretLeft,RxCaretRight} from 'react-icons/rx';
@@ -7,26 +7,20 @@ import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 import Button from './Button';
 import useAuthModal from '@/hooks/useAuthModal';
-import { FaUserAlt } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
 import {useRecoilState} from "recoil";
-import {baseUrl, loginState} from "@/store/store";
-import {CheckAccessToken, GetCookie, LogoutProcess, ReissueTokens, SetTokenCookie} from "@/libs/auth";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
+import ProfileButton from "@/components/ProfileButton";
+import NotificationButton from "@/components/NotificationButton";
+import {UserInfos} from "@/types";
 
 interface Props{
     children:React.ReactNode;
     className?:string
 }
 const Header: React.FC<Props> = ({children,className}) => {
-    const [isLogin, setIsLogin] = useRecoilState(loginState);
-    const [requestUrl, setRequestUrl] = useRecoilState(baseUrl);
     const router = useRouter()
-    const handleLogout =  async () => {
-        //reset any playing songs
-        router.refresh()
-
-        LogoutProcess(requestUrl, setIsLogin);
-    }
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const authModal = useAuthModal()
 
     return (
@@ -53,19 +47,14 @@ const Header: React.FC<Props> = ({children,className}) => {
                     {isLogin?(
                         //logged in
                         <div className='flex gap-x-4 items-center'>
-                            <Button onClick={handleLogout} className='bg-white px-6 py-2'>Logout</Button>
-                            <Button onClick={()=>router.push('/account')} className='bg-white'><FaUserAlt/></Button>
+                            <NotificationButton />
+                            <ProfileButton className='w-10 h-10' profileImageUrl={userInfos.profileImageUrl} username={userInfos.username}></ProfileButton>
                         </div>
                     ):(
                         //not logged in
-                    <>
-                        <div>
-                            <Button onClick={authModal.onOpen} className='bg-transparent text-neutral-300 font-medium'>Sign Up</Button>
+                        <div className='flex gap-x-4 items-center'>
+                            <Button onClick={authModal.onOpen} className='bg-white px-6 py-2'>Login</Button>
                         </div>
-                        <div>
-                            <Button onClick={authModal.onOpen} className='bg-white px-6 py-2'>Log in</Button>
-                        </div>
-                    </>
                     )}
                 </div>
             </div>

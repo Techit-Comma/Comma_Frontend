@@ -1,71 +1,82 @@
 'use client'
 
 import useAuthModal from "@/hooks/useAuthModal";
-import { useUser } from "@/hooks/useUser";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import {useRecoilState} from "recoil";
+import {loginState, userInfoDataState} from "@/providers/RecoilContextProvider";
+import {AlbumData, UserInfos} from "@/types";
+import axiosClient from "@/libs/axiosClient";
 
 interface Props{
-    songId: string;
+    data: AlbumData
 }
 
-const LikeButton = ({songId}:Props) => {
+const LikeButton = ({data}: Props) => {
 
     const router = useRouter()
-    const { supabaseClient } = useSessionContext()
     const authModal = useAuthModal()
-    const { user } = useUser()
-
+    const [isLogin, setIsLogin] = useRecoilState(loginState);
+    const [userInfos, setUserInfos] = useRecoilState<UserInfos>(userInfoDataState);
     const [isLiked, setIsLiked] = useState<boolean>(false)
 
     useEffect(()=>{
-        if(!user?.id){
+        if(!userInfos.memberId){
             return
         }
 
         const fetchData = async () => {
-            //fetch the songs that are liked by current user
-            const { data, error } = await supabaseClient.from('liked_songs').select('*').eq('user_id', user.id).eq('song_id', songId).single()
-
-            if(!error && data){
-                setIsLiked(true)
-            }
+            await getAlbumLike();
         }
 
-        fetchData()
-    },[songId, supabaseClient, user?.id])
+        fetchData();
+    },[data])
 
     const Icon = isLiked ? AiFillHeart : AiOutlineHeart
 
     const handleLike = async () => {
-        if(!user){ //open auth if logged out and try to like
+        if(!isLogin){ //open auth if logged out and try to like
             return authModal.onOpen()
         }
 
         if(isLiked){
-            //pressing like on a liked song will unlike it
-            const {error} = await supabaseClient.from('liked_songs').delete().eq('user_id',user.id).eq('song_id',songId)
-
-            if(error){
-                toast.error(error.message)
-            }else{
-                setIsLiked(false)
-            }
+            await disLikeAlbum();
+            toast.success('좋아요를 취소했습니다!')
         }else{
-            //like the song aka insert into song
-            const {error} = await supabaseClient.from('liked_songs').insert({song_id: songId, user_id: user.id})
-
-            if(error){
-                toast.error(error.message)
-            }else{
-                setIsLiked(true)
-                toast.success('Liked!')
-            }
+            await likeAlbum();
+            toast.success('좋아요를 했습니다!')
         }
         router.refresh()
+    }
+
+    async function getAlbumLike() {
+        try{
+            const res = await axiosClient.get(`/album/${data.id}/like`);
+            const resData = await res.data.data;
+            setIsLiked(!resData)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function likeAlbum() {
+        try{
+            await axiosClient.post(`/album/${data.id}/like`,data.id);
+            setIsLiked(true)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function disLikeAlbum() {
+        try{
+            await axiosClient.post(`/album/${data.id}/cancelLike`,data.id);
+            setIsLiked(false)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

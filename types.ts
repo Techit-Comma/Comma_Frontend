@@ -9,6 +9,31 @@ export interface Song {
   image_path: string;
 }
 
+export type AlbumData = {
+  id: number;
+  imgUrl: string;
+  fileUrl: string;
+  albumname: string;
+  artistNickname: string;
+  artistUsername: string;
+  genre: string;
+  licenseDescription: string;
+  permit: boolean;
+  price: number;
+};
+
+export type PlaylistItem = {
+  playlistId: number;
+  title: string;
+  producerUsername: string;
+  producerNickname: string;
+}
+
+export type FollowItem = {
+  memberId: number;
+  username: string;
+}
+
 export interface Product {
   id: string;
   active?: boolean;
@@ -46,6 +71,14 @@ export interface UserDetails {
   avatar_url?: string;
   billing_address?: Stripe.Address;
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
+}
+
+export interface UserInfos {
+  memberId: string;
+  username: string;
+  nickname: string;
+  email: string;
+  profileImageUrl: string;
 }
 
 export interface ProductWithPrice extends Product {

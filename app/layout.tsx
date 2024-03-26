@@ -1,16 +1,6 @@
-'use client';
-
-import './globals.css'
 import type { Metadata } from 'next'
-import { Figtree } from 'next/font/google'
-import Sidebar from '@/components/Sidebar'
-import UserProvider from '@/providers/UserProvider'
-import ModalProvider from '@/providers/ModalProvider'
-import ToasterProvider from '@/providers/ToasterProvider'
-import { Player } from '@/components/Player'
-import {RecoilRoot} from "recoil";
-
-const font = Figtree({ subsets: ['latin'] })
+import Base from "./base";
+import RecoilContextProvider from "@/providers/RecoilContextProvider";
 
 export const metadata: Metadata = {
   title: 'Comma',
@@ -19,28 +9,13 @@ export const metadata: Metadata = {
 
 export const revalidate = 0
 
-export default function RootLayout({
-  children,
-}: {
+export default function RootLayout({children}: {
   children: React.ReactNode
 }) {
-
-  const userSongs = []
-
   return (
-    <html lang="en">
-      <body className={font.className}>
-      <RecoilRoot>
-        <ToasterProvider/>
-        <UserProvider>
-          <ModalProvider/>
-          <Sidebar songs={userSongs}>
-            {children}
-          </Sidebar>
-          <Player/>
-        </UserProvider>
-      </RecoilRoot>
-      </body>
-    </html>
-  )
+    <RecoilContextProvider>
+      <Base>{children}</Base>
+    </RecoilContextProvider>
+  );
+
 }

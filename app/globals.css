@@ -9,3 +9,15 @@ body,
   background-color: black;
   color-scheme:dark
 }
+
+
+.logs-container {
+  display: flex;
+  flex-direction: column; /* 기본적으로 세로 배치 */
+}
+
+@media (min-width: 1500px) {
+  .logs-container {
+    flex-direction: row; /* 1500px 이상일 때 가로 배치 */
+  }
+}
