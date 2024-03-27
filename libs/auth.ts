@@ -14,7 +14,7 @@ export function SetTokenCookie(name: string, value: string, hours: number): void
     date.setTime(date.getTime() + (hours*60*60*1000));
     expires = "; expires=" + date.toUTCString();
   }
-  document.cookie = name + "=" + (value || "")  + expires + "; path=/; Secure";
+  document.cookie = name + "=" + (value || "")  + expires + "; domain=.com-ma.shop; path=/; Secure";
 }
 
 export async function CheckAccessToken(): Promise<boolean> { // 로그인 상태 확인, 향후 API 보내 인증하는 형식으로 수정 필요
