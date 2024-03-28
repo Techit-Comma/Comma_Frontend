@@ -5,4 +5,4 @@
 
 ### 백엔드 작업물로 이동
 - 자세한 내용은 백엔드 Repository에서 확인 가능합니다!
-- [Comma BackEnd](https://github.com/Techit-BitHarmony/Comma)
+- [Comma BackEnd](https://github.com/Techit-Comma/Comma_Backend)
